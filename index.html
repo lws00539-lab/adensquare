@@ -1,0 +1,625 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>아덴광장 - 리니지 클래식 유저들의 광장</title>
+  <meta
+    name="description"
+    content="공략, 시세, 혈맹, 서버 소식이 모이는 리니지 클래식 비공식 팬 커뮤니티 아덴광장입니다."
+  />
+  <style>
+    :root {
+      --bg: #0f1117;
+      --panel: #171b25;
+      --panel-light: #202635;
+      --gold: #c9a646;
+      --gold-light: #f0d98a;
+      --red: #8b1e1e;
+      --text: #e8e6da;
+      --muted: #9ca3af;
+      --border: #2d3140;
+      --black: #07080c;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    html {
+      scroll-behavior: smooth;
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(201, 166, 70, 0.18), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(139, 30, 30, 0.22), transparent 34%),
+        linear-gradient(180deg, #0f1117 0%, #090b10 100%);
+      color: var(--text);
+      font-family:
+        Pretendard,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        "Apple SD Gothic Neo",
+        "Noto Sans KR",
+        sans-serif;
+    }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+    .site {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 26px 0 36px;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 0;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      border: 1px solid rgba(201, 166, 70, 0.45);
+      border-radius: 14px;
+      background:
+        linear-gradient(145deg, rgba(201, 166, 70, 0.18), rgba(139, 30, 30, 0.12)),
+        var(--panel);
+      color: var(--gold-light);
+      font-weight: 900;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+    }
+    .brand small {
+      display: block;
+      margin-bottom: 2px;
+      color: var(--gold);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+    }
+    .brand strong {
+      display: block;
+      font-size: 24px;
+      letter-spacing: -0.06em;
+    }
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 14px;
+      white-space: nowrap;
+    }
+    .nav a {
+      padding: 9px 12px;
+      border-radius: 999px;
+      transition: 0.2s ease;
+    }
+    .nav a:hover {
+      background: rgba(201, 166, 70, 0.12);
+      color: var(--gold-light);
+    }
+    .hero {
+      display: grid;
+      grid-template-columns: 1.65fr 0.95fr;
+      gap: 22px;
+      align-items: stretch;
+      margin-top: 32px;
+    }
+    .hero-main,
+    .side-card,
+    .board-card,
+    .chat-box,
+    .notice-box {
+      border: 1px solid var(--border);
+      background:
+        linear-gradient(145deg, rgba(32, 38, 53, 0.94), rgba(23, 27, 37, 0.94));
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
+    }
+    .hero-main {
+      min-height: 430px;
+      padding: 54px;
+      border-radius: 30px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-main::after {
+      content: "";
+      position: absolute;
+      right: -80px;
+      bottom: -100px;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: rgba(201, 166, 70, 0.08);
+      filter: blur(2px);
+      pointer-events: none;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 18px;
+      padding: 8px 12px;
+      border: 1px solid rgba(201, 166, 70, 0.42);
+      border-radius: 999px;
+      background: rgba(201, 166, 70, 0.1);
+      color: var(--gold-light);
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 18px var(--gold);
+    }
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+    .hero-main h1 {
+      max-width: 740px;
+      margin-bottom: 20px;
+      font-size: clamp(44px, 7vw, 78px);
+      line-height: 0.96;
+      letter-spacing: -0.08em;
+    }
+    .hero-main p {
+      max-width: 680px;
+      margin-bottom: 0;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.75;
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 34px;
+    }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 0 18px;
+      border-radius: 13px;
+      font-weight: 900;
+      transition: 0.2s ease;
+    }
+    .button-primary {
+      background: var(--gold);
+      color: #171205;
+    }
+    .button-primary:hover {
+      background: var(--gold-light);
+      transform: translateY(-1px);
+    }
+    .button-secondary {
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+    }
+    .button-secondary:hover {
+      border-color: rgba(201, 166, 70, 0.5);
+      color: var(--gold-light);
+      transform: translateY(-1px);
+    }
+    .side-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 28px;
+      border-radius: 30px;
+    }
+    .side-card h2 {
+      margin-bottom: 12px;
+      color: var(--gold-light);
+      font-size: 25px;
+      letter-spacing: -0.04em;
+    }
+    .side-card p {
+      color: var(--muted);
+      line-height: 1.75;
+    }
+    .status-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 24px;
+    }
+    .status-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.035);
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .status-item strong {
+      color: var(--text);
+    }
+    .status-item span {
+      color: var(--gold);
+      font-weight: 800;
+    }
+    .section {
+      margin-top: 72px;
+    }
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+    .eyebrow {
+      margin-bottom: 8px;
+      color: var(--gold);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+    }
+    .section h2 {
+      margin-bottom: 0;
+      font-size: 34px;
+      letter-spacing: -0.06em;
+    }
+    .section-desc {
+      max-width: 560px;
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+      text-align: right;
+    }
+    .board-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+    .board-card {
+      min-height: 170px;
+      padding: 22px;
+      border-radius: 22px;
+      transition: 0.2s ease;
+    }
+    .board-card:hover {
+      border-color: rgba(201, 166, 70, 0.5);
+      transform: translateY(-3px);
+    }
+    .board-card h3 {
+      margin-bottom: 10px;
+      color: var(--gold-light);
+      font-size: 22px;
+      letter-spacing: -0.04em;
+    }
+    .board-card p {
+      margin-bottom: 0;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 15px;
+    }
+    .chat-section {
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 26px;
+      align-items: center;
+    }
+    .chat-copy p {
+      max-width: 620px;
+      color: var(--muted);
+      line-height: 1.75;
+    }
+    .chat-rules {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      max-width: 620px;
+      margin-top: 22px;
+    }
+    .chat-rules span {
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.035);
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .chat-box {
+      overflow: hidden;
+      border-radius: 24px;
+    }
+    .chat-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 16px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(201, 166, 70, 0.08);
+    }
+    .chat-top strong {
+      color: var(--gold-light);
+    }
+    .chat-top span {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .chat-messages {
+      display: grid;
+      gap: 10px;
+      padding: 16px;
+    }
+    .chat-message {
+      padding: 11px 12px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .chat-message strong {
+      margin-right: 8px;
+      color: var(--gold);
+    }
+    .chat-input {
+      margin: 0 16px 16px;
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .notice-box {
+      padding: 24px;
+      border-radius: 22px;
+    }
+    .notice-box h3 {
+      margin-bottom: 10px;
+      color: var(--gold-light);
+      font-size: 22px;
+      letter-spacing: -0.04em;
+    }
+    .notice-box p {
+      margin-bottom: 0;
+      color: var(--muted);
+      line-height: 1.75;
+    }
+    .footer {
+      margin-top: 72px;
+      padding-top: 26px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+    .footer strong {
+      color: var(--text);
+    }
+    .footer p {
+      margin-bottom: 6px;
+    }
+    @media (max-width: 920px) {
+      .header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+      .nav {
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 4px;
+      }
+      .hero,
+      .chat-section {
+        grid-template-columns: 1fr;
+      }
+      .hero-main {
+        min-height: auto;
+        padding: 38px 26px;
+      }
+      .section-head {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+      .section-desc {
+        text-align: left;
+      }
+      .board-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 560px) {
+      .site {
+        width: min(100% - 20px, 1120px);
+        padding-top: 16px;
+      }
+      .brand strong {
+        font-size: 22px;
+      }
+      .hero {
+        margin-top: 20px;
+      }
+      .hero-main h1 {
+        font-size: 44px;
+      }
+      .actions {
+        flex-direction: column;
+      }
+      .button {
+        width: 100%;
+      }
+      .board-grid,
+      .chat-rules {
+        grid-template-columns: 1fr;
+      }
+      .section {
+        margin-top: 54px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="site">
+    <header class="header">
+      <a class="brand" href="#" aria-label="아덴광장 홈">
+        <div class="brand-mark">A</div>
+        <div>
+          <small>ADEN SQUARE</small>
+          <strong>아덴광장</strong>
+        </div>
+      </a>
+      <nav class="nav" aria-label="주요 메뉴">
+        <a href="#boards">게시판</a>
+        <a href="#chat">실시간 광장</a>
+        <a href="#notice">공지</a>
+        <a href="#footer">안내</a>
+      </nav>
+    </header>
+    <main>
+      <section class="hero">
+        <div class="hero-main">
+          <p class="badge">
+            <span class="badge-dot"></span>
+            비공식 팬 커뮤니티 준비 중
+          </p>
+          <h1>리니지 클래식 유저들의 광장</h1>
+          <p>
+            아덴광장은 공략, 아이템 시세, 혈맹 모집, 서버 소식, 실시간 채팅이
+            모이는 리니지 클래식 유저 커뮤니티입니다.
+          </p>
+          <div class="actions">
+            <a class="button button-primary" href="#boards">게시판 보기</a>
+            <a class="button button-secondary" href="#chat">실시간 광장 보기</a>
+          </div>
+        </div>
+        <aside class="side-card" id="notice">
+          <div>
+            <h2>오픈 준비 중입니다</h2>
+            <p>
+              자유광장, 공략서고, 시세장터, 혈맹회관과 서버별 채팅창을
+              순차적으로 준비하고 있습니다.
+            </p>
+          </div>
+          <div class="status-list" aria-label="준비 현황">
+            <div class="status-item">
+              <strong>대표 도메인</strong>
+              <span>adensquare.kr</span>
+            </div>
+            <div class="status-item">
+              <strong>게시판</strong>
+              <span>준비 중</span>
+            </div>
+            <div class="status-item">
+              <strong>실시간 채팅</strong>
+              <span>준비 중</span>
+            </div>
+          </div>
+        </aside>
+      </section>
+      <section class="section" id="boards">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">BOARDS</p>
+            <h2>주요 게시판</h2>
+          </div>
+          <p class="section-desc">
+            처음에는 핵심 게시판부터 열고, 유저가 모이면 서버소식과 득템인증
+            게시판을 추가할 예정입니다.
+          </p>
+        </div>
+        <div class="board-grid">
+          <article class="board-card">
+            <h3>자유광장</h3>
+            <p>리니지 클래식 유저들의 자유로운 이야기와 질문을 나누는 공간입니다.</p>
+          </article>
+          <article class="board-card">
+            <h3>공략서고</h3>
+            <p>사냥터, 육성법, 장비 세팅, 클래스별 공략을 정리하는 공간입니다.</p>
+          </article>
+          <article class="board-card">
+            <h3>시세장터</h3>
+            <p>아이템 시세, 거래 정보, 장비 가격 흐름을 공유하는 공간입니다.</p>
+          </article>
+          <article class="board-card">
+            <h3>혈맹회관</h3>
+            <p>혈맹 모집, 가입 문의, 혈맹 홍보를 위한 공간입니다.</p>
+          </article>
+        </div>
+      </section>
+      <section class="section chat-section" id="chat">
+        <div class="chat-copy">
+          <p class="eyebrow">LIVE SQUARE</p>
+          <h2>실시간 광장</h2>
+          <p>
+            서버별 채팅창은 로그인 유저만 참여할 수 있도록 준비할 예정입니다.
+            전체광장부터 시작해 서버별 채팅방을 순차적으로 추가합니다.
+          </p>
+          <div class="chat-rules">
+            <span>로그인 유저만 채팅 가능</span>
+            <span>욕설 및 도배 제한</span>
+            <span>현금거래 홍보 금지</span>
+            <span>불법 프로그램 홍보 금지</span>
+          </div>
+        </div>
+        <div class="chat-box">
+          <div class="chat-top">
+            <strong>전체광장</strong>
+            <span>COMING SOON</span>
+          </div>
+          <div class="chat-messages">
+            <div class="chat-message">
+              <strong>운영자</strong>
+              아덴광장 실시간 채팅을 준비 중입니다.
+            </div>
+            <div class="chat-message">
+              <strong>기사</strong>
+              서버별 채팅방도 곧 만나요.
+            </div>
+            <div class="chat-message">
+              <strong>요정</strong>
+              공략과 시세 정보도 기대 중!
+            </div>
+          </div>
+          <div class="chat-input">로그인 후 채팅 참여 가능</div>
+        </div>
+      </section>
+      <section class="section">
+        <div class="notice-box">
+          <h3>운영 안내</h3>
+          <p>
+            아덴광장은 건전한 정보 공유를 위한 공간으로 운영됩니다. 욕설, 도배,
+            사칭, 현금거래 유도, 사설서버 홍보, 불법 프로그램 홍보는 제한될 수
+            있습니다.
+          </p>
+        </div>
+      </section>
+    </main>
+    <footer class="footer" id="footer">
+      <p>
+        <strong>아덴광장</strong>은 리니지 클래식 유저들을 위한 비공식 팬
+        커뮤니티입니다.
+      </p>
+      <p>
+        리니지 및 관련 상표, 이미지, 저작권은 각 권리자에게 있습니다. 본 사이트는
+        공식 서비스와 관련이 없습니다.
+      </p>
+    </footer>
+  </div>
+</body>
+</html>
