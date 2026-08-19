@@ -3454,17 +3454,17 @@ footer a{color:var(--g2);}
     average: 831,
     updatedAtLabel: '기본값 (실시간 데이터 없음)',
     servers: [
-      {name:'안타라스',price:2020},{name:'파아그리오',price:1252},{name:'아스테어',price:1127},
-      {name:'글루디오',price:1106},{name:'오렌',price:1042},{name:'발라카스',price:934},
-      {name:'크리스터',price:927},{name:'에바',price:923},{name:'사이하',price:920},
-      {name:'데포로쥬',price:896},{name:'하딘',price:893},{name:'발센',price:882},
-      {name:'하이네',price:821},{name:'세바스찬',price:810},{name:'가드리아',price:793},
-      {name:'어레인',price:792},{name:'데컨',price:790},{name:'이실로테',price:767},
-      {name:'린델',price:763},{name:'아툰',price:753},{name:'캐스톨',price:749},
-      {name:'켄라우헬',price:725},{name:'오웬',price:725},{name:'듀크데필',price:724},
-      {name:'마프르',price:715},{name:'케레니스',price:714},{name:'군터',price:714},
-      {name:'질리언',price:712},{name:'로엔그린',price:711},{name:'아인하사드',price:711},
-      {name:'조우',price:707}
+      {name:'안타라스',price:2020,changePct:0.05},{name:'파아그리오',price:1252,changePct:-0.2},{name:'아스테어',price:1127,changePct:-3.09},
+      {name:'글루디오',price:1106,changePct:-4.38},{name:'오렌',price:1042,changePct:-0.9},{name:'발라카스',price:934,changePct:4.31},
+      {name:'크리스터',price:927,changePct:-3.07},{name:'에바',price:923,changePct:-1.67},{name:'사이하',price:920,changePct:-0.36},
+      {name:'데포로쥬',price:896,changePct:0.63},{name:'하딘',price:893,changePct:-0.2},{name:'발센',price:882,changePct:-1.37},
+      {name:'하이네',price:821,changePct:2.2},{name:'세바스찬',price:810,changePct:0.59},{name:'가드리아',price:793,changePct:1.99},
+      {name:'어레인',price:792,changePct:-1.04},{name:'데컨',price:790,changePct:3.43},{name:'이실로테',price:767,changePct:1.87},
+      {name:'린델',price:763,changePct:-2.83},{name:'아툰',price:753,changePct:-2.25},{name:'캐스톨',price:749,changePct:-1.65},
+      {name:'켄라우헬',price:725,changePct:2.64},{name:'오웬',price:725,changePct:-0.42},{name:'듀크데필',price:724,changePct:1.32},
+      {name:'마프르',price:715,changePct:1.67},{name:'케레니스',price:714,changePct:-2.79},{name:'군터',price:714,changePct:-0.03},
+      {name:'질리언',price:712,changePct:-0.73},{name:'로엔그린',price:711,changePct:-1.64},{name:'아인하사드',price:711,changePct:0.67},
+      {name:'조우',price:707,changePct:-2.24}
     ]
   };
 
@@ -3482,14 +3482,27 @@ footer a{color:var(--g2);}
       : '기본값 표시 중';
 
     const servers = (data.servers || []).slice().sort((a,b) => b.price - a.price);
-    gridEl.innerHTML = servers.map(s => `
+    gridEl.innerHTML = servers.map(s => {
+      let pctHtml = '';
+      if (typeof s.changePct === 'number' && !Number.isNaN(s.changePct)) {
+        if (s.changePct > 0) {
+          pctHtml = `<span style="color:#e05a5a;font-size:12px;">▲${s.changePct.toFixed(2)}%</span>`;
+        } else if (s.changePct < 0) {
+          pctHtml = `<span style="color:#5a8ee0;font-size:12px;">▼${Math.abs(s.changePct).toFixed(2)}%</span>`;
+        } else {
+          pctHtml = `<span style="color:var(--text3);font-size:12px;">0%</span>`;
+        }
+      }
+      return `
       <div style="padding:12px 14px;border:1px solid var(--border);border-radius:6px;background:var(--dark);">
         <div style="font-weight:600;font-size:13px;margin-bottom:6px;">${s.name}</div>
         <div style="display:flex;justify-content:space-between;align-items:baseline;">
           <span style="color:var(--text2);font-size:13px;">${s.price.toLocaleString()}원</span>
+          ${pctHtml}
         </div>
       </div>
-    `).join('');
+    `;
+    }).join('');
   }
 
   function loadAdenPrice() {
