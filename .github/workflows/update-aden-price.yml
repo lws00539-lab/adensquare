@@ -1,0 +1,132 @@
+/**
+ * update-aden-price.js
+ * ------------------------------------------------------------
+ * 매일 1회(GitHub Actions 스케줄)로 실행되어
+ *   1) adena.kr 메인 페이지의 "전 서버 현재 시세" 표를 가져오고
+ *   2) 서버별 최저가 / 평균 / 최고가 / 최저가서버 / 최고가서버를 계산해서
+ *   3) Firebase Realtime Database의 `adenPrice` 노드에 저장합니다.
+ *
+ * 사이트(index.html)는 이 노드를 실시간으로 구독해서
+ * "아덴 시세" 페이지에 자동으로 최신 값을 보여줍니다.
+ *
+ * ⚠️ 주의
+ * - adena.kr 은 아이템베이/바로템/아이템매니아 시세를 모아 보여주는
+ *   퍼블릭 웹페이지입니다. 이 스크립트는 그 페이지의 HTML 구조를
+ *   그대로 가져다 쓰므로, adena.kr 이 페이지 구조를 바꾸면
+ *   셀렉터(CSS selector)를 다시 맞춰야 할 수 있습니다.
+ * - 개인/커뮤니티용 참고 데이터 수집이며, 상업적 재배포 목적이 아님을
+ *   전제로 합니다. 사용 전 adena.kr 이용약관을 한 번 확인하세요.
+ * - 네트워크 접근이 없는 샌드박스 환경에서 작성되었기 때문에,
+ *   실제 실행 환경(GitHub Actions)에서 셀렉터가 맞는지 한 번은
+ *   직접 확인해 주세요. (아래 "테스트 방법" 참고)
+ * ------------------------------------------------------------
+ */
+
+const admin = require('firebase-admin');
+const cheerio = require('cheerio');
+
+const SOURCE_URL = 'https://adena.kr/?lang=ko';
+
+// ---------- 1. Firebase 초기화 ----------
+function initFirebase() {
+  const raw = process.env.FIREBASE_SERVICE_ACCOUNT;
+  if (!raw) {
+    throw new Error('환경변수 FIREBASE_SERVICE_ACCOUNT 가 없습니다. (GitHub Secrets 확인)');
+  }
+  const serviceAccount = JSON.parse(raw);
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: process.env.FIREBASE_DATABASE_URL, // 예: https://adensquare-xxxx-default-rtdb.asia-southeast1.firebasedatabase.app
+  });
+  return admin.database();
+}
+
+// ---------- 2. 시세 페이지 가져오기 + 파싱 ----------
+async function fetchServerPrices() {
+  const res = await fetch(SOURCE_URL, {
+    headers: {
+      'User-Agent':
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36',
+    },
+  });
+  if (!res.ok) throw new Error(`페이지 요청 실패: ${res.status}`);
+  const html = await res.text();
+  const $ = cheerio.load(html);
+
+  // "전 서버 현재 시세" 표를 찾는다.
+  // adena.kr 마크업이 바뀌면 이 셀렉터를 갱신해야 합니다.
+  const servers = [];
+  $('table').each((_, table) => {
+    const headerText = $(table).text();
+    if (!headerText.includes('최저가')) return; // 시세표가 아니면 skip
+
+    $(table)
+      .find('tbody tr')
+      .each((__, tr) => {
+        const tds = $(tr).find('td');
+        if (tds.length < 5) return;
+        // 컬럼 순서: [즐겨찾기 아이콘] 서버 | 매니아 | 바로템 | 아이템베이 | 최저가
+        let name = $(tds[1]).text().trim();
+        name = name.replace('NEW', '').trim();
+        const lowestText = $(tds[5]).text().trim() || $(tds[tds.length - 1]).text().trim();
+        const lowest = parseInt(lowestText.replace(/[^0-9]/g, ''), 10);
+        if (name && !Number.isNaN(lowest)) {
+          servers.push({ name, price: lowest });
+        }
+      });
+  });
+
+  if (servers.length === 0) {
+    throw new Error('시세 표를 찾지 못했습니다. adena.kr 마크업이 변경되었을 수 있습니다.');
+  }
+  return servers;
+}
+
+// ---------- 3. 통계 계산 ----------
+function buildSummary(servers) {
+  const prices = servers.map((s) => s.price);
+  const avg = Math.round(prices.reduce((a, b) => a + b, 0) / prices.length);
+  const min = servers.reduce((a, b) => (a.price <= b.price ? a : b));
+  const max = servers.reduce((a, b) => (a.price >= b.price ? a : b));
+  return {
+    servers,
+    average: avg,
+    lowestServer: min.name,
+    lowestPrice: min.price,
+    highestServer: max.name,
+    highestPrice: max.price,
+    updatedAt: Date.now(),
+    updatedAtLabel: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
+    source: 'adena.kr',
+  };
+}
+
+// ---------- 4. Firebase에 기록 ----------
+async function writeToFirebase(db, summary) {
+  await db.ref('adenPrice').set(summary);
+}
+
+// ---------- 실행 ----------
+(async () => {
+  try {
+    console.log('[1/4] adena.kr 시세 조회 중...');
+    const servers = await fetchServerPrices();
+    console.log(`  -> ${servers.length}개 서버 확인`);
+
+    console.log('[2/4] 통계 계산 중...');
+    const summary = buildSummary(servers);
+    console.log(`  -> 평균 ${summary.average}원 / 최저 ${summary.lowestServer} ${summary.lowestPrice}원 / 최고 ${summary.highestServer} ${summary.highestPrice}원`);
+
+    console.log('[3/4] Firebase 연결 중...');
+    const db = initFirebase();
+
+    console.log('[4/4] Firebase에 저장 중...');
+    await writeToFirebase(db, summary);
+
+    console.log('완료! adenPrice 노드가 업데이트되었습니다.');
+    process.exit(0);
+  } catch (err) {
+    console.error('실패:', err.message);
+    process.exit(1);
+  }
+})();
