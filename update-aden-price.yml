@@ -1,0 +1,30 @@
+name: 아덴 시세 매일 업데이트
+
+on:
+  schedule:
+    # 매일 한국시간(KST, UTC+9) 오전 9시에 실행 = UTC 00:00
+    - cron: '0 0 * * *'
+  workflow_dispatch: {} # Actions 탭에서 수동 실행 버튼도 사용 가능
+
+jobs:
+  update-price:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 저장소 체크아웃
+        uses: actions/checkout@v4
+
+      - name: Node.js 설치
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 의존성 설치
+        working-directory: scripts
+        run: npm install
+
+      - name: 아덴 시세 조회 후 Firebase 업데이트
+        working-directory: scripts
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          FIREBASE_DATABASE_URL: ${{ secrets.FIREBASE_DATABASE_URL }}
+        run: npm run update

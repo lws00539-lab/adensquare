@@ -1,0 +1,30 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "chat": {
+      "global": {
+        ".read": true,
+        "$messageId": {
+          ".write": "auth !== null",
+          ".validate": "newData.hasChildren(['uid', 'nickname', 'text', 'timestamp'])",
+          "uid":         { ".validate": "newData.isString() && newData.val().length > 0" },
+          "nickname":    { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 20" },
+          "text":        { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 500" },
+          "timestamp":   { ".validate": "newData.isNumber()" },
+          "avatarBg":    { ".validate": "newData.isString()" },
+          "avatarColor": { ".validate": "newData.isString()" },
+          "isSim":       { ".validate": "newData.isBoolean()" },
+          "$other": { ".validate": false }
+        }
+      }
+    },
+    "news": { ".read": true, ".write": true },
+    "deleted_news": { ".read": true, ".write": true },
+    "board": { ".read": true, ".write": true },
+    "board_content": { ".read": true, ".write": true },
+    "board_comments": { ".read": true, ".write": true },
+    "market": { ".read": true, ".write": true },
+    "adenPrice": { ".read": true, ".write": false }
+  }
+}
