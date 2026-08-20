@@ -1588,7 +1588,7 @@ footer a{color:var(--g2);}
             <div class="card-title"><div class="bar"></div><i class="ti ti-coin"></i>아덴 시세</div>
             <div class="card-more" onclick="event.preventDefault();showAdenPrice()" style="cursor:pointer;">아덴시세 보기 →</div>
           </div>
-          <div id="aden-mini-viewport" style="overflow:hidden;position:relative;padding:12px 14px;height:76px;">
+          <div id="aden-mini-viewport" style="overflow:hidden;position:relative;padding:12px 14px;">
             <div id="aden-mini-track" style="display:flex;flex-direction:column;transition:transform .6s ease;"></div>
           </div>
         </div>
@@ -1651,7 +1651,7 @@ footer a{color:var(--g2);}
     <div class="col-right">
       <div class="card">
         <div class="card-head"><div class="card-title"><div class="bar"></div><i class="ti ti-coin"></i>아덴 시세</div><div class="card-more" onclick="event.preventDefault();showAdenPrice()" style="cursor:pointer;">아덴시세 보기 →</div></div>
-        <div id="aden-mini-viewport" style="overflow:hidden;position:relative;padding:12px 14px;height:76px;">
+        <div id="aden-mini-viewport" style="overflow:hidden;position:relative;padding:12px 14px;">
           <div id="aden-mini-track" style="display:flex;flex-direction:column;transition:transform .6s ease;"></div>
         </div>
       </div>
@@ -4379,12 +4379,13 @@ footer a{color:var(--g2);}
   let _adenMiniPages = [];
   let _adenMiniIndex = 0;
   let _adenMiniTimer = null;
+  let _adenMiniPageHeight = 0;
 
   function buildAdenMiniPages(servers) {
     const sorted = (servers || []).slice().sort((a,b) => b.price - a.price);
     const pages = [];
-    for (let i = 0; i < sorted.length; i += 4) {
-      pages.push(sorted.slice(i, i + 4));
+    for (let i = 0; i < sorted.length; i += 12) {
+      pages.push(sorted.slice(i, i + 12));
     }
     return pages;
   }
@@ -4398,9 +4399,9 @@ footer a{color:var(--g2);}
         else pctHtml = `<span style="color:var(--text3);font-size:11px;">0%</span>`;
       }
       return `
-        <div style="padding:9px 10px;border:1px solid var(--border);border-radius:6px;background:var(--dark);">
-          <div style="font-weight:600;font-size:12px;margin-bottom:4px;">${s.name}</div>
-          <div style="display:flex;justify-content:space-between;align-items:baseline;">
+        <div style="padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--dark);display:flex;align-items:center;justify-content:space-between;gap:6px;">
+          <span style="font-weight:600;font-size:12px;white-space:nowrap;">${s.name}</span>
+          <div style="display:flex;align-items:center;gap:6px;white-space:nowrap;">
             <span style="color:var(--text2);font-size:12px;">${s.price.toLocaleString()}원</span>
             ${pctHtml}
           </div>
@@ -4416,7 +4417,7 @@ footer a{color:var(--g2);}
     _adenMiniIndex = 0;
 
     const pagesHtml = _adenMiniPages.map(page => `
-      <div style="flex:0 0 76px;height:76px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+      <div class="aden-mini-page" style="flex-shrink:0;display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:min-content;gap:8px;">
         ${renderAdenMiniSlide(page)}
       </div>
     `).join('');
@@ -4426,15 +4427,27 @@ footer a{color:var(--g2);}
       track.style.transform = 'translateY(0px)';
     });
 
-    if (_adenMiniTimer) clearInterval(_adenMiniTimer);
-    if (_adenMiniPages.length > 1) {
-      _adenMiniTimer = setInterval(() => {
-        _adenMiniIndex = (_adenMiniIndex + 1) % _adenMiniPages.length;
-        tracks.forEach(track => {
-          track.style.transform = `translateY(-${_adenMiniIndex * 76}px)`;
-        });
-      }, 5000);
-    }
+    // 실제 렌더된 페이지 높이를 측정해서 뷰포트/이동 거리를 정확히 맞춤 (잘림 방지)
+    requestAnimationFrame(() => {
+      const firstPage = tracks[0] && tracks[0].querySelector('.aden-mini-page');
+      if (!firstPage) return;
+      const pageHeight = firstPage.getBoundingClientRect().height;
+      _adenMiniPageHeight = pageHeight;
+
+      document.querySelectorAll('#aden-mini-viewport').forEach(vp => {
+        vp.style.height = pageHeight + 'px';
+      });
+
+      if (_adenMiniTimer) clearInterval(_adenMiniTimer);
+      if (_adenMiniPages.length > 1) {
+        _adenMiniTimer = setInterval(() => {
+          _adenMiniIndex = (_adenMiniIndex + 1) % _adenMiniPages.length;
+          tracks.forEach(track => {
+            track.style.transform = `translateY(-${_adenMiniIndex * (pageHeight + 8)}px)`;
+          });
+        }, 5000);
+      }
+    });
   }
 
   function loadAdenMiniWidget() {
