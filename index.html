@@ -1584,14 +1584,14 @@ footer a{color:var(--g2);}
           </div>
         </div>
         <div class="card" style="margin-bottom:12px;">
-          <div class="card-head">
-            <div class="card-title"><div class="bar"></div><i class="ti ti-coin"></i>아덴 시세</div>
-            <div class="card-more" onclick="event.preventDefault();showAdenPrice()" style="cursor:pointer;">아덴시세 보기 →</div>
-          </div>
-          <div style="text-align:center;padding:8px 14px;border-bottom:1px solid var(--border);background:var(--dark);">
-            <span style="font-size:11px;color:var(--text3);">전서버 평균</span>
-            <span id="aden-mini-avg-price" style="font-size:16px;font-weight:800;color:var(--g);margin-left:6px;">831원</span>
-            <span id="aden-mini-avg-change" style="font-size:12px;font-weight:700;margin-left:6px;"></span>
+          <div class="card-head" style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-title" style="flex:0 0 auto;"><div class="bar"></div><i class="ti ti-coin"></i>아덴 시세</div>
+            <div style="flex:1;text-align:center;font-size:12px;">
+              <span style="color:var(--text3);">전서버 평균</span>
+              <span id="aden-mini-avg-price" style="font-size:15px;font-weight:800;color:var(--g);margin-left:6px;">831원</span>
+              <span id="aden-mini-avg-change" style="font-weight:700;margin-left:6px;"></span>
+            </div>
+            <div class="card-more" onclick="event.preventDefault();showAdenPrice()" style="cursor:pointer;flex:0 0 auto;">아덴시세 보기 →</div>
           </div>
           <div id="aden-mini-viewport" style="overflow:hidden;position:relative;padding:12px 14px;">
             <div id="aden-mini-track" style="display:flex;flex-direction:column;transition:transform .6s ease;"></div>
