@@ -1082,6 +1082,7 @@ footer a{color:var(--g2);}
       <div style="display:flex;align-items:baseline;justify-content:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--dark);flex-wrap:wrap;">
         <span style="font-size:12px;color:var(--text3);">전서버 평균 (만 아데나당)</span>
         <span id="aden-avg-price" style="font-size:22px;font-weight:800;color:var(--g);">831원</span>
+        <span id="aden-avg-change" style="font-size:14px;font-weight:700;"></span>
         <span id="aden-updated-label" style="font-size:11px;color:var(--text3);">기본값 표시 중</span>
       </div>
 
@@ -3452,6 +3453,7 @@ footer a{color:var(--g2);}
   // 폴백용 기본 데이터 (Firebase에 값이 아직 없거나 불러오기 실패 시 표시)
   const ADEN_PRICE_FALLBACK = {
     average: 831,
+    avgChangePct: 3.8,
     updatedAtLabel: '기본값 (실시간 데이터 없음)',
     servers: [
       {name:'안타라스',price:2020,changePct:0.05},{name:'파아그리오',price:1252,changePct:-0.2},{name:'아스테어',price:1127,changePct:-3.09},
@@ -3472,11 +3474,31 @@ footer a{color:var(--g2);}
 
   function renderAdenPrice(data) {
     const avgEl = document.getElementById('aden-avg-price');
+    const avgChangeEl = document.getElementById('aden-avg-change');
     const labelEl = document.getElementById('aden-updated-label');
     const gridEl = document.getElementById('aden-price-grid');
     if (!avgEl || !gridEl) return;
 
     avgEl.textContent = (data.average || 0).toLocaleString() + '원';
+
+    if (avgChangeEl) {
+      const pct = data.avgChangePct;
+      if (typeof pct === 'number' && !Number.isNaN(pct)) {
+        if (pct > 0) {
+          avgChangeEl.innerHTML = `▲${pct.toFixed(2)}%`;
+          avgChangeEl.style.color = '#e05a5a';
+        } else if (pct < 0) {
+          avgChangeEl.innerHTML = `▼${Math.abs(pct).toFixed(2)}%`;
+          avgChangeEl.style.color = '#5a8ee0';
+        } else {
+          avgChangeEl.innerHTML = '0%';
+          avgChangeEl.style.color = 'var(--text3)';
+        }
+      } else {
+        avgChangeEl.innerHTML = '';
+      }
+    }
+
     labelEl.textContent = data.updatedAtLabel
       ? ('마지막 업데이트: ' + data.updatedAtLabel)
       : '기본값 표시 중';
