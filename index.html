@@ -1585,12 +1585,16 @@ footer a{color:var(--g2);}
         </div>
         <div class="card" style="margin-bottom:12px;">
           <div class="card-head">
-            <div class="card-title"><div class="bar"></div><i class="ti ti-coin"></i>아덴 시세</div>
-            <div class="card-more" onclick="event.preventDefault();showAdenPrice()" style="cursor:pointer;">아덴시세 보기 →</div>
+            <div class="card-title"><div class="bar"></div><i class="ti ti-coin"></i>실시간 시세</div>
+            <div class="card-more">시세장터 →</div>
           </div>
-          <div id="aden-mini-viewport" style="overflow:hidden;position:relative;padding:12px 14px;height:76px;">
-            <div id="aden-mini-track" style="display:flex;flex-direction:column;transition:transform .6s ease;"></div>
-          </div>
+          <table class="price-table">
+            <tr><td><div class="price-item">BOP</div><div class="price-server">조우</div></td><td class="price-val">3.2억 A</td><td class="price-chg up">▲ 12%</td></tr>
+            <tr><td><div class="price-item">엔트의 가지</div><div class="price-server">데포로쥬</div></td><td class="price-val">580만 A</td><td class="price-chg dn">▼ 3%</td></tr>
+            <tr><td><div class="price-item">마법의 가루</div><div class="price-server">전체</div></td><td class="price-val">12만 A</td><td class="price-chg up">▲ 5%</td></tr>
+            <tr><td><div class="price-item">+7 강화 장갑</div><div class="price-server">글루딘</div></td><td class="price-val">4,800만 A</td><td class="price-chg">→ 0%</td></tr>
+            <tr><td><div class="price-item">용의 뼈</div><div class="price-server">힐든</div></td><td class="price-val">890만 A</td><td class="price-chg dn">▼ 7%</td></tr>
+          </table>
         </div>
         <div class="card">
           <div class="card-head">
@@ -1650,9 +1654,19 @@ footer a{color:var(--g2);}
     </div>
     <div class="col-right">
       <div class="card">
+        <div class="card-head"><div class="card-title"><div class="bar"></div><i class="ti ti-coin"></i>실시간 시세</div><div class="card-more">시세장터 →</div></div>
+        <table class="price-table">
+          <tr><td><div class="price-item">BOP</div><div class="price-server">조우</div></td><td class="price-val">3.2억 A</td><td class="price-chg up">▲ 12%</td></tr>
+          <tr><td><div class="price-item">엔트의 가지</div><div class="price-server">데포로쥬</div></td><td class="price-val">580만 A</td><td class="price-chg dn">▼ 3%</td></tr>
+          <tr><td><div class="price-item">마법의 가루</div><div class="price-server">전체</div></td><td class="price-val">12만 A</td><td class="price-chg up">▲ 5%</td></tr>
+          <tr><td><div class="price-item">+7 강화 장갑</div><div class="price-server">글루딘</div></td><td class="price-val">4,800만 A</td><td class="price-chg">→ 0%</td></tr>
+          <tr><td><div class="price-item">용의 뼈</div><div class="price-server">힐든</div></td><td class="price-val">890만 A</td><td class="price-chg dn">▼ 7%</td></tr>
+        </table>
+      </div>
+      <div class="card">
         <div class="card-head"><div class="card-title"><div class="bar"></div><i class="ti ti-coin"></i>아덴 시세</div><div class="card-more" onclick="event.preventDefault();showAdenPrice()" style="cursor:pointer;">아덴시세 보기 →</div></div>
-        <div id="aden-mini-viewport" style="overflow:hidden;position:relative;padding:12px 14px;height:76px;">
-          <div id="aden-mini-track" style="display:flex;flex-direction:column;transition:transform .6s ease;"></div>
+        <div id="aden-mini-viewport" style="overflow:hidden;position:relative;padding:12px 14px;">
+          <div id="aden-mini-track" style="display:flex;transition:transform .6s ease;"></div>
         </div>
       </div>
       <div class="card">
@@ -4383,8 +4397,8 @@ footer a{color:var(--g2);}
   function buildAdenMiniPages(servers) {
     const sorted = (servers || []).slice().sort((a,b) => b.price - a.price);
     const pages = [];
-    for (let i = 0; i < sorted.length; i += 4) {
-      pages.push(sorted.slice(i, i + 4));
+    for (let i = 0; i < sorted.length; i += 6) {
+      pages.push(sorted.slice(i, i + 6));
     }
     return pages;
   }
@@ -4409,31 +4423,25 @@ footer a{color:var(--g2);}
   }
 
   function renderAdenMiniSlider(data) {
-    const tracks = document.querySelectorAll('#aden-mini-track');
-    if (!tracks.length) return;
+    const track = document.getElementById('aden-mini-track');
+    if (!track) return;
 
     _adenMiniPages = buildAdenMiniPages(data.servers || []);
     _adenMiniIndex = 0;
 
-    const pagesHtml = _adenMiniPages.map(page => `
-      <div style="flex:0 0 76px;height:76px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+    track.innerHTML = _adenMiniPages.map(page => `
+      <div style="flex:0 0 100%;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
         ${renderAdenMiniSlide(page)}
       </div>
     `).join('');
-
-    tracks.forEach(track => {
-      track.innerHTML = pagesHtml;
-      track.style.transform = 'translateY(0px)';
-    });
+    track.style.transform = 'translateX(0%)';
 
     if (_adenMiniTimer) clearInterval(_adenMiniTimer);
     if (_adenMiniPages.length > 1) {
       _adenMiniTimer = setInterval(() => {
         _adenMiniIndex = (_adenMiniIndex + 1) % _adenMiniPages.length;
-        tracks.forEach(track => {
-          track.style.transform = `translateY(-${_adenMiniIndex * 76}px)`;
-        });
-      }, 5000);
+        track.style.transform = `translateX(-${_adenMiniIndex * 100}%)`;
+      }, 3500);
     }
   }
 
