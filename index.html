@@ -4384,7 +4384,7 @@ footer a{color:var(--g2);}
     const sorted = (servers || []).slice().sort((a,b) => b.price - a.price);
     const pages = [];
     for (let i = 0; i < sorted.length; i += 16) {
-      pages.push(sorted.slice(i, i + 12));
+      pages.push(sorted.slice(i, i + 16));
     }
     return pages;
   }
@@ -4441,15 +4441,17 @@ footer a{color:var(--g2);}
     });
 
     // 실제 렌더된 페이지 높이를 측정해서 뷰포트/이동 거리를 정확히 맞춤 (잘림 방지)
-    setTimeout(() => {
-      const firstPage = tracks[0] && tracks[0].querySelector('.aden-mini-page');
-      const firstCard = firstPage && firstPage.firstElementChild;
-      if (!firstPage || !firstCard) return;
+    const measureAndStart = () => {
+      const pageEls = tracks[0] ? Array.from(tracks[0].querySelectorAll('.aden-mini-page')) : [];
+      if (!pageEls.length) return;
 
-      const cardHeight = firstCard.getBoundingClientRect().height;
-      const rows = 4; // 4열 x 4줄
-      const rowGap = 8;
-      const pageHeight = Math.ceil(cardHeight * rows + rowGap * (rows - 1)) + 2; // 여유 2px (잘림 방지)
+      // 모든 페이지 중 가장 큰 실제 높이를 기준으로 삼음 (마지막 페이지 등 항목 수가 달라도 안전)
+      let pageHeight = 0;
+      pageEls.forEach(el => {
+        const h = el.getBoundingClientRect().height;
+        if (h > pageHeight) pageHeight = h;
+      });
+      pageHeight = Math.ceil(pageHeight) + 2; // 여유 2px (잘림 방지)
       _adenMiniPageHeight = pageHeight;
 
       document.querySelectorAll('#aden-mini-viewport').forEach(vp => {
@@ -4465,7 +4467,15 @@ footer a{color:var(--g2);}
           });
         }, 5000);
       }
-    }, 150);
+    };
+
+    // 폰트 로딩까지 끝난 뒤, 두 번의 렌더 프레임을 기다려 정확한 높이를 측정 (잘림/겹침 방지)
+    const runMeasure = () => requestAnimationFrame(() => requestAnimationFrame(measureAndStart));
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(runMeasure);
+    } else {
+      runMeasure();
+    }
   }
 
   function loadAdenMiniWidget() {
