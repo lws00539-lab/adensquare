@@ -1664,6 +1664,12 @@ footer a{color:var(--g2);}
         </table>
       </div>
       <div class="card">
+        <div class="card-head"><div class="card-title"><div class="bar"></div><i class="ti ti-coin"></i>아덴 시세</div><div class="card-more" onclick="event.preventDefault();showAdenPrice()" style="cursor:pointer;">아덴시세 보기 →</div></div>
+        <div id="aden-mini-viewport" style="overflow:hidden;position:relative;padding:12px 14px;">
+          <div id="aden-mini-track" style="display:flex;transition:transform .6s ease;"></div>
+        </div>
+      </div>
+      <div class="card">
         <div class="card-head"><div class="card-title"><div class="bar"></div><i class="ti ti-shield"></i>혈맹 모집</div><div class="card-more">혈맹회관 →</div></div>
         <div class="clan-list">
           <div class="clan-item"><div class="clan-emblem">🔥</div><div class="clan-info"><div class="clan-name">불꽃군단</div><div class="clan-desc">조우 · 공성 전문 · 레벨 50+</div></div><span class="clan-tag">모집중</span></div>
@@ -4382,6 +4388,81 @@ footer a{color:var(--g2);}
 
   // 실시간 카운터
   setInterval(()=>{const rand=Math.floor(Math.random()*20)-10;document.getElementById('online-count').textContent=(847+rand).toLocaleString()+'명';},4000);
+
+  // ---------- 메인화면 아덴 시세 미니 슬라이더 ----------
+  let _adenMiniPages = [];
+  let _adenMiniIndex = 0;
+  let _adenMiniTimer = null;
+
+  function buildAdenMiniPages(servers) {
+    const sorted = (servers || []).slice().sort((a,b) => b.price - a.price);
+    const pages = [];
+    for (let i = 0; i < sorted.length; i += 6) {
+      pages.push(sorted.slice(i, i + 6));
+    }
+    return pages;
+  }
+
+  function renderAdenMiniSlide(page) {
+    return page.map(s => {
+      let pctHtml = '';
+      if (typeof s.changePct === 'number' && !Number.isNaN(s.changePct)) {
+        if (s.changePct > 0) pctHtml = `<span style="color:#e05a5a;font-size:11px;">▲${s.changePct.toFixed(2)}%</span>`;
+        else if (s.changePct < 0) pctHtml = `<span style="color:#5a8ee0;font-size:11px;">▼${Math.abs(s.changePct).toFixed(2)}%</span>`;
+        else pctHtml = `<span style="color:var(--text3);font-size:11px;">0%</span>`;
+      }
+      return `
+        <div style="padding:9px 10px;border:1px solid var(--border);border-radius:6px;background:var(--dark);">
+          <div style="font-weight:600;font-size:12px;margin-bottom:4px;">${s.name}</div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;">
+            <span style="color:var(--text2);font-size:12px;">${s.price.toLocaleString()}원</span>
+            ${pctHtml}
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function renderAdenMiniSlider(data) {
+    const track = document.getElementById('aden-mini-track');
+    if (!track) return;
+
+    _adenMiniPages = buildAdenMiniPages(data.servers || []);
+    _adenMiniIndex = 0;
+
+    track.innerHTML = _adenMiniPages.map(page => `
+      <div style="flex:0 0 100%;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+        ${renderAdenMiniSlide(page)}
+      </div>
+    `).join('');
+    track.style.transform = 'translateX(0%)';
+
+    if (_adenMiniTimer) clearInterval(_adenMiniTimer);
+    if (_adenMiniPages.length > 1) {
+      _adenMiniTimer = setInterval(() => {
+        _adenMiniIndex = (_adenMiniIndex + 1) % _adenMiniPages.length;
+        track.style.transform = `translateX(-${_adenMiniIndex * 100}%)`;
+      }, 3500);
+    }
+  }
+
+  function loadAdenMiniWidget() {
+    renderAdenMiniSlider(ADEN_PRICE_FALLBACK);
+    try {
+      const db = firebase.database();
+      db.ref('adenPrice').on('value', (snap) => {
+        const data = snap.val();
+        if (data && data.servers && data.servers.length) {
+          renderAdenMiniSlider(data);
+        }
+      }, (err) => {
+        console.error('메인 아덴 시세 위젯 로드 실패:', err);
+      });
+    } catch (e) {
+      console.error('Firebase 연결 실패(메인 위젯):', e);
+    }
+  }
+
+  loadAdenMiniWidget();
 
 
 </script>
