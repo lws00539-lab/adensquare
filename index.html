@@ -1588,6 +1588,11 @@ footer a{color:var(--g2);}
             <div class="card-title"><div class="bar"></div><i class="ti ti-coin"></i>아덴 시세</div>
             <div class="card-more" onclick="event.preventDefault();showAdenPrice()" style="cursor:pointer;">아덴시세 보기 →</div>
           </div>
+          <div style="text-align:center;padding:8px 14px;border-bottom:1px solid var(--border);background:var(--dark);">
+            <span style="font-size:11px;color:var(--text3);">전서버 평균</span>
+            <span id="aden-mini-avg-price" style="font-size:16px;font-weight:800;color:var(--g);margin-left:6px;">831원</span>
+            <span id="aden-mini-avg-change" style="font-size:12px;font-weight:700;margin-left:6px;"></span>
+          </div>
           <div id="aden-mini-viewport" style="overflow:hidden;position:relative;padding:12px 14px;">
             <div id="aden-mini-track" style="display:flex;flex-direction:column;transition:transform .6s ease;"></div>
           </div>
@@ -1649,12 +1654,6 @@ footer a{color:var(--g2);}
       </div>
     </div>
     <div class="col-right">
-      <div class="card">
-        <div class="card-head"><div class="card-title"><div class="bar"></div><i class="ti ti-coin"></i>아덴 시세</div><div class="card-more" onclick="event.preventDefault();showAdenPrice()" style="cursor:pointer;">아덴시세 보기 →</div></div>
-        <div id="aden-mini-viewport" style="overflow:hidden;position:relative;padding:12px 14px;">
-          <div id="aden-mini-track" style="display:flex;flex-direction:column;transition:transform .6s ease;"></div>
-        </div>
-      </div>
       <div class="card">
         <div class="card-head"><div class="card-title"><div class="bar"></div><i class="ti ti-shield"></i>혈맹 모집</div><div class="card-more">혈맹회관 →</div></div>
         <div class="clan-list">
@@ -4384,7 +4383,7 @@ footer a{color:var(--g2);}
   function buildAdenMiniPages(servers) {
     const sorted = (servers || []).slice().sort((a,b) => b.price - a.price);
     const pages = [];
-    for (let i = 0; i < sorted.length; i += 12) {
+    for (let i = 0; i < sorted.length; i += 16) {
       pages.push(sorted.slice(i, i + 12));
     }
     return pages;
@@ -4413,6 +4412,20 @@ footer a{color:var(--g2);}
     const tracks = document.querySelectorAll('#aden-mini-track');
     if (!tracks.length) return;
 
+    const avgEl = document.getElementById('aden-mini-avg-price');
+    const avgChangeEl = document.getElementById('aden-mini-avg-change');
+    if (avgEl) avgEl.textContent = (data.average || 0).toLocaleString() + '원';
+    if (avgChangeEl) {
+      const pct = data.avgChangePct;
+      if (typeof pct === 'number' && !Number.isNaN(pct)) {
+        if (pct > 0) { avgChangeEl.textContent = `▲${pct.toFixed(2)}%`; avgChangeEl.style.color = '#e05a5a'; }
+        else if (pct < 0) { avgChangeEl.textContent = `▼${Math.abs(pct).toFixed(2)}%`; avgChangeEl.style.color = '#5a8ee0'; }
+        else { avgChangeEl.textContent = '0%'; avgChangeEl.style.color = 'var(--text3)'; }
+      } else {
+        avgChangeEl.textContent = '';
+      }
+    }
+
     _adenMiniPages = buildAdenMiniPages(data.servers || []);
     _adenMiniIndex = 0;
 
@@ -4428,10 +4441,15 @@ footer a{color:var(--g2);}
     });
 
     // 실제 렌더된 페이지 높이를 측정해서 뷰포트/이동 거리를 정확히 맞춤 (잘림 방지)
-    requestAnimationFrame(() => {
+    setTimeout(() => {
       const firstPage = tracks[0] && tracks[0].querySelector('.aden-mini-page');
-      if (!firstPage) return;
-      const pageHeight = firstPage.getBoundingClientRect().height;
+      const firstCard = firstPage && firstPage.firstElementChild;
+      if (!firstPage || !firstCard) return;
+
+      const cardHeight = firstCard.getBoundingClientRect().height;
+      const rows = 4; // 4열 x 4줄
+      const rowGap = 8;
+      const pageHeight = Math.ceil(cardHeight * rows + rowGap * (rows - 1)) + 2; // 여유 2px (잘림 방지)
       _adenMiniPageHeight = pageHeight;
 
       document.querySelectorAll('#aden-mini-viewport').forEach(vp => {
@@ -4447,7 +4465,7 @@ footer a{color:var(--g2);}
           });
         }, 5000);
       }
-    });
+    }, 150);
   }
 
   function loadAdenMiniWidget() {
