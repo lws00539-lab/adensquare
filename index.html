@@ -1662,9 +1662,10 @@ footer a{color:var(--g2);}
           <tr><td><div class="price-item">+7 강화 장갑</div><div class="price-server">글루딘</div></td><td class="price-val">4,800만 A</td><td class="price-chg">→ 0%</td></tr>
           <tr><td><div class="price-item">용의 뼈</div><div class="price-server">힐든</div></td><td class="price-val">890만 A</td><td class="price-chg dn">▼ 7%</td></tr>
         </table>
-      </div>
-      <div class="card">
-        <div class="card-head"><div class="card-title"><div class="bar"></div><i class="ti ti-coin"></i>아덴 시세</div><div class="card-more" onclick="event.preventDefault();showAdenPrice()" style="cursor:pointer;">아덴시세 보기 →</div></div>
+        <div style="padding:9px 14px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--dark);">
+          <div style="font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;color:var(--text);"><div style="width:2px;height:12px;background:var(--gold);border-radius:1px;"></div>💰 아덴 시세</div>
+          <div class="card-more" onclick="event.preventDefault();showAdenPrice()" style="cursor:pointer;">아덴시세 보기 →</div>
+        </div>
         <div id="aden-mini-viewport" style="overflow:hidden;position:relative;padding:12px 14px;">
           <div id="aden-mini-track" style="display:flex;transition:transform .6s ease;"></div>
         </div>
