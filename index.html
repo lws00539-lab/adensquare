@@ -1624,14 +1624,34 @@ footer a{color:var(--g2);}
           </div>
         </div>
         <div class="card">
-          <div class="card-head">
-            <div class="card-title"><div class="bar"></div><i class="ti ti-shield"></i>혈맹 모집</div>
-            <div class="card-more">혈맹회관 →</div>
-          </div>
-          <div class="clan-list">
-            <div class="clan-item"><div class="clan-emblem">🔥</div><div class="clan-info"><div class="clan-name">불꽃군단</div><div class="clan-desc">조우 · 공성 전문 · 레벨 50+ 기사/요정</div></div><span class="clan-tag">모집중</span></div>
-            <div class="clan-item"><div class="clan-emblem">⚡</div><div class="clan-info"><div class="clan-name">블루스톰</div><div class="clan-desc">데포로쥬 · 파밍 위주 · 초보 환영</div></div><span class="clan-tag">모집중</span></div>
-            <div class="clan-item"><div class="clan-emblem">🌿</div><div class="clan-info"><div class="clan-name">영원의숲</div><div class="clan-desc">힐든 · 성인 운영 · 요정/다크엘프</div></div><span class="clan-tag">모집중</span></div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);">
+            <div style="border-right:1px solid var(--border);">
+              <div class="card-head">
+                <div class="card-title"><div class="bar"></div><i class="ti ti-coin"></i>거래소</div>
+                <div class="card-more" onclick="event.preventDefault();showMarket()" style="cursor:pointer;">더보기 →</div>
+              </div>
+              <div id="main-market-list" style="padding:8px 14px;font-size:11px;color:var(--text2);min-height:150px;">
+                <div style="padding:5px 0;color:var(--text3);">불러오는 중...</div>
+              </div>
+            </div>
+            <div style="border-right:1px solid var(--border);">
+              <div class="card-head">
+                <div class="card-title"><div class="bar"></div><i class="ti ti-brand-youtube"></i>유튜브 · 리니지클래식</div>
+                <div class="card-more" onclick="event.preventDefault();showYoutube()" style="cursor:pointer;">더보기 →</div>
+              </div>
+              <div id="main-youtube-list" style="padding:8px 14px;font-size:11px;color:var(--text2);min-height:150px;">
+                <div style="padding:5px 0;color:var(--text3);">불러오는 중...</div>
+              </div>
+            </div>
+            <div>
+              <div class="card-head">
+                <div class="card-title"><div class="bar"></div><i class="ti ti-users"></i>게임같이해요</div>
+                <div class="card-more" onclick="event.preventDefault();showBoard('play_lineage')" style="cursor:pointer;">더보기 →</div>
+              </div>
+              <div id="main-playtogether-list" style="padding:8px 14px;font-size:11px;color:var(--text2);min-height:150px;">
+                <div style="padding:5px 0;color:var(--text3);">불러오는 중...</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -4553,6 +4573,89 @@ footer a{color:var(--g2);}
     }
   }
   loadMainFreeBoardMini();
+
+  // ---------- 메인화면 거래소 미니 리스트 ----------
+  async function loadMainMarketMini() {
+    const el = document.getElementById('main-market-list');
+    if (!el) return;
+    try {
+      const db = firebase.database();
+      const snap = await db.ref('market').once('value');
+      const items = [];
+      snap.forEach(c => { const v = c.val(); if (v && v.item) items.push(v); });
+      items.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+      const top = items.slice(0, 5);
+      if (!top.length) {
+        el.innerHTML = '<div style="padding:5px 0;color:var(--text3);">등록된 매물이 없습니다.</div>';
+        return;
+      }
+      el.innerHTML = top.map(it => `
+        <div style="padding:5px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;gap:6px;cursor:pointer;" onclick="showMarket()">
+          <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${it.type === 'buy' ? '<span style=\"color:#5a8ee0;\">[삽니다]</span>' : '<span style=\"color:#e05a5a;\">[팝니다]</span>'} ${(it.item || '').replace(/</g,'&lt;')}</span>
+          <span style="color:var(--text3);flex-shrink:0;">${it.server || ''}</span>
+        </div>
+      `).join('');
+    } catch (e) {
+      console.error('메인 거래소 미니 로드 실패:', e);
+      el.innerHTML = '<div style="padding:5px 0;color:#e07070;">불러오기 실패</div>';
+    }
+  }
+  loadMainMarketMini();
+
+  // ---------- 메인화면 유튜브(리니지클래식) 미니 리스트 ----------
+  async function loadMainYoutubeMini() {
+    const el = document.getElementById('main-youtube-list');
+    if (!el) return;
+    try {
+      const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent('리니지 클래식')}&maxResults=5&order=date&type=video&key=${YT_API_KEY}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      if (data.error) throw new Error(data.error.message);
+      const videos = (data.items || []).filter(i => i.id?.videoId).slice(0, 3);
+      if (!videos.length) {
+        el.innerHTML = '<div style="padding:5px 0;color:var(--text3);">영상이 없습니다.</div>';
+        return;
+      }
+      el.innerHTML = videos.map(v => `
+        <div style="padding:5px 0;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center;cursor:pointer;" onclick="event.preventDefault();showYoutube()">
+          <img src="${v.snippet.thumbnails?.default?.url || ''}" style="width:48px;height:27px;object-fit:cover;border-radius:3px;flex-shrink:0;">
+          <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${(v.snippet.title || '').replace(/</g,'&lt;')}</span>
+        </div>
+      `).join('');
+    } catch (e) {
+      console.error('메인 유튜브 미니 로드 실패:', e);
+      el.innerHTML = '<div style="padding:5px 0;color:#e07070;">불러오기 실패</div>';
+    }
+  }
+  loadMainYoutubeMini();
+
+  // ---------- 메인화면 게임같이해요 미니 리스트 ----------
+  async function loadMainPlayTogetherMini() {
+    const el = document.getElementById('main-playtogether-list');
+    if (!el) return;
+    try {
+      const db = firebase.database();
+      const snap = await db.ref('board/play_lineage').once('value');
+      const posts = [];
+      snap.forEach(child => { const val = child.val(); if (val && val.title) posts.push(val); });
+      posts.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+      const top = posts.slice(0, 5);
+      if (!top.length) {
+        el.innerHTML = '<div style="padding:5px 0;color:var(--text3);">게시글이 없습니다.</div>';
+        return;
+      }
+      el.innerHTML = top.map(p => `
+        <div style="padding:5px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;gap:6px;cursor:pointer;" onclick="showBoard('play_lineage')">
+          <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${(p.title || '').replace(/</g,'&lt;')}</span>
+          <span style="color:var(--text3);flex-shrink:0;">${p.nickname ? p.nickname : ''}</span>
+        </div>
+      `).join('');
+    } catch (e) {
+      console.error('메인 게임같이해요 미니 로드 실패:', e);
+      el.innerHTML = '<div style="padding:5px 0;color:#e07070;">불러오기 실패</div>';
+    }
+  }
+  loadMainPlayTogetherMini();
 
 
 </script>
