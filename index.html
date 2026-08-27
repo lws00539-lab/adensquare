@@ -4584,7 +4584,7 @@ footer a{color:var(--g2);}
       const items = [];
       snap.forEach(c => { const v = c.val(); if (v && v.item) items.push(v); });
       items.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-      const top = items.slice(0, 5);
+      const top = items.slice(0, 10);
       if (!top.length) {
         el.innerHTML = '<div style="padding:5px 0;color:var(--text3);">등록된 매물이 없습니다.</div>';
         return;
@@ -4607,11 +4607,11 @@ footer a{color:var(--g2);}
     const el = document.getElementById('main-youtube-list');
     if (!el) return;
     try {
-      const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent('리니지 클래식')}&maxResults=5&order=date&type=video&key=${YT_API_KEY}`;
+      const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent('리니지 클래식')}&maxResults=8&order=date&type=video&key=${YT_API_KEY}`;
       const res = await fetch(url);
       const data = await res.json();
       if (data.error) throw new Error(data.error.message);
-      const videos = (data.items || []).filter(i => i.id?.videoId).slice(0, 3);
+      const videos = (data.items || []).filter(i => i.id?.videoId).slice(0, 7);
       if (!videos.length) {
         el.innerHTML = '<div style="padding:5px 0;color:var(--text3);">영상이 없습니다.</div>';
         return;
@@ -4639,7 +4639,7 @@ footer a{color:var(--g2);}
       const posts = [];
       snap.forEach(child => { const val = child.val(); if (val && val.title) posts.push(val); });
       posts.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-      const top = posts.slice(0, 5);
+      const top = posts.slice(0, 10);
       if (!top.length) {
         el.innerHTML = '<div style="padding:5px 0;color:var(--text3);">게시글이 없습니다.</div>';
         return;
