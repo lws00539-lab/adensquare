@@ -1636,8 +1636,8 @@ footer a{color:var(--g2);}
             </div>
             <div style="border-right:1px solid var(--border);min-width:0;display:flex;flex-direction:column;">
               <div class="card-head">
-                <div class="card-title"><div class="bar"></div><i class="ti ti-brand-youtube"></i>유튜브 · 리니지클래식</div>
-                <div class="card-more" onclick="event.preventDefault();showYoutube()" style="cursor:pointer;">더보기 →</div>
+                <div class="card-title"><div class="bar"></div>🔴 리니지 클래식 실시간 LIVE</div>
+                <div class="card-more" onclick="event.preventDefault();showYoutube();setYoutubeTab('live');" style="cursor:pointer;">더보기 →</div>
               </div>
               <div id="main-youtube-list" style="padding:8px 14px;font-size:11px;color:var(--text2);flex:1;min-width:0;">
                 <div style="padding:5px 0;color:var(--text3);">불러오는 중...</div>
@@ -4607,23 +4607,46 @@ footer a{color:var(--g2);}
     const el = document.getElementById('main-youtube-list');
     if (!el) return;
     try {
-      const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent('리니지 클래식')}&maxResults=8&order=date&type=video&key=${YT_API_KEY}`;
-      const res = await fetch(url);
-      const data = await res.json();
-      if (data.error) throw new Error(data.error.message);
-      const videos = (data.items || []).filter(i => i.id?.videoId).slice(0, 7);
-      if (!videos.length) {
-        el.innerHTML = '<div style="padding:5px 0;color:var(--text3);">영상이 없습니다.</div>';
+      // 1) 라이브 방송 검색
+      const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent('리니지 클래식')}&eventType=live&type=video&maxResults=10&key=${YT_API_KEY}`;
+      const searchRes = await fetch(searchUrl);
+      const searchData = await searchRes.json();
+      if (searchData.error) throw new Error(searchData.error.message);
+      const liveItems = (searchData.items || []).filter(i => i.id?.videoId);
+      if (!liveItems.length) {
+        el.innerHTML = '<div style="padding:5px 0;color:var(--text3);">현재 진행중인 라이브가 없습니다.</div>';
         return;
       }
-      el.innerHTML = videos.map(v => `
-        <div style="padding:5px 0;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center;cursor:pointer;min-width:0;" onclick="event.preventDefault();showYoutube()">
-          <img src="${v.snippet.thumbnails?.default?.url || ''}" style="width:48px;height:27px;object-fit:cover;border-radius:3px;flex-shrink:0;">
-          <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1;">${(v.snippet.title || '').replace(/</g,'&lt;')}</span>
+
+      // 2) 시청자 수 조회 (videos.list)
+      const ids = liveItems.map(i => i.id.videoId).join(',');
+      const statsUrl = `https://www.googleapis.com/youtube/v3/videos?part=snippet,liveStreamingDetails&id=${ids}&key=${YT_API_KEY}`;
+      const statsRes = await fetch(statsUrl);
+      const statsData = await statsRes.json();
+      if (statsData.error) throw new Error(statsData.error.message);
+
+      let lives = (statsData.items || []).map(v => ({
+        id: v.id,
+        title: v.snippet?.title || '',
+        channel: v.snippet?.channelTitle || '',
+        thumb: v.snippet?.thumbnails?.default?.url || '',
+        viewers: parseInt(v.liveStreamingDetails?.concurrentViewers || '0', 10),
+      }));
+      lives.sort((a, b) => b.viewers - a.viewers);
+      lives = lives.slice(0, 7);
+
+      el.innerHTML = lives.map(v => `
+        <div style="padding:5px 0;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center;cursor:pointer;min-width:0;" onclick="event.preventDefault();window.open('https://www.youtube.com/watch?v=${v.id}','_blank')">
+          <div style="position:relative;flex-shrink:0;">
+            <img src="${v.thumb}" style="width:48px;height:27px;object-fit:cover;border-radius:3px;display:block;">
+            <span style="position:absolute;top:1px;left:1px;background:#e02020;color:#fff;font-size:8px;font-weight:800;padding:0 3px;border-radius:2px;line-height:1.4;">LIVE</span>
+          </div>
+          <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1;">${v.channel.replace(/</g,'&lt;')}</span>
+          <span style="color:#e05a5a;font-weight:700;flex-shrink:0;">${v.viewers.toLocaleString()}</span>
         </div>
       `).join('');
     } catch (e) {
-      console.error('메인 유튜브 미니 로드 실패:', e);
+      console.error('메인 라이브 미니 로드 실패:', e);
       el.innerHTML = '<div style="padding:5px 0;color:#e07070;">불러오기 실패</div>';
     }
   }
