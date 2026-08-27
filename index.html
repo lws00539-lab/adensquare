@@ -1624,31 +1624,31 @@ footer a{color:var(--g2);}
           </div>
         </div>
         <div class="card">
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);">
-            <div style="border-right:1px solid var(--border);">
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch;">
+            <div style="border-right:1px solid var(--border);min-width:0;display:flex;flex-direction:column;">
               <div class="card-head">
                 <div class="card-title"><div class="bar"></div><i class="ti ti-coin"></i>거래소</div>
                 <div class="card-more" onclick="event.preventDefault();showMarket()" style="cursor:pointer;">더보기 →</div>
               </div>
-              <div id="main-market-list" style="padding:8px 14px;font-size:11px;color:var(--text2);min-height:150px;">
+              <div id="main-market-list" style="padding:8px 14px;font-size:11px;color:var(--text2);flex:1;">
                 <div style="padding:5px 0;color:var(--text3);">불러오는 중...</div>
               </div>
             </div>
-            <div style="border-right:1px solid var(--border);">
+            <div style="border-right:1px solid var(--border);min-width:0;display:flex;flex-direction:column;">
               <div class="card-head">
                 <div class="card-title"><div class="bar"></div><i class="ti ti-brand-youtube"></i>유튜브 · 리니지클래식</div>
                 <div class="card-more" onclick="event.preventDefault();showYoutube()" style="cursor:pointer;">더보기 →</div>
               </div>
-              <div id="main-youtube-list" style="padding:8px 14px;font-size:11px;color:var(--text2);min-height:150px;">
+              <div id="main-youtube-list" style="padding:8px 14px;font-size:11px;color:var(--text2);flex:1;min-width:0;">
                 <div style="padding:5px 0;color:var(--text3);">불러오는 중...</div>
               </div>
             </div>
-            <div>
+            <div style="min-width:0;display:flex;flex-direction:column;">
               <div class="card-head">
                 <div class="card-title"><div class="bar"></div><i class="ti ti-users"></i>게임같이해요</div>
                 <div class="card-more" onclick="event.preventDefault();showBoard('play_lineage')" style="cursor:pointer;">더보기 →</div>
               </div>
-              <div id="main-playtogether-list" style="padding:8px 14px;font-size:11px;color:var(--text2);min-height:150px;">
+              <div id="main-playtogether-list" style="padding:8px 14px;font-size:11px;color:var(--text2);flex:1;">
                 <div style="padding:5px 0;color:var(--text3);">불러오는 중...</div>
               </div>
             </div>
@@ -4617,9 +4617,9 @@ footer a{color:var(--g2);}
         return;
       }
       el.innerHTML = videos.map(v => `
-        <div style="padding:5px 0;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center;cursor:pointer;" onclick="event.preventDefault();showYoutube()">
+        <div style="padding:5px 0;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center;cursor:pointer;min-width:0;" onclick="event.preventDefault();showYoutube()">
           <img src="${v.snippet.thumbnails?.default?.url || ''}" style="width:48px;height:27px;object-fit:cover;border-radius:3px;flex-shrink:0;">
-          <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${(v.snippet.title || '').replace(/</g,'&lt;')}</span>
+          <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1;">${(v.snippet.title || '').replace(/</g,'&lt;')}</span>
         </div>
       `).join('');
     } catch (e) {
