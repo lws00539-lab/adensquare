@@ -27,7 +27,8 @@ button{font-family:inherit;cursor:pointer;}
 input,select{font-family:inherit;outline:none;}
 
 /* HEADER WRAP (nav + menubar share one continuous background image) */
-.site-header{position:sticky;top:0;z-index:500;background:url('images/banner_v4.png') center 43%/cover no-repeat;}
+.site-header{position:sticky;top:0;z-index:500;background:url('images/banner_v5.png') center 30%/cover no-repeat;}
+.site-header-title{position:absolute;left:50%;top:14px;transform:translateX(-50%);height:96px;width:auto;pointer-events:none;z-index:5;}
 
 /* NAV */
 .nav{background:transparent;height:136px;display:flex;align-items:flex-end;padding:0 40px 2px;position:relative;white-space:nowrap;gap:0;overflow:visible;}
@@ -362,6 +363,7 @@ footer a{color:var(--g2);}
 
 <!-- NAV -->
 <div class="site-header">
+<img src="images/title_logo.png" alt="아덴광장" class="site-header-title">
 <nav class="nav">
   <div class="nav-logo" onclick="location.reload()" style="cursor:pointer;">
     <img class="nav-logo-full" src="images/logo_new.png" alt="아덴광장">
