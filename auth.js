@@ -573,6 +573,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (localStorage.getItem('aden_admin_session') === '1') {
     adminLogin();
     initChat();
+    const chatInputA = document.getElementById('chat-input');
+    const chatSendA = document.getElementById('chat-send-btn');
+    if (chatInputA) chatInputA.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChatMessage(); } });
+    if (chatSendA) chatSendA.onclick = sendChatMessage;
     return;
   }
 
