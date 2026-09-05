@@ -476,18 +476,24 @@ footer a{color:var(--g2);}
           ⚡ 리니지클래식 러쉬
         </div>
         <div class="dropdown-item" onclick="showYoutube();setYoutubeCategory(2)">
-          ✨ SOL인챈트
+          💎 리니지M
         </div>
         <div class="dropdown-item" onclick="showYoutube();setYoutubeCategory(3)">
-          👹 디아블로
+          ⚡ 리니지M 러쉬
         </div>
         <div class="dropdown-item" onclick="showYoutube();setYoutubeCategory(4)">
-          ⭐ 스타크래프트
+          ✨ SOL인챈트
         </div>
         <div class="dropdown-item" onclick="showYoutube();setYoutubeCategory(5)">
-          🏆 LOL
+          👹 디아블로
         </div>
         <div class="dropdown-item" onclick="showYoutube();setYoutubeCategory(6)">
+          ⭐ 스타크래프트
+        </div>
+        <div class="dropdown-item" onclick="showYoutube();setYoutubeCategory(7)">
+          🏆 LOL
+        </div>
+        <div class="dropdown-item" onclick="showYoutube();setYoutubeCategory(8)">
           💰 비트코인 선물
         </div>
       </div>
@@ -685,11 +691,13 @@ footer a{color:var(--g2);}
       <div style="padding:10px 16px;border-bottom:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;">
         <button id="ytcat-0" onclick="setYoutubeCategory(0)" style="padding:5px 14px;border-radius:20px;border:1px solid #d4a84b;background:#2a1a08;color:#d4a84b;font-size:12px;cursor:pointer;">리니지클래식</button>
         <button id="ytcat-1" onclick="setYoutubeCategory(1)" style="padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--dark);color:var(--text3);font-size:12px;cursor:pointer;">리니지클래식 러쉬</button>
-        <button id="ytcat-2" onclick="setYoutubeCategory(2)" style="padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--dark);color:var(--text3);font-size:12px;cursor:pointer;">SOL인챈트</button>
-        <button id="ytcat-3" onclick="setYoutubeCategory(3)" style="padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--dark);color:var(--text3);font-size:12px;cursor:pointer;">디아블로</button>
-        <button id="ytcat-4" onclick="setYoutubeCategory(4)" style="padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--dark);color:var(--text3);font-size:12px;cursor:pointer;">스타크래프트</button>
-        <button id="ytcat-5" onclick="setYoutubeCategory(5)" style="padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--dark);color:var(--text3);font-size:12px;cursor:pointer;">LOL</button>
-        <button id="ytcat-6" onclick="setYoutubeCategory(6)" style="padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--dark);color:var(--text3);font-size:12px;cursor:pointer;">비트코인 선물</button>
+        <button id="ytcat-2" onclick="setYoutubeCategory(2)" style="padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--dark);color:var(--text3);font-size:12px;cursor:pointer;">리니지M</button>
+        <button id="ytcat-3" onclick="setYoutubeCategory(3)" style="padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--dark);color:var(--text3);font-size:12px;cursor:pointer;">리니지M 러쉬</button>
+        <button id="ytcat-4" onclick="setYoutubeCategory(4)" style="padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--dark);color:var(--text3);font-size:12px;cursor:pointer;">SOL인챈트</button>
+        <button id="ytcat-5" onclick="setYoutubeCategory(5)" style="padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--dark);color:var(--text3);font-size:12px;cursor:pointer;">디아블로</button>
+        <button id="ytcat-6" onclick="setYoutubeCategory(6)" style="padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--dark);color:var(--text3);font-size:12px;cursor:pointer;">스타크래프트</button>
+        <button id="ytcat-7" onclick="setYoutubeCategory(7)" style="padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--dark);color:var(--text3);font-size:12px;cursor:pointer;">LOL</button>
+        <button id="ytcat-8" onclick="setYoutubeCategory(8)" style="padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--dark);color:var(--text3);font-size:12px;cursor:pointer;">비트코인 선물</button>
       </div>
       <div id="youtube-list" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:16px;"></div>
       <div id="youtube-pagination" style="display:flex;justify-content:center;gap:4px;padding:14px;"></div>
@@ -2535,6 +2543,8 @@ footer a{color:var(--g2);}
   const YT_CATEGORIES = [
     { name: '리니지클래식', query: '리니지 클래식 데포로쥬' },
     { name: '리니지클래식 러쉬', query: '리니지 클래식 러쉬' },
+    { name: '리니지M', query: '리니지M 린엠' },
+    { name: '리니지M 러쉬', query: '리니지M 러쉬' },
     { name: 'SOL인챈트', query: 'sol 인챈트 솔 인챈트' },
     { name: '디아블로', query: '디아블로2 레저렉션 디아블로' },
     { name: '스타크래프트', query: '스타크래프트' },
