@@ -1,10 +1,11 @@
 {
   "name": "adensquare-aden-price-updater",
   "version": "1.0.0",
-  "description": "매일 아덴 시세를 가져와 Firebase에 저장하는 스크립트 (아덴광장)",
+  "description": "아덴 시세 / 리니지M 다이아 시세를 매일 가져와 Firebase에 저장하는 스크립트 (아덴광장)",
   "main": "update-aden-price.js",
   "scripts": {
-    "update": "node update-aden-price.js"
+    "update": "node update-aden-price.js",
+    "update:dia": "node update-dia-price.js"
   },
   "dependencies": {
     "cheerio": "^1.0.0",
