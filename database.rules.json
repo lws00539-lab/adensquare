@@ -25,6 +25,7 @@
     "board_content": { ".read": true, ".write": true },
     "board_comments": { ".read": true, ".write": true },
     "market": { ".read": true, ".write": true },
-    "adenPrice": { ".read": true, ".write": false }
+    "adenPrice": { ".read": true, ".write": false },
+    "diaPrice": { ".read": true, ".write": false }
   }
 }

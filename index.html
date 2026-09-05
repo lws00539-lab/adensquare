@@ -451,7 +451,17 @@ footer a{color:var(--g2);}
         </div>
       </div>
     </div>
-    <a class="nav-link" href="#" onclick="event.preventDefault();showAdenPrice()">아덴시세</a>
+    <div class="nav-link nav-dropdown">
+      시세 <span class="nav-arrow">▼</span>
+      <div class="dropdown-menu">
+        <div class="dropdown-item" onclick="showAdenPrice()">
+          💰 리니지클래식 아덴시세
+        </div>
+        <div class="dropdown-item" onclick="showDiaPrice()">
+          💎 리니지M 다이아시세 <span class="game-new">NEW</span>
+        </div>
+      </div>
+    </div>
     <a class="nav-link" href="#" onclick="event.preventDefault();showMarket()">거래소</a>
     <div class="nav-link nav-dropdown">
       유튜브 <span class="nav-arrow">▼</span>
@@ -1092,6 +1102,27 @@ footer a{color:var(--g2);}
 
       <div style="padding:14px 16px;font-size:11px;color:var(--text3);line-height:1.6;border-top:1px solid var(--border);">
         ※ 외부 거래소(아이템베이·바로템·아이템매니아) 최저 판매가 기준, 30분~1시간 단위 자동 갱신. 표시 가격은 참고용이며 실제 거래가와 다를 수 있습니다.
+      </div>
+    </div>
+  </div>
+
+  <div id="section-diaprice" style="display:none;">
+    <div style="background:var(--dark3);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;">
+      <div style="padding:12px 16px;background:linear-gradient(180deg,#2a1a08,#1a1008);border-bottom:1px solid var(--border);">
+        <div style="font-size:18px;font-weight:700;color:#d4a84b;">💎 리니지M 다이아 시세</div>
+      </div>
+
+      <div style="display:flex;align-items:baseline;justify-content:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--dark);flex-wrap:wrap;">
+        <span style="font-size:12px;color:var(--text3);">전서버 평균 (1천 다이아당)</span>
+        <span id="dia-avg-price" style="font-size:22px;font-weight:800;color:var(--g);">19,929원</span>
+        <span id="dia-avg-change" style="font-size:14px;font-weight:700;"></span>
+        <span id="dia-updated-label" style="font-size:11px;color:var(--text3);">기본값 표시 중</span>
+      </div>
+
+      <div id="dia-price-grid" style="padding:16px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;"></div>
+
+      <div style="padding:14px 16px;font-size:11px;color:var(--text3);line-height:1.6;border-top:1px solid var(--border);">
+        ※ 데이터 출처: 게임비트(gamebit.co.kr) 리니지M 서버별 다이아 시세, 1천 다이아 기준. 하루 1회 자동 갱신되며, 표시 가격은 참고용으로 실제 거래가와 다를 수 있습니다.
       </div>
     </div>
   </div>
@@ -1818,7 +1849,7 @@ footer a{color:var(--g2);}
   function showSlimeRace(){
     ['section-main','section-simulator','section-news','section-news-write','section-news-detail',
      'section-board','section-board-write','section-board-detail',
-     'section-market','section-market-write','section-adenprice','section-youtube','section-fortune','section-tarot','section-lotto'].forEach(id => {
+     'section-market','section-market-write','section-adenprice','section-diaprice','section-youtube','section-fortune','section-tarot','section-lotto'].forEach(id => {
       const el = document.getElementById(id); if(el) el.style.display='none';
     });
     document.getElementById('section-slime').style.display='block';
@@ -1955,7 +1986,7 @@ footer a{color:var(--g2);}
   function showSimulator(){
     ['section-main','section-news','section-news-write','section-news-detail',
      'section-slime','section-board','section-board-write','section-board-detail',
-     'section-market','section-market-write','section-adenprice','section-youtube','section-fortune','section-tarot','section-lotto'].forEach(id => {
+     'section-market','section-market-write','section-adenprice','section-diaprice','section-youtube','section-fortune','section-tarot','section-lotto'].forEach(id => {
       const el = document.getElementById(id); if(el) el.style.display='none';
     });
     document.getElementById('section-simulator').style.display='block';
@@ -2510,7 +2541,7 @@ footer a{color:var(--g2);}
   function showYoutube() {
     ['section-main','section-news','section-news-write','section-news-detail',
      'section-simulator','section-slime','section-board','section-board-write',
-     'section-board-detail','section-market','section-market-write','section-adenprice'].forEach(id => {
+     'section-board-detail','section-market','section-market-write','section-adenprice','section-diaprice'].forEach(id => {
       const el = document.getElementById(id); if(el) el.style.display='none';
     });
     document.getElementById('section-youtube').style.display = 'block';
@@ -2635,7 +2666,7 @@ footer a{color:var(--g2);}
   function showLotto() {
     ['section-main','section-news','section-news-write','section-news-detail',
      'section-simulator','section-slime','section-board','section-board-write',
-     'section-board-detail','section-market','section-market-write','section-adenprice','section-youtube',
+     'section-board-detail','section-market','section-market-write','section-adenprice','section-diaprice','section-youtube',
      'section-fortune','section-tarot','section-lotto'].forEach(id => {
       const el = document.getElementById(id); if(el) el.style.display='none';
     });
@@ -2766,7 +2797,7 @@ footer a{color:var(--g2);}
   function showTarot() {
     ['section-main','section-news','section-news-write','section-news-detail',
      'section-simulator','section-slime','section-board','section-board-write',
-     'section-board-detail','section-market','section-market-write','section-adenprice','section-youtube','section-fortune','section-tarot','section-lotto'].forEach(id => {
+     'section-board-detail','section-market','section-market-write','section-adenprice','section-diaprice','section-youtube','section-fortune','section-tarot','section-lotto'].forEach(id => {
       const el = document.getElementById(id); if(el) el.style.display='none';
     });
     document.getElementById('section-tarot').style.display = 'block';
@@ -3332,7 +3363,7 @@ footer a{color:var(--g2);}
   function showFortune() {
     ['section-main','section-news','section-news-write','section-news-detail',
      'section-simulator','section-slime','section-board','section-board-write',
-     'section-board-detail','section-market','section-market-write','section-adenprice','section-youtube','section-fortune','section-tarot','section-lotto'].forEach(id => {
+     'section-board-detail','section-market','section-market-write','section-adenprice','section-diaprice','section-youtube','section-fortune','section-tarot','section-lotto'].forEach(id => {
       const el = document.getElementById(id); if (el) el.style.display = 'none';
     });
     document.getElementById('section-fortune').style.display = 'block';
@@ -3590,10 +3621,131 @@ footer a{color:var(--g2);}
     }
   }
 
+  // ---------- 리니지M 다이아 시세 ----------
+  // 폴백용 기본 데이터 (Firebase에 값이 아직 없거나 불러오기 실패 시 표시)
+  const DIA_PRICE_FALLBACK = {
+    average: 19929,
+    avgChangePct: 0.44,
+    updatedAtLabel: '',
+    servers: [
+      {name:'판도라',price:23927,changePct:1.64},   {name:'케레니스',price:20222,changePct:1.92},
+      {name:'라스타바드',price:20219,changePct:2.13},{name:'블루디카',price:20159,changePct:2.05},
+      {name:'파푸리온',price:20157,changePct:0.67}, {name:'발라카스',price:20060,changePct:1.25},
+      {name:'진기르타스',price:20052,changePct:0.43},{name:'이실로테',price:20004,changePct:1.12},
+      {name:'린드비오르',price:19982,changePct:1.33},{name:'듀크데필',price:19931,changePct:-0.09},
+      {name:'아툰',price:19911,changePct:0.21},     {name:'하딘',price:19906,changePct:-0.12},
+      {name:'군터',price:19840,changePct:0.04},     {name:'데스나이트',price:19785,changePct:-0.03},
+      {name:'안타라스',price:19776,changePct:0.37}, {name:'사이하',price:19740,changePct:0.74},
+      {name:'질리언',price:19695,changePct:1.31},   {name:'데포로쥬',price:19658,changePct:0.65},
+      {name:'그림리퍼',price:19578,changePct:0.3},  {name:'켄라우헬',price:19463,changePct:0.01},
+      {name:'기르타스',price:19363,changePct:-0.02},{name:'발록',price:19362,changePct:-0.87},
+      {name:'그레시아',price:19342,changePct:0.61}, {name:'글루디오',price:19277,changePct:-0.37},
+      {name:'오렌',price:19230,changePct:0.2},      {name:'말하는섬',price:19199,changePct:0.33},
+      {name:'켄트',price:19185,changePct:-2.19},    {name:'윈다우드',price:18989,changePct:-1.28}
+    ]
+  };
+
+  let _diaPriceListenerAttached = false;
+  let _diaPriceData = DIA_PRICE_FALLBACK;
+
+  function renderDiaPrice(data) {
+    if (!data) return;
+    _diaPriceData = data;
+
+    const avgEl = document.getElementById('dia-avg-price');
+    const avgChangeEl = document.getElementById('dia-avg-change');
+    const labelEl = document.getElementById('dia-updated-label');
+    const gridEl = document.getElementById('dia-price-grid');
+    if (!avgEl || !gridEl) return;
+
+    let avg = data.average;
+    if (typeof avg !== 'number' && data.servers && data.servers.length) {
+      avg = Math.round(data.servers.reduce((s, v) => s + (v.price || 0), 0) / data.servers.length);
+    }
+    avgEl.textContent = (avg || 0).toLocaleString() + '원';
+
+    if (avgChangeEl) {
+      const pct = data.avgChangePct;
+      if (typeof pct === 'number' && !Number.isNaN(pct)) {
+        if (pct > 0) {
+          avgChangeEl.innerHTML = `▲${pct.toFixed(2)}%`;
+          avgChangeEl.style.color = '#e05a5a';
+        } else if (pct < 0) {
+          avgChangeEl.innerHTML = `▼${Math.abs(pct).toFixed(2)}%`;
+          avgChangeEl.style.color = '#5a8ee0';
+        } else {
+          avgChangeEl.innerHTML = '0%';
+          avgChangeEl.style.color = 'var(--text3)';
+        }
+      } else {
+        avgChangeEl.innerHTML = '';
+      }
+    }
+
+    labelEl.textContent = data.updatedAtLabel
+      ? ('마지막 업데이트: ' + data.updatedAtLabel)
+      : '기본값 표시 중';
+
+    const servers = (data.servers || []).slice().sort((a,b) => b.price - a.price);
+    gridEl.innerHTML = servers.map(s => {
+      let pctHtml = '';
+      if (typeof s.changePct === 'number' && !Number.isNaN(s.changePct)) {
+        if (s.changePct > 0) {
+          pctHtml = `<span style="color:#e05a5a;font-size:12px;">▲${s.changePct.toFixed(2)}%</span>`;
+        } else if (s.changePct < 0) {
+          pctHtml = `<span style="color:#5a8ee0;font-size:12px;">▼${Math.abs(s.changePct).toFixed(2)}%</span>`;
+        } else {
+          pctHtml = `<span style="color:var(--text3);font-size:12px;">0%</span>`;
+        }
+      }
+      return `
+      <div style="padding:12px 14px;border:1px solid var(--border);border-radius:6px;background:var(--dark);">
+        <div style="font-weight:600;font-size:13px;margin-bottom:6px;">${s.name}</div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;">
+          <span style="color:var(--text2);font-size:13px;">${s.price.toLocaleString()}원</span>
+          ${pctHtml}
+        </div>
+      </div>
+    `;
+    }).join('');
+  }
+
+  function loadDiaPrice() {
+    // 우선 폴백(기본값)을 즉시 그려서 빈 화면이 보이지 않게 함
+    renderDiaPrice(_diaPriceData);
+
+    if (_diaPriceListenerAttached) return;
+    _diaPriceListenerAttached = true;
+
+    try {
+      const db = firebase.database();
+      db.ref('diaPrice').on('value', (snap) => {
+        const data = snap.val();
+        if (data && data.servers && data.servers.length) renderDiaPrice(data);
+      }, (err) => {
+        console.error('다이아 시세 실시간 로드 실패:', err);
+      });
+    } catch (e) {
+      console.error('Firebase 연결 실패:', e);
+    }
+  }
+
+  function showDiaPrice() {
+    ['section-main','section-news','section-news-write','section-news-detail',
+     'section-simulator','section-slime','section-board','section-board-write',
+     'section-board-detail','section-market','section-market-write','section-adenprice',
+     'section-youtube','section-fortune','section-tarot','section-lotto'].forEach(id => {
+      const el = document.getElementById(id); if(el) el.style.display='none';
+    });
+    document.getElementById('section-diaprice').style.display = 'block';
+    window.scrollTo(0,0);
+    loadDiaPrice();
+  }
+
   function showMarket() {
     ['section-main','section-news','section-news-write','section-news-detail',
      'section-simulator','section-slime','section-board','section-board-write',
-     'section-board-detail','section-market-write','section-adenprice','section-youtube','section-fortune','section-tarot','section-lotto'].forEach(id => {
+     'section-board-detail','section-market-write','section-adenprice','section-diaprice','section-youtube','section-fortune','section-tarot','section-lotto'].forEach(id => {
       const el = document.getElementById(id); if(el) el.style.display='none';
     });
     document.getElementById('section-market').style.display = 'block';
@@ -3769,7 +3921,7 @@ footer a{color:var(--g2);}
     if (writeBtn) writeBtn.style.display = (auth.currentUser || isAdmin) ? 'inline-block' : 'none';
     ['section-main','section-news','section-news-write','section-news-detail',
      'section-simulator','section-slime','section-board-write','section-board-detail',
-     'section-market','section-market-write','section-adenprice','section-youtube','section-fortune','section-tarot','section-lotto'].forEach(id => {
+     'section-market','section-market-write','section-adenprice','section-diaprice','section-youtube','section-fortune','section-tarot','section-lotto'].forEach(id => {
       const el = document.getElementById(id); if (el) el.style.display = 'none';
     });
     document.getElementById('section-board').style.display = 'block';
@@ -4195,7 +4347,7 @@ footer a{color:var(--g2);}
   function showMain() {
     ['section-news','section-news-write','section-news-detail','section-simulator',
      'section-slime','section-board','section-board-write','section-board-detail',
-     'section-market','section-market-write','section-adenprice','section-youtube','section-fortune','section-tarot','section-lotto'].forEach(id => {
+     'section-market','section-market-write','section-adenprice','section-diaprice','section-youtube','section-fortune','section-tarot','section-lotto'].forEach(id => {
       const el = document.getElementById(id); if (el) el.style.display = 'none';
     });
     document.getElementById('section-main').style.display = 'block';
@@ -4217,7 +4369,7 @@ footer a{color:var(--g2);}
   function showNews() {
     ['section-main','section-simulator','section-slime','section-news-write',
      'section-news-detail','section-board','section-board-write','section-board-detail',
-     'section-market','section-market-write','section-adenprice','section-youtube','section-fortune','section-tarot','section-lotto'].forEach(id => {
+     'section-market','section-market-write','section-adenprice','section-diaprice','section-youtube','section-fortune','section-tarot','section-lotto'].forEach(id => {
       const el = document.getElementById(id); if(el) el.style.display='none';
     });
     document.getElementById('section-news').style.display='block';
