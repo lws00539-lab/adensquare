@@ -1656,6 +1656,20 @@ footer a{color:var(--g2);}
             <div id="aden-mini-track" style="display:flex;flex-direction:column;transition:transform .6s ease;"></div>
           </div>
         </div>
+        <div class="card" style="margin-bottom:12px;">
+          <div class="card-head" style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-title" style="flex:0 0 auto;"><div class="bar"></div>💎 리니지M 다이아 시세</div>
+            <div style="flex:1;text-align:center;font-size:12px;">
+              <span style="color:var(--text3);">전서버 평균</span>
+              <span id="dia-mini-avg-price" style="font-size:15px;font-weight:800;color:var(--g);margin-left:6px;">19,929원</span>
+              <span id="dia-mini-avg-change" style="font-weight:700;margin-left:6px;"></span>
+            </div>
+            <div class="card-more" onclick="event.preventDefault();showDiaPrice()" style="cursor:pointer;flex:0 0 auto;">다이아시세 보기 →</div>
+          </div>
+          <div id="dia-mini-viewport" style="overflow:hidden;position:relative;padding:6px 14px 12px;">
+            <div id="dia-mini-track" style="display:flex;flex-direction:column;transition:transform .6s ease;"></div>
+          </div>
+        </div>
         <div class="card">
           <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch;">
             <div style="border-right:1px solid var(--border);min-width:0;display:flex;flex-direction:column;">
@@ -4574,30 +4588,34 @@ footer a{color:var(--g2);}
   // 실시간 카운터
   setInterval(()=>{const rand=Math.floor(Math.random()*20)-10;document.getElementById('online-count').textContent=(847+rand).toLocaleString()+'명';},4000);
 
-  // ---------- 메인화면 아덴 시세 미니 슬라이더 ----------
-  let _adenMiniPages = [];
-  let _adenMiniIndex = 0;
-  let _adenMiniTimer = null;
-  let _adenMiniPageHeight = 0;
+  // ---------- 메인화면 시세 미니 슬라이더 (아덴 / 다이아 공용) ----------
+  // 한 페이지에 4열 x 2줄 = 8개씩 보여주고, 5초마다 다음 페이지로 슬라이드
+  const MINI_PER_PAGE = 8;
 
-  function buildAdenMiniPages(servers) {
-    const sorted = (servers || []).slice().sort((a,b) => b.price - a.price);
-    const pages = [];
-    for (let i = 0; i < sorted.length; i += 16) {
-      pages.push(sorted.slice(i, i + 16));
-    }
-    return pages;
-  }
+  function createMiniSlider(opts) {
+    // opts: { key, dbPath, fallback, trackId, viewportId, avgId, changeId, pageClass }
+    let pages = [];
+    let index = 0;
+    let timer = null;
 
-  function renderAdenMiniSlide(page) {
-    return page.map(s => {
-      let pctHtml = '';
-      if (typeof s.changePct === 'number' && !Number.isNaN(s.changePct)) {
-        if (s.changePct > 0) pctHtml = `<span style="color:#e05a5a;font-size:11px;">▲${s.changePct.toFixed(2)}%</span>`;
-        else if (s.changePct < 0) pctHtml = `<span style="color:#5a8ee0;font-size:11px;">▼${Math.abs(s.changePct).toFixed(2)}%</span>`;
-        else pctHtml = `<span style="color:var(--text3);font-size:11px;">0%</span>`;
+    function buildPages(servers) {
+      const sorted = (servers || []).slice().sort((a, b) => b.price - a.price);
+      const out = [];
+      for (let i = 0; i < sorted.length; i += MINI_PER_PAGE) {
+        out.push(sorted.slice(i, i + MINI_PER_PAGE));
       }
-      return `
+      return out;
+    }
+
+    function renderSlide(page) {
+      return page.map(s => {
+        let pctHtml = '';
+        if (typeof s.changePct === 'number' && !Number.isNaN(s.changePct)) {
+          if (s.changePct > 0) pctHtml = `<span style="color:#e05a5a;font-size:11px;">▲${s.changePct.toFixed(2)}%</span>`;
+          else if (s.changePct < 0) pctHtml = `<span style="color:#5a8ee0;font-size:11px;">▼${Math.abs(s.changePct).toFixed(2)}%</span>`;
+          else pctHtml = `<span style="color:var(--text3);font-size:11px;">0%</span>`;
+        }
+        return `
         <div style="padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--dark);display:flex;align-items:center;justify-content:space-between;gap:6px;">
           <span style="font-weight:600;font-size:12px;white-space:nowrap;">${s.name}</span>
           <div style="display:flex;align-items:center;gap:6px;white-space:nowrap;">
@@ -4605,97 +4623,118 @@ footer a{color:var(--g2);}
             ${pctHtml}
           </div>
         </div>`;
-    }).join('');
-  }
-
-  function renderAdenMiniSlider(data) {
-    const tracks = document.querySelectorAll('#aden-mini-track');
-    if (!tracks.length) return;
-
-    const avgEl = document.getElementById('aden-mini-avg-price');
-    const avgChangeEl = document.getElementById('aden-mini-avg-change');
-    if (avgEl) avgEl.textContent = (data.average || 0).toLocaleString() + '원';
-    if (avgChangeEl) {
-      const pct = data.avgChangePct;
-      if (typeof pct === 'number' && !Number.isNaN(pct)) {
-        if (pct > 0) { avgChangeEl.textContent = `▲${pct.toFixed(2)}%`; avgChangeEl.style.color = '#e05a5a'; }
-        else if (pct < 0) { avgChangeEl.textContent = `▼${Math.abs(pct).toFixed(2)}%`; avgChangeEl.style.color = '#5a8ee0'; }
-        else { avgChangeEl.textContent = '0%'; avgChangeEl.style.color = 'var(--text3)'; }
-      } else {
-        avgChangeEl.textContent = '';
-      }
+      }).join('');
     }
 
-    _adenMiniPages = buildAdenMiniPages(data.servers || []);
-    _adenMiniIndex = 0;
+    function render(data) {
+      const track = document.getElementById(opts.trackId);
+      if (!track) return;
 
-    const pagesHtml = _adenMiniPages.map(page => `
-      <div class="aden-mini-page" style="flex-shrink:0;display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:min-content;align-content:start;gap:8px;">
-        ${renderAdenMiniSlide(page)}
-      </div>
-    `).join('');
+      const avgEl = document.getElementById(opts.avgId);
+      const avgChangeEl = document.getElementById(opts.changeId);
 
-    tracks.forEach(track => {
-      track.innerHTML = pagesHtml;
-      track.style.transform = 'translateY(0px)';
-    });
-
-    // 실제 렌더된 페이지 높이를 측정해서 뷰포트/이동 거리를 정확히 맞춤 (잘림 방지)
-    const measureAndStart = () => {
-      const pageEls = tracks[0] ? Array.from(tracks[0].querySelectorAll('.aden-mini-page')) : [];
-      if (!pageEls.length) return;
-
-      // 모든 페이지 중 가장 큰 실제 높이를 기준으로 삼음 (마지막 페이지 등 항목 수가 달라도 안전)
-      let pageHeight = 0;
-      pageEls.forEach(el => {
-        const h = el.getBoundingClientRect().height;
-        if (h > pageHeight) pageHeight = h;
-      });
-      pageHeight = Math.ceil(pageHeight) + 2; // 여유 2px (잘림 방지)
-      _adenMiniPageHeight = pageHeight;
-
-      document.querySelectorAll('#aden-mini-viewport').forEach(vp => {
-        vp.style.height = pageHeight + 'px';
-      });
-
-      if (_adenMiniTimer) clearInterval(_adenMiniTimer);
-      if (_adenMiniPages.length > 1) {
-        _adenMiniTimer = setInterval(() => {
-          _adenMiniIndex = (_adenMiniIndex + 1) % _adenMiniPages.length;
-          tracks.forEach(track => {
-            track.style.transform = `translateY(-${_adenMiniIndex * (pageHeight + 8)}px)`;
-          });
-        }, 5000);
+      let avg = data.average;
+      if (typeof avg !== 'number' && data.servers && data.servers.length) {
+        avg = Math.round(data.servers.reduce((a, v) => a + (v.price || 0), 0) / data.servers.length);
       }
-    };
+      if (avgEl) avgEl.textContent = (avg || 0).toLocaleString() + '원';
 
-    // 폰트 로딩까지 끝난 뒤, 두 번의 렌더 프레임을 기다려 정확한 높이를 측정 (잘림/겹침 방지)
-    const runMeasure = () => requestAnimationFrame(() => requestAnimationFrame(measureAndStart));
-    if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(runMeasure);
-    } else {
-      runMeasure();
-    }
-  }
-
-  function loadAdenMiniWidget() {
-    renderAdenMiniSlider(ADEN_PRICE_FALLBACK);
-    try {
-      const db = firebase.database();
-      db.ref('adenPrice').on('value', (snap) => {
-        const data = snap.val();
-        if (data && data.servers && data.servers.length) {
-          renderAdenMiniSlider(data);
+      if (avgChangeEl) {
+        const pct = data.avgChangePct;
+        if (typeof pct === 'number' && !Number.isNaN(pct)) {
+          if (pct > 0) { avgChangeEl.textContent = `▲${pct.toFixed(2)}%`; avgChangeEl.style.color = '#e05a5a'; }
+          else if (pct < 0) { avgChangeEl.textContent = `▼${Math.abs(pct).toFixed(2)}%`; avgChangeEl.style.color = '#5a8ee0'; }
+          else { avgChangeEl.textContent = '0%'; avgChangeEl.style.color = 'var(--text3)'; }
+        } else {
+          avgChangeEl.textContent = '';
         }
-      }, (err) => {
-        console.error('메인 아덴 시세 위젯 로드 실패:', err);
-      });
-    } catch (e) {
-      console.error('Firebase 연결 실패(메인 위젯):', e);
+      }
+
+      pages = buildPages(data.servers || []);
+      index = 0;
+
+      track.innerHTML = pages.map(page => `
+        <div class="${opts.pageClass}" style="flex-shrink:0;display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:min-content;align-content:start;gap:8px;">
+          ${renderSlide(page)}
+        </div>
+      `).join('');
+      track.style.transform = 'translateY(0px)';
+
+      // 실제 렌더된 페이지 높이를 측정해서 뷰포트/이동 거리를 정확히 맞춤 (잘림 방지)
+      const measureAndStart = () => {
+        const pageEls = Array.from(track.querySelectorAll('.' + opts.pageClass));
+        if (!pageEls.length) return;
+
+        let pageHeight = 0;
+        pageEls.forEach(el => {
+          const h = el.getBoundingClientRect().height;
+          if (h > pageHeight) pageHeight = h;
+        });
+        pageHeight = Math.ceil(pageHeight) + 2; // 여유 2px (잘림 방지)
+
+        const vp = document.getElementById(opts.viewportId);
+        if (vp) vp.style.height = pageHeight + 'px';
+
+        if (timer) clearInterval(timer);
+        if (pages.length > 1) {
+          timer = setInterval(() => {
+            index = (index + 1) % pages.length;
+            track.style.transform = `translateY(-${index * (pageHeight + 8)}px)`;
+          }, 5000);
+        }
+      };
+
+      // 폰트 로딩까지 끝난 뒤, 두 번의 렌더 프레임을 기다려 정확한 높이를 측정
+      const runMeasure = () => requestAnimationFrame(() => requestAnimationFrame(measureAndStart));
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(runMeasure);
+      } else {
+        runMeasure();
+      }
     }
+
+    function load() {
+      render(opts.fallback);
+      try {
+        const db = firebase.database();
+        db.ref(opts.dbPath).on('value', (snap) => {
+          const data = snap.val();
+          if (data && data.servers && data.servers.length) render(data);
+        }, (err) => {
+          console.error(`메인 ${opts.key} 위젯 로드 실패:`, err);
+        });
+      } catch (e) {
+        console.error('Firebase 연결 실패(메인 위젯):', e);
+      }
+    }
+
+    return { load, render };
   }
 
-  loadAdenMiniWidget();
+  const adenMiniSlider = createMiniSlider({
+    key: '아덴 시세',
+    dbPath: 'adenPrice',
+    fallback: ADEN_PRICE_FALLBACK,
+    trackId: 'aden-mini-track',
+    viewportId: 'aden-mini-viewport',
+    avgId: 'aden-mini-avg-price',
+    changeId: 'aden-mini-avg-change',
+    pageClass: 'aden-mini-page'
+  });
+
+  const diaMiniSlider = createMiniSlider({
+    key: '다이아 시세',
+    dbPath: 'diaPrice',
+    fallback: DIA_PRICE_FALLBACK,
+    trackId: 'dia-mini-track',
+    viewportId: 'dia-mini-viewport',
+    avgId: 'dia-mini-avg-price',
+    changeId: 'dia-mini-avg-change',
+    pageClass: 'dia-mini-page'
+  });
+
+  adenMiniSlider.load();
+  diaMiniSlider.load();
 
   // ---------- 메인화면 자유게시판 미니 리스트 ----------
   async function loadMainFreeBoardMini() {
