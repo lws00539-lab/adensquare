@@ -1651,7 +1651,7 @@ footer a{color:var(--g2);}
             <div style="border-right:1px solid var(--border);min-width:0;display:flex;flex-direction:column;">
               <div class="card-head" style="display:flex;align-items:center;justify-content:space-between;gap:6px;">
                 <div class="card-title" style="flex:0 0 auto;"><div class="bar"></div><i class="ti ti-coin"></i>아덴 시세</div>
-                <div style="flex:1;text-align:right;font-size:11px;min-width:0;white-space:nowrap;overflow:hidden;">
+                <div style="flex:1;text-align:center;font-size:11px;min-width:0;white-space:nowrap;overflow:hidden;">
                   <span style="color:var(--text3);">평균</span>
                   <span id="aden-mini-avg-price" style="font-size:14px;font-weight:800;color:var(--g);margin-left:4px;">831원</span>
                   <span id="aden-mini-avg-change" style="font-weight:700;margin-left:4px;"></span>
@@ -1659,14 +1659,14 @@ footer a{color:var(--g2);}
                 <div class="card-more" onclick="event.preventDefault();showAdenPrice()" style="cursor:pointer;flex:0 0 auto;">더보기 →</div>
               </div>
               <div id="aden-mini-viewport" style="overflow:hidden;position:relative;padding:6px 14px 12px;">
-                <div id="aden-mini-track" style="display:flex;flex-direction:column;transition:transform .6s ease;"></div>
+                <div id="aden-mini-track" style="display:flex;flex-direction:column;gap:8px;transition:transform .6s ease;"></div>
               </div>
             </div>
 
             <div style="min-width:0;display:flex;flex-direction:column;">
               <div class="card-head" style="display:flex;align-items:center;justify-content:space-between;gap:6px;">
                 <div class="card-title" style="flex:0 0 auto;"><div class="bar"></div>💎 다이아 시세</div>
-                <div style="flex:1;text-align:right;font-size:11px;min-width:0;white-space:nowrap;overflow:hidden;">
+                <div style="flex:1;text-align:center;font-size:11px;min-width:0;white-space:nowrap;overflow:hidden;">
                   <span style="color:var(--text3);">평균</span>
                   <span id="dia-mini-avg-price" style="font-size:14px;font-weight:800;color:var(--g);margin-left:4px;">19,929원</span>
                   <span id="dia-mini-avg-change" style="font-weight:700;margin-left:4px;"></span>
@@ -1674,7 +1674,7 @@ footer a{color:var(--g2);}
                 <div class="card-more" onclick="event.preventDefault();showDiaPrice()" style="cursor:pointer;flex:0 0 auto;">더보기 →</div>
               </div>
               <div id="dia-mini-viewport" style="overflow:hidden;position:relative;padding:6px 14px 12px;">
-                <div id="dia-mini-track" style="display:flex;flex-direction:column;transition:transform .6s ease;"></div>
+                <div id="dia-mini-track" style="display:flex;flex-direction:column;gap:8px;transition:transform .6s ease;"></div>
               </div>
             </div>
 
@@ -4611,9 +4611,16 @@ footer a{color:var(--g2);}
 
     function buildPages(servers) {
       const sorted = (servers || []).slice().sort((a, b) => b.price - a.price);
+      if (!sorted.length) return [];
+
+      // 마지막 페이지만 텅 비지 않도록 페이지 수를 먼저 정하고 고르게 나눈다.
+      // 예: 28개 / 8개씩 -> 8,8,8,4 대신 7,7,7,7
+      const pageCount = Math.ceil(sorted.length / MINI_PER_PAGE);
+      const perPage = Math.ceil(sorted.length / pageCount);
+
       const out = [];
-      for (let i = 0; i < sorted.length; i += MINI_PER_PAGE) {
-        out.push(sorted.slice(i, i + MINI_PER_PAGE));
+      for (let i = 0; i < sorted.length; i += perPage) {
+        out.push(sorted.slice(i, i + perPage));
       }
       return out;
     }
@@ -4671,11 +4678,13 @@ footer a{color:var(--g2);}
       `).join('');
       track.style.transform = 'translateY(0px)';
 
-      // 실제 렌더된 페이지 높이를 측정해서 뷰포트/이동 거리를 정확히 맞춤 (잘림 방지)
+      // 각 페이지의 실제 위치(offsetTop)를 그대로 이동 거리로 쓴다.
+      // 높이를 계산해서 곱하는 방식은 오차가 페이지마다 누적돼 줄이 잘리므로 사용하지 않음.
       const measureAndStart = () => {
         const pageEls = Array.from(track.querySelectorAll('.' + opts.pageClass));
         if (!pageEls.length) return;
 
+        // 뷰포트 높이는 가장 높은 페이지 기준 (마지막 페이지는 항목이 적을 수 있음)
         let pageHeight = 0;
         pageEls.forEach(el => {
           const h = el.getBoundingClientRect().height;
@@ -4686,11 +4695,15 @@ footer a{color:var(--g2);}
         const vp = document.getElementById(opts.viewportId);
         if (vp) vp.style.height = pageHeight + 'px';
 
+        // 페이지별 실제 시작 위치를 미리 구해둔다 (누적 오차 없음)
+        const baseTop = pageEls[0].offsetTop;
+        const offsets = pageEls.map(el => el.offsetTop - baseTop);
+
         if (timer) clearInterval(timer);
         if (pages.length > 1) {
           timer = setInterval(() => {
             index = (index + 1) % pages.length;
-            track.style.transform = `translateY(-${index * (pageHeight + 8)}px)`;
+            track.style.transform = `translateY(-${offsets[index]}px)`;
           }, 5000);
         }
       };
