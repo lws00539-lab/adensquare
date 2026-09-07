@@ -1184,6 +1184,16 @@ footer a{color:var(--g2);}
             <button id="mkt-tab-buy" onclick="setMarketTab('buy')" style="padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:var(--dark);color:var(--text3);font-size:12px;cursor:pointer;">구매</button>
           </div>
         </div>
+        <div id="mkt-channel-wrap" style="display:none;gap:6px;align-items:center;">
+          <span style="font-size:11px;color:var(--text3);">채널</span>
+          <select id="mkt-channel" onchange="filterMarket()" style="padding:5px 10px;background:#0a0800;border:1px solid #3a2e10;border-radius:20px;color:#e8dcc8;font-size:12px;">
+            <option value="">전체</option>
+            <option value="1">1채널</option><option value="2">2채널</option><option value="3">3채널</option>
+            <option value="4">4채널</option><option value="5">5채널</option><option value="6">6채널</option>
+            <option value="7">7채널</option><option value="8">8채널</option><option value="9">9채널</option>
+            <option value="10">10채널</option>
+          </select>
+        </div>
         <div style="display:flex;gap:6px;align-items:center;">
           <span style="font-size:11px;color:var(--text3);">서버</span>
           <select id="mkt-server" onchange="filterMarket()" style="padding:5px 10px;background:#0a0800;border:1px solid #3a2e10;border-radius:20px;color:#e8dcc8;font-size:12px;">
@@ -1257,6 +1267,13 @@ footer a{color:var(--g2);}
           <select id="mw-type" style="flex:1;padding:10px;background:#0a0800;border:1px solid #3a2e10;border-radius:4px;color:#e8dcc8;font-size:13px;">
             <option value="sell">판매</option>
             <option value="buy">구매</option>
+          </select>
+          <select id="mw-channel" style="display:none;flex:1;padding:10px;background:#0a0800;border:1px solid #3a2e10;border-radius:4px;color:#e8dcc8;font-size:13px;">
+            <option value="">채널 선택</option>
+            <option value="1">1채널</option><option value="2">2채널</option><option value="3">3채널</option>
+            <option value="4">4채널</option><option value="5">5채널</option><option value="6">6채널</option>
+            <option value="7">7채널</option><option value="8">8채널</option><option value="9">9채널</option>
+            <option value="10">10채널</option>
           </select>
           <select id="mw-server" style="flex:1;padding:10px;background:#0a0800;border:1px solid #3a2e10;border-radius:4px;color:#e8dcc8;font-size:13px;">
             <option value="">서버 선택</option>
@@ -3817,6 +3834,12 @@ footer a{color:var(--g2);}
       mktSrv.options[0].textContent = '전체 서버';
       if ([...mktSrv.options].some(o => o.value === keep)) mktSrv.value = keep;
     }
+    // 채널은 리니지M에만 있는 개념
+    const chWrap = document.getElementById('mkt-channel-wrap');
+    if (chWrap) {
+      chWrap.style.display = _marketGame === 'm' ? 'flex' : 'none';
+      if (_marketGame !== 'm') { const c = document.getElementById('mkt-channel'); if (c) c.value = ''; }
+    }
     ['section-main','section-news','section-news-write','section-news-detail',
      'section-simulator','section-slime','section-board','section-board-write',
      'section-board-detail','section-market-write','section-adenprice','section-diaprice','section-youtube','section-fortune','section-tarot','section-lotto'].forEach(id => {
@@ -3860,12 +3883,14 @@ footer a{color:var(--g2);}
   function filterMarket() {
     const search = (document.getElementById('mkt-search')?.value || '').toLowerCase();
     const server = document.getElementById('mkt-server')?.value || '';
+    const channel = document.getElementById('mkt-channel')?.value || '';
     const hideDone = document.getElementById('mkt-hide-done')?.checked;
     let filtered = _marketAllItems.filter(item => {
       if (((item.game === 'm') ? 'm' : 'classic') !== _marketGame) return false;
       if (_marketTab === 'sell' && item.type !== 'sell') return false;
       if (_marketTab === 'buy' && item.type !== 'buy') return false;
       if (server && item.server !== server) return false;
+      if (channel && String(item.channel||'') !== channel) return false;
       if (hideDone && (item.status === 'done')) return false;
       if (search && !(item.item||'').toLowerCase().includes(search)) return false;
       return true;
@@ -3906,7 +3931,7 @@ footer a{color:var(--g2);}
         <div style="font-size:18px;font-weight:700;color:#d4a84b;margin-bottom:8px;">${priceStr} <span style="font-size:12px;color:var(--text3);">아데나</span></div>
         <div style="font-size:12px;color:var(--text3);line-height:1.8;">
           수량 <span style="color:var(--text);">${item.qty||1}개</span><br>
-          서버 <span style="color:var(--text);">${item.server||''}</span><br>
+          서버 <span style="color:var(--text);">${item.server||''}${item.channel ? ' / ' + item.channel + '채널' : ''}</span><br>
           캐릭터 <span style="color:var(--text);">${item.char||''}</span>
         </div>
         <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;">
@@ -3930,6 +3955,8 @@ footer a{color:var(--g2);}
   function showMarketWrite() {
     if (!auth.currentUser && !isAdmin) { showToast('로그인 후 이용하세요.'); return; }
     fillBoardServerOptions(document.getElementById('mw-server'), _marketGame === 'm' ? 'x_m' : 'x');
+    const mwCh = document.getElementById('mw-channel');
+    if (mwCh) { mwCh.style.display = _marketGame === 'm' ? '' : 'none'; mwCh.value = ''; }
     document.getElementById('section-market').style.display = 'none';
     document.getElementById('section-market-write').style.display = 'block';
   }
@@ -3939,6 +3966,7 @@ footer a{color:var(--g2);}
     const price = document.getElementById('mw-price').value.trim();
     const qty = document.getElementById('mw-qty').value || '1';
     const server = document.getElementById('mw-server').value;
+    const channel = _marketGame === 'm' ? (document.getElementById('mw-channel')?.value || '') : '';
     const char = document.getElementById('mw-char').value.trim();
     const contact = document.getElementById('mw-contact').value.trim();
     const type = document.getElementById('mw-type').value;
@@ -3947,7 +3975,7 @@ footer a{color:var(--g2);}
     const user = auth.currentUser;
     const nickname = isAdmin ? 'GM메티스' : (user ? (user.displayName||user.email.split('@')[0]) : '익명');
     const id = 'm' + Date.now();
-    const data = { id, item, price, qty, server, char, contact, type, nickname, status:'active', timestamp:Date.now(), game:_marketGame };
+    const data = { id, item, price, qty, server, char, contact, type, nickname, status:'active', timestamp:Date.now(), game:_marketGame, channel };
     try {
       await firebase.database().ref('market/' + id).set(data);
       showToast('✅ 등록되었습니다.');
