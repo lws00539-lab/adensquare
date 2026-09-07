@@ -444,13 +444,22 @@ footer a{color:var(--g2);}
       커뮤니티 <span class="nav-arrow">▼</span>
       <div class="dropdown-menu">
         <div class="dropdown-item" onclick="showBoard('free')">
-          📋 자유게시판
+          📋 클래식 자유게시판
+        </div>
+        <div class="dropdown-item" onclick="showBoard('free_m')">
+          📋 리니지M 자유게시판
         </div>
         <div class="dropdown-item" onclick="showBoard('clan')">
-          ⚔ 혈맹모집 게시판
+          ⚔ 클래식 혈맹모집
+        </div>
+        <div class="dropdown-item" onclick="showBoard('clan_m')">
+          ⚔ 리니지M 혈맹모집
         </div>
         <div class="dropdown-item" onclick="showBoard('brag')">
-          🏆 자랑하기 게시판
+          🏆 클래식 자랑하기
+        </div>
+        <div class="dropdown-item" onclick="showBoard('brag_m')">
+          🏆 리니지M 자랑하기
         </div>
       </div>
     </div>
@@ -3923,9 +3932,12 @@ footer a{color:var(--g2);}
   function showBoard(boardType) {
     _currentBoard = boardType || 'free';
     const titleMap = {
-      'free': '📋 자유게시판',
-      'clan': '⚔ 혈맹모집 게시판',
-      'brag': '🏆 자랑하기 게시판',
+      'free': '📋 리니지클래식 자유게시판',
+      'free_m': '📋 리니지M 자유게시판',
+      'clan': '⚔ 리니지클래식 혈맹모집 게시판',
+      'clan_m': '⚔ 리니지M 혈맹모집 게시판',
+      'brag': '🏆 리니지클래식 자랑하기 게시판',
+      'brag_m': '🏆 리니지M 자랑하기 게시판',
       'play_lineage': '🎮 게임같이해요',
       'play_star': '⭐ 스타같이해요',
       'play_lol': '🏆 LOL같이해요',
@@ -4201,9 +4213,12 @@ footer a{color:var(--g2);}
     const p = _lastBoardPost;
     if (!p) return;
     const titleMap = {
-      'free': '자유게시판',
-      'clan': '혈맹모집 게시판',
-      'brag': '자랑하기 게시판',
+      'free': '리니지클래식 자유게시판',
+      'free_m': '리니지M 자유게시판',
+      'clan': '리니지클래식 혈맹모집 게시판',
+      'clan_m': '리니지M 혈맹모집 게시판',
+      'brag': '리니지클래식 자랑하기 게시판',
+      'brag_m': '리니지M 자랑하기 게시판',
       'play_star': '스타같이해요',
       'play_lol': 'LOL같이해요',
       'play_sol': 'SOL같이해요',
@@ -4244,12 +4259,29 @@ footer a{color:var(--g2);}
     } catch(e) { showToast('수정 실패: ' + e.message); }
   }
 
+  // ---------- 게시판별 서버 목록 ----------
+  // 리니지클래식과 리니지M은 서버 이름이 다르므로 글쓰기 화면에서 갈아끼운다.
+  const CLASSIC_SERVERS = ['데포로쥬','캔라우헬','질리언','이실로테','조우','하딘','케레니스','오웬','크리스터','아튼','가드리아','군터','아스테어','듀크데필','발센','어레인','캐스톨','세바스찬','데컨','아인하사드','파아그리오','에바','사이하','마프르','린델','하이네','로엔그린','발라카스','오렌'];
+  const LINM_SERVERS = ['판도라','케레니스','라스타바드','블루디카','파푸리온','발라카스','진기르타스','이실로테','린드비오르','듀크데필','아툰','하딘','군터','데스나이트','안타라스','사이하','질리언','데포로쥬','그림리퍼','켄라우헬','기르타스','발록','그레시아','글루디오','오렌','말하는섬','켄트','윈다우드'];
+
+  function fillBoardServerOptions(sel, boardType) {
+    if (!sel) return;
+    const list = String(boardType || '').endsWith('_m') ? LINM_SERVERS : CLASSIC_SERVERS;
+    sel.innerHTML = '<option value="">서버 선택</option>'
+      + list.map(n => `<option value="${n}">${n}</option>`).join('')
+      + '<option value="전체">전체서버</option>';
+    sel.value = '';
+  }
+
   function showBoardWrite() {
     if (!auth.currentUser && !isAdmin) { showToast('로그인 후 이용하세요.'); return; }
     const titleMap = {
-      'free': '자유게시판',
-      'clan': '혈맹모집 게시판',
-      'brag': '자랑하기 게시판',
+      'free': '리니지클래식 자유게시판',
+      'free_m': '리니지M 자유게시판',
+      'clan': '리니지클래식 혈맹모집 게시판',
+      'clan_m': '리니지M 혈맹모집 게시판',
+      'brag': '리니지클래식 자랑하기 게시판',
+      'brag_m': '리니지M 자랑하기 게시판',
       'play_star': '스타같이해요',
       'play_lol': 'LOL같이해요',
       'play_sol': 'SOL같이해요',
@@ -4274,7 +4306,7 @@ footer a{color:var(--g2);}
     } else {
       catSel.parentElement.style.display = 'flex';
       if (srvSel) srvSel.style.display = '';
-      if (_currentBoard === 'clan') {
+      if (_currentBoard === 'clan' || _currentBoard === 'clan_m') {
         catSel.innerHTML = `<option value="">분류 선택</option><option value="혈맹모집해요">혈맹모집해요</option><option value="혈맹들어가고 싶어요">혈맹들어가고 싶어요</option>`;
         if (jobSel) { jobSel.style.display='flex'; jobSel.style.flex='1'; jobSel.value=''; }
         if (!document.getElementById('bw-extra-row')) {
@@ -4284,7 +4316,7 @@ footer a{color:var(--g2);}
           row2.innerHTML = `<select id="bw-level" style="flex:1;padding:10px 12px;background:#0a0800;border:1px solid #3a2e10;border-radius:4px;color:#e8dcc8;font-size:13px;"><option value="">최소레벨</option><option value="무관">무관</option><option value="20레벨">20레벨</option><option value="30레벨">30레벨</option><option value="40레벨">40레벨</option><option value="52레벨">52레벨</option></select><select id="bw-neutral" style="flex:1;padding:10px 12px;background:#0a0800;border:1px solid #3a2e10;border-radius:4px;color:#e8dcc8;font-size:13px;"><option value="">중립라인</option><option value="중립">중립</option><option value="라인">라인</option></select>`;
           catSel.parentElement.parentElement.insertBefore(row2, catSel.parentElement.nextSibling);
         } else { document.getElementById('bw-extra-row').style.display='flex'; }
-      } else if (_currentBoard === 'brag') {
+      } else if (_currentBoard === 'brag' || _currentBoard === 'brag_m') {
         catSel.innerHTML = `<option value="">분류 선택</option><option value="장비 자랑하기">장비 자랑하기</option><option value="레벨 자랑하기">레벨 자랑하기</option><option value="득템 자랑하기">득템 자랑하기</option><option value="러쉬 자랑하기">러쉬 자랑하기</option><option value="기타 자랑하기">기타 자랑하기</option>`;
         if (jobSel) { jobSel.style.display='none'; jobSel.value=''; }
         if (extraRow) extraRow.style.display='none';
@@ -4293,7 +4325,7 @@ footer a{color:var(--g2);}
         if (jobSel) { jobSel.style.display='none'; jobSel.value=''; }
         if (extraRow) extraRow.style.display='none';
       }
-      if (srvSel) srvSel.value = '';
+      if (srvSel) fillBoardServerOptions(srvSel, _currentBoard);
     }
     // 등록 버튼 원상복구
     const btn = document.querySelector('button[onclick^="submitBoardEdit"]');
