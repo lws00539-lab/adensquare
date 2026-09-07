@@ -416,6 +416,7 @@ function updateSimBtn() {
 
 // 버튼은 이 함수만 호출한다 (시작/중지를 상태 보고 알아서 결정)
 function toggleSimChat() {
+  console.log('[아덴광장] 버튼 클릭 - 현재 상태:', _simWanted ? '실행중' : '정지');
   if (_simWanted) stopSimChat(); else startSimChat();
 }
 
@@ -443,6 +444,7 @@ function startSimChat(silent) {
 }
 
 function stopSimChat(silent) {
+  console.log('[아덴광장] 자동채팅 중지 요청됨');
   _simWanted = false;                         // 먼저 의사를 끈다
   if (simInterval) clearTimeout(simInterval);
   simInterval = null;
@@ -629,6 +631,16 @@ function firebaseErrorMsg(code) {
   return map[code] || '오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
 }
 
+// 다른 탭에서 자동채팅을 켜거나 끄면 이 탭에도 즉시 반영한다.
+window.addEventListener('storage', (e) => {
+  if (e.key !== 'aden_sim_on') return;
+  if (e.newValue === '1') {
+    if (isAdmin && !_simWanted) startSimChat(true);
+  } else {
+    if (_simWanted) { console.log('[아덴광장] 다른 탭에서 중지'); stopSimChat(true); }
+  }
+});
+
 // 새로고침 전에 자동채팅이 켜져 있었다면 다시 시작한다.
 // 초기화 시점에 DB/세션이 아직 준비 안 됐을 수 있으므로 여러 번 시도하고,
 // 이후에도 30초마다 꺼져 있으면 되살린다.
@@ -653,11 +665,16 @@ async function restoreSimChat() {
   // 이후에도 꺼져 있으면 되살리는 감시기
   if (!window._simWatchdog) {
     window._simWatchdog = setInterval(() => {
+      // 다른 탭에서 중지했으면 이 탭도 멈춘다
+      if (localStorage.getItem('aden_sim_on') !== '1') {
+        if (_simWanted) { console.log('[아덴광장] 다른 탭에서 중지됨 - 이 탭도 정지'); stopSimChat(true); }
+        return;
+      }
       if (_simWanted && !simInterval && isAdmin) {
         console.log('[아덴광장] 자동채팅이 멈춰 있어 재시작합니다');
         startSimChat(true);
       }
-    }, 30000);
+    }, 5000);
   }
 }
 
