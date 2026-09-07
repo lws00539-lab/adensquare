@@ -628,7 +628,7 @@ footer a{color:var(--g2);}
           <span onclick="adminResetNick()" style="color:#6a5a30;cursor:pointer;margin-left:6px;">[초기화]</span>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:6px;">
-          <button id="admin-sim-btn" onclick="startSimChat()" style="padding:6px;border:1px solid #5a4a22;background:#2a1e08;color:#d4a84b;font-size:10px;font-weight:700;border-radius:var(--r);cursor:pointer;">▶ 채팅 시작</button>
+          <button id="admin-sim-btn" onclick="toggleSimChat()" style="padding:6px;border:1px solid #5a4a22;background:#2a1e08;color:#d4a84b;font-size:10px;font-weight:700;border-radius:var(--r);cursor:pointer;">▶ 채팅 시작</button>
           <button onclick="adminClearAll()" style="padding:6px;border:1px solid #8a3a18;background:#2a0808;color:#e07070;font-size:10px;font-weight:700;border-radius:var(--r);cursor:pointer;">🗑 전체 삭제</button>
         </div>
         <div style="font-size:9px;color:#4a3a18;margin-top:5px;">💬 채팅 닉네임 클릭 → 해당 닉으로 채팅</div>
@@ -1908,7 +1908,7 @@ footer a{color:var(--g2);}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <!-- ?v= 값을 올리면 브라우저가 캐시를 무시하고 새 파일을 받는다. auth-v2.js를 고칠 때마다 숫자를 올릴 것 -->
-<script src="auth-v2.js?v=299"></script>
+<script src="auth-v2.js?v=305"></script>
 <script>
   // 장비러쉬
   const SIM_SWORD='images/img6.jpg';

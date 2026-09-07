@@ -274,6 +274,7 @@ async function sendSimMsg() {
   } while (t === _lastSimChat && tries < 10);
   _lastSimUser = u.nick;
   _lastSimChat = t;
+  if (!_simWanted) return;
   if (!auth.currentUser && !(await ensureFirebaseSession())) return;
   try {
     await chatDb.ref('chat/global').push({
@@ -401,31 +402,52 @@ function adminResetNick() {
   showToast('👑 메티스로 복귀');
 }
 
+// ---------- 시뮬 자동채팅 ----------
+// _simWanted 가 이 기능의 유일한 기준이다. 타이머(simInterval)는 결과일 뿐이므로,
+// 중지 후 뒤늦게 끝난 전송이 타이머를 다시 잡는 일이 없도록 매번 이 값을 확인한다.
+let _simWanted = false;
+
+function updateSimBtn() {
+  const btn = document.getElementById('admin-sim-btn');
+  if (!btn) return;
+  btn.textContent = _simWanted ? '⏹ 채팅 중지' : '▶ 채팅 시작';
+  btn.onclick = toggleSimChat;   // 버튼은 항상 토글 하나만 연결한다
+}
+
+// 버튼은 이 함수만 호출한다 (시작/중지를 상태 보고 알아서 결정)
+function toggleSimChat() {
+  if (_simWanted) stopSimChat(); else startSimChat();
+}
+
 // silent=true 이면 토스트를 띄우지 않는다 (새로고침 후 자동 복구용)
 function startSimChat(silent) {
-  if (simInterval) { if (!silent) showToast('이미 실행 중입니다.'); return; }
   if (!chatDb) { try { chatDb = firebase.database(); } catch(e) { showToast('DB 연결 실패'); return; } }
-  // 새로고침해도 켜둔 상태가 유지되도록 기록
-  localStorage.setItem('aden_sim_on', '1');
+  if (_simWanted && simInterval) { if (!silent) showToast('이미 실행 중입니다.'); return; }
+
+  _simWanted = true;
+  localStorage.setItem('aden_sim_on', '1');   // 새로고침해도 유지
+  updateSimBtn();
   if (!silent) showToast('🎭 시뮬 채팅 시작!');
-  const btn = document.getElementById('admin-sim-btn');
-  if (btn) { btn.textContent = '⏹ 채팅 중지'; btn.onclick = () => stopSimChat(); }
-  sendSimMsg();
+
   function scheduleNext() {
-    if (!simInterval) return;
-    const t = setTimeout(async () => { await sendSimMsg(); scheduleNext(); }, 3000 + Math.random() * 3000);
-    simInterval = t;
+    if (!_simWanted) return;                  // 중지되었으면 다음 타이머를 잡지 않는다
+    simInterval = setTimeout(async () => {
+      if (!_simWanted) return;
+      await sendSimMsg();
+      scheduleNext();
+    }, 3000 + Math.random() * 3000);
   }
-  simInterval = true;
+
+  sendSimMsg();
   scheduleNext();
 }
 
 function stopSimChat(silent) {
-  if (simInterval && simInterval !== true) clearTimeout(simInterval);
+  _simWanted = false;                         // 먼저 의사를 끈다
+  if (simInterval) clearTimeout(simInterval);
   simInterval = null;
   localStorage.removeItem('aden_sim_on');
-  const btn = document.getElementById('admin-sim-btn');
-  if (btn) { btn.textContent = '▶ 채팅 시작'; btn.onclick = () => startSimChat(); }
+  updateSimBtn();
   if (!silent) showToast('⏹ 시뮬 채팅 중지');
 }
 
@@ -615,7 +637,8 @@ async function restoreSimChat() {
   console.log('[아덴광장] 자동채팅 복구 시도');
 
   const tryStart = async () => {
-    if (simInterval) return true;
+    if (_simWanted && simInterval) return true;
+    if (localStorage.getItem('aden_sim_on') !== '1') return true;  // 그사이 사용자가 중지했으면 그만둔다
     if (!isAdmin) return false;
     await ensureFirebaseSession();
     startSimChat(true);
@@ -630,7 +653,7 @@ async function restoreSimChat() {
   // 이후에도 꺼져 있으면 되살리는 감시기
   if (!window._simWatchdog) {
     window._simWatchdog = setInterval(() => {
-      if (localStorage.getItem('aden_sim_on') === '1' && !simInterval && isAdmin) {
+      if (_simWanted && !simInterval && isAdmin) {
         console.log('[아덴광장] 자동채팅이 멈춰 있어 재시작합니다');
         startSimChat(true);
       }
