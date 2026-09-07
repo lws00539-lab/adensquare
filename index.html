@@ -1184,16 +1184,6 @@ footer a{color:var(--g2);}
             <button id="mkt-tab-buy" onclick="setMarketTab('buy')" style="padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:var(--dark);color:var(--text3);font-size:12px;cursor:pointer;">구매</button>
           </div>
         </div>
-        <div id="mkt-channel-wrap" style="display:none;gap:6px;align-items:center;">
-          <span style="font-size:11px;color:var(--text3);">채널</span>
-          <select id="mkt-channel" onchange="filterMarket()" style="padding:5px 10px;background:#0a0800;border:1px solid #3a2e10;border-radius:20px;color:#e8dcc8;font-size:12px;">
-            <option value="">전체</option>
-            <option value="1">1채널</option><option value="2">2채널</option><option value="3">3채널</option>
-            <option value="4">4채널</option><option value="5">5채널</option><option value="6">6채널</option>
-            <option value="7">7채널</option><option value="8">8채널</option><option value="9">9채널</option>
-            <option value="10">10채널</option>
-          </select>
-        </div>
         <div style="display:flex;gap:6px;align-items:center;">
           <span style="font-size:11px;color:var(--text3);">서버</span>
           <select id="mkt-server" onchange="filterMarket()" style="padding:5px 10px;background:#0a0800;border:1px solid #3a2e10;border-radius:20px;color:#e8dcc8;font-size:12px;">
@@ -1227,6 +1217,16 @@ footer a{color:var(--g2);}
             <option value="로엔그린">로엔그린</option>
             <option value="발라카스">발라카스</option>
             <option value="오렌">오렌</option>
+          </select>
+        </div>
+        <div id="mkt-channel-wrap" style="display:none;gap:6px;align-items:center;">
+          <span style="font-size:11px;color:var(--text3);">채널</span>
+          <select id="mkt-channel" onchange="filterMarket()" style="padding:5px 10px;background:#0a0800;border:1px solid #3a2e10;border-radius:20px;color:#e8dcc8;font-size:12px;">
+            <option value="">전체</option>
+            <option value="1">1채널</option><option value="2">2채널</option><option value="3">3채널</option>
+            <option value="4">4채널</option><option value="5">5채널</option><option value="6">6채널</option>
+            <option value="7">7채널</option><option value="8">8채널</option><option value="9">9채널</option>
+            <option value="10">10채널</option>
           </select>
         </div>
         <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text3);cursor:pointer;">
@@ -1268,13 +1268,6 @@ footer a{color:var(--g2);}
             <option value="sell">판매</option>
             <option value="buy">구매</option>
           </select>
-          <select id="mw-channel" style="display:none;flex:1;padding:10px;background:#0a0800;border:1px solid #3a2e10;border-radius:4px;color:#e8dcc8;font-size:13px;">
-            <option value="">채널 선택</option>
-            <option value="1">1채널</option><option value="2">2채널</option><option value="3">3채널</option>
-            <option value="4">4채널</option><option value="5">5채널</option><option value="6">6채널</option>
-            <option value="7">7채널</option><option value="8">8채널</option><option value="9">9채널</option>
-            <option value="10">10채널</option>
-          </select>
           <select id="mw-server" style="flex:1;padding:10px;background:#0a0800;border:1px solid #3a2e10;border-radius:4px;color:#e8dcc8;font-size:13px;">
             <option value="">서버 선택</option>
             <option value="데포로쥬">데포로쥬</option>
@@ -1306,6 +1299,13 @@ footer a{color:var(--g2);}
             <option value="로엔그린">로엔그린</option>
             <option value="발라카스">발라카스</option>
             <option value="오렌">오렌</option>
+          </select>
+          <select id="mw-channel" style="display:none;flex:1;padding:10px;background:#0a0800;border:1px solid #3a2e10;border-radius:4px;color:#e8dcc8;font-size:13px;">
+            <option value="">채널 선택</option>
+            <option value="1">1채널</option><option value="2">2채널</option><option value="3">3채널</option>
+            <option value="4">4채널</option><option value="5">5채널</option><option value="6">6채널</option>
+            <option value="7">7채널</option><option value="8">8채널</option><option value="9">9채널</option>
+            <option value="10">10채널</option>
           </select>
         </div>
         <input id="mw-item" type="text" placeholder="아이템명 (예: 은장검 +9)" style="padding:10px;background:#0a0800;border:1px solid #3a2e10;border-radius:4px;color:#e8dcc8;font-size:13px;">
