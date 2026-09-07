@@ -401,12 +401,15 @@ function adminResetNick() {
   showToast('👑 메티스로 복귀');
 }
 
-function startSimChat() {
-  if (simInterval) { showToast('이미 실행 중입니다.'); return; }
+// silent=true 이면 토스트를 띄우지 않는다 (새로고침 후 자동 복구용)
+function startSimChat(silent) {
+  if (simInterval) { if (!silent) showToast('이미 실행 중입니다.'); return; }
   if (!chatDb) { try { chatDb = firebase.database(); } catch(e) { showToast('DB 연결 실패'); return; } }
-  showToast('🎭 시뮬 채팅 시작!');
+  // 새로고침해도 켜둔 상태가 유지되도록 기록
+  localStorage.setItem('aden_sim_on', '1');
+  if (!silent) showToast('🎭 시뮬 채팅 시작!');
   const btn = document.getElementById('admin-sim-btn');
-  if (btn) { btn.textContent = '⏹ 채팅 중지'; btn.onclick = stopSimChat; }
+  if (btn) { btn.textContent = '⏹ 채팅 중지'; btn.onclick = () => stopSimChat(); }
   sendSimMsg();
   function scheduleNext() {
     if (!simInterval) return;
@@ -417,12 +420,13 @@ function startSimChat() {
   scheduleNext();
 }
 
-function stopSimChat() {
+function stopSimChat(silent) {
   if (simInterval && simInterval !== true) clearTimeout(simInterval);
   simInterval = null;
+  localStorage.removeItem('aden_sim_on');
   const btn = document.getElementById('admin-sim-btn');
-  if (btn) { btn.textContent = '▶ 채팅 시작'; btn.onclick = startSimChat; }
-  showToast('⏹ 시뮬 채팅 중지');
+  if (btn) { btn.textContent = '▶ 채팅 시작'; btn.onclick = () => startSimChat(); }
+  if (!silent) showToast('⏹ 시뮬 채팅 중지');
 }
 
 async function adminDelMsg(el) {
@@ -603,6 +607,37 @@ function firebaseErrorMsg(code) {
   return map[code] || '오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
 }
 
+// 새로고침 전에 자동채팅이 켜져 있었다면 다시 시작한다.
+// 초기화 시점에 DB/세션이 아직 준비 안 됐을 수 있으므로 여러 번 시도하고,
+// 이후에도 30초마다 꺼져 있으면 되살린다.
+async function restoreSimChat() {
+  if (localStorage.getItem('aden_sim_on') !== '1') return;
+  console.log('[아덴광장] 자동채팅 복구 시도');
+
+  const tryStart = async () => {
+    if (simInterval) return true;
+    if (!isAdmin) return false;
+    await ensureFirebaseSession();
+    startSimChat(true);
+    return !!simInterval;
+  };
+
+  for (let i = 0; i < 5; i++) {
+    if (await tryStart()) { console.log('[아덴광장] 자동채팅 복구 완료'); break; }
+    await new Promise(r => setTimeout(r, 1000));
+  }
+
+  // 이후에도 꺼져 있으면 되살리는 감시기
+  if (!window._simWatchdog) {
+    window._simWatchdog = setInterval(() => {
+      if (localStorage.getItem('aden_sim_on') === '1' && !simInterval && isAdmin) {
+        console.log('[아덴광장] 자동채팅이 멈춰 있어 재시작합니다');
+        startSimChat(true);
+      }
+    }, 30000);
+  }
+}
+
 // ================================================================
 // 초기화
 // ================================================================
@@ -618,6 +653,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const chatSendA = document.getElementById('chat-send-btn');
     if (chatInputA) chatInputA.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChatMessage(); } });
     if (chatSendA) chatSendA.onclick = sendChatMessage;
+
+    restoreSimChat();
     return;
   }
 
@@ -632,4 +669,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   initChat();
+  restoreSimChat();
 });
+
+// DOMContentLoaded 처리가 어떤 이유로든 중단됐을 때를 대비한 최후 보루
+window.addEventListener('load', () => { setTimeout(restoreSimChat, 2000); });
