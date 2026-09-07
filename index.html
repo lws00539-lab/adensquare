@@ -485,7 +485,17 @@ footer a{color:var(--g2);}
         </div>
       </div>
     </div>
-    <a class="nav-link" href="#" onclick="event.preventDefault();showMarket()">거래소</a>
+    <div class="nav-link nav-dropdown">
+      거래소 <span class="nav-arrow">▼</span>
+      <div class="dropdown-menu">
+        <div class="dropdown-item" onclick="showMarket('classic')">
+          🎮 리니지클래식 거래소
+        </div>
+        <div class="dropdown-item" onclick="showMarket('m')">
+          💎 리니지M 거래소
+        </div>
+      </div>
+    </div>
     <div class="nav-link nav-dropdown">
       유튜브 <span class="nav-arrow">▼</span>
       <div class="dropdown-menu">
@@ -1161,7 +1171,7 @@ footer a{color:var(--g2);}
   <div id="section-market" style="display:none;">
     <div style="background:var(--dark3);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;">
       <div style="padding:12px 16px;background:linear-gradient(180deg,#2a1a08,#1a1008);border-bottom:1px solid var(--border);">
-        <div style="font-size:18px;font-weight:700;color:#d4a84b;">거래소</div>
+        <div id="market-page-title" style="font-size:18px;font-weight:700;color:#d4a84b;">🎮 리니지클래식 거래소</div>
       </div>
 
       <!-- 필터 영역 -->
@@ -3792,7 +3802,21 @@ footer a{color:var(--g2);}
     loadDiaPrice();
   }
 
-  function showMarket() {
+  // 'classic' | 'm'. 게임 구분값이 없는 예전 매물은 클래식으로 취급한다.
+  let _marketGame = 'classic';
+
+  function showMarket(game) {
+    if (game === 'classic' || game === 'm') _marketGame = game;
+    const t = document.getElementById('market-page-title');
+    if (t) t.textContent = _marketGame === 'm' ? '💎 리니지M 거래소' : '🎮 리니지클래식 거래소';
+    // 거래소 필터의 서버 목록도 게임에 맞게 교체
+    const mktSrv = document.getElementById('mkt-server');
+    if (mktSrv) {
+      const keep = mktSrv.value;
+      fillBoardServerOptions(mktSrv, _marketGame === 'm' ? 'x_m' : 'x');
+      mktSrv.options[0].textContent = '전체 서버';
+      if ([...mktSrv.options].some(o => o.value === keep)) mktSrv.value = keep;
+    }
     ['section-main','section-news','section-news-write','section-news-detail',
      'section-simulator','section-slime','section-board','section-board-write',
      'section-board-detail','section-market-write','section-adenprice','section-diaprice','section-youtube','section-fortune','section-tarot','section-lotto'].forEach(id => {
@@ -3838,6 +3862,7 @@ footer a{color:var(--g2);}
     const server = document.getElementById('mkt-server')?.value || '';
     const hideDone = document.getElementById('mkt-hide-done')?.checked;
     let filtered = _marketAllItems.filter(item => {
+      if (((item.game === 'm') ? 'm' : 'classic') !== _marketGame) return false;
       if (_marketTab === 'sell' && item.type !== 'sell') return false;
       if (_marketTab === 'buy' && item.type !== 'buy') return false;
       if (server && item.server !== server) return false;
@@ -3904,6 +3929,7 @@ footer a{color:var(--g2);}
 
   function showMarketWrite() {
     if (!auth.currentUser && !isAdmin) { showToast('로그인 후 이용하세요.'); return; }
+    fillBoardServerOptions(document.getElementById('mw-server'), _marketGame === 'm' ? 'x_m' : 'x');
     document.getElementById('section-market').style.display = 'none';
     document.getElementById('section-market-write').style.display = 'block';
   }
@@ -3921,7 +3947,7 @@ footer a{color:var(--g2);}
     const user = auth.currentUser;
     const nickname = isAdmin ? 'GM메티스' : (user ? (user.displayName||user.email.split('@')[0]) : '익명');
     const id = 'm' + Date.now();
-    const data = { id, item, price, qty, server, char, contact, type, nickname, status:'active', timestamp:Date.now() };
+    const data = { id, item, price, qty, server, char, contact, type, nickname, status:'active', timestamp:Date.now(), game:_marketGame };
     try {
       await firebase.database().ref('market/' + id).set(data);
       showToast('✅ 등록되었습니다.');
