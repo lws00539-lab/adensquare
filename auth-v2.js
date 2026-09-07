@@ -131,6 +131,9 @@ async function signOut() {
 // ================================================================
 function _handleAuthState(user) {
   const navRight = document.getElementById('nav-right');
+  // 익명 로그인은 채팅 권한 확보용일 뿐이므로 UI를 로그인 상태로 바꾸지 않는다
+  if (user && user.isAnonymous) return;
+  if (isAdmin) return;
   if (user) {
     // 모달 닫기
     closeAllModals();
@@ -271,6 +274,7 @@ async function sendSimMsg() {
   } while (t === _lastSimChat && tries < 10);
   _lastSimUser = u.nick;
   _lastSimChat = t;
+  if (!auth.currentUser && !(await ensureFirebaseSession())) return;
   try {
     await chatDb.ref('chat/global').push({
       uid: 'sim_' + u.nick, nickname: u.nick, text: t,
@@ -280,8 +284,26 @@ async function sendSimMsg() {
   } catch(e) { console.error('Sim error:', e); }
 }
 
+// 관리자 로그인은 localStorage 방식이라 Firebase 입장에서는 "비로그인" 상태다.
+// 채팅 쓰기 규칙(".write": "auth !== null")을 통과하려면 Firebase 세션이 하나 필요하므로
+// 익명 로그인을 붙여준다. 익명 사용자는 _handleAuthState 에서 무시하도록 처리했다.
+async function ensureFirebaseSession() {
+  if (auth.currentUser) return true;
+  try {
+    await auth.signInAnonymously();
+    return true;
+  } catch (e) {
+    console.error('익명 로그인 실패:', e);
+    if (e && e.code === 'auth/operation-not-allowed') {
+      showToast('Firebase 콘솔에서 익명 로그인을 사용 설정해야 합니다.');
+    }
+    return false;
+  }
+}
+
 function adminLogin() {
   isAdmin = true;
+  ensureFirebaseSession();
   _cachedNick = ADMIN_NICK;
   localStorage.setItem('aden_admin_session', '1');
   _cachedAvatarBg = '#1a0a28';
@@ -519,6 +541,10 @@ async function sendChatMessage() {
   const text = input.value.trim();
   if (!text) return;
   if (!chatDb) { showToast('채팅 서버 연결 중입니다.'); return; }
+  if (!auth.currentUser) {
+    const ok = await ensureFirebaseSession();
+    if (!ok) { showToast('채팅 권한을 얻지 못했습니다.'); return; }
+  }
   const uid = isAdmin ? ('admin_' + (_cachedNick||'메티스')) : user.uid;
   const palette = [{bg:'#2a1208',color:'#c9a84c'},{bg:'#0c1228',color:'#7090d8'},{bg:'#1e0c2a',color:'#b870d8'},{bg:'#0c2010',color:'#70b870'},{bg:'#2a0c0c',color:'#e07070'},{bg:'#1a0c28',color:'#d8a0f0'},{bg:'#0c2028',color:'#70c8d8'}];
   const idx = uid.charCodeAt(0) % palette.length;
