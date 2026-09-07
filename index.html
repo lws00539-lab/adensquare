@@ -4901,19 +4901,68 @@ footer a{color:var(--g2);}
     document.body.appendChild(modal);
   }
 
-  // ---------- 메인화면 유튜브(리니지클래식) 미니 리스트 ----------
-  async function loadYoutubeLiveMini(elementId, query, emptyMsg) {
+  // ---------- 메인화면 라이브 미니 리스트 (Firebase 캐시 사용) ----------
+  // 유튜브 검색 API는 1회에 100포인트를 쓰고 무료 한도가 하루 10,000포인트다.
+  // 방문할 때마다 3개 칸이 검색하면 33명만 들어와도 한도가 바닥나므로,
+  // 결과를 Firebase에 저장해두고 일정 시간 동안 재사용한다.
+  const YT_CACHE_MINUTES = 60;
+
+  function renderLiveMini(el, lives, emptyMsg) {
+    if (!lives || !lives.length) {
+      el.innerHTML = `<div style="padding:5px 0;color:var(--text3);">${emptyMsg}</div>`;
+      return;
+    }
+    const escAttr = (t) => String(t || '').replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
+    el.innerHTML = lives.map((v, idx) => `
+        <div class="live-mini-row" data-vid="${escAttr(v.id)}" data-title="${escAttr(v.title)}" data-channel="${escAttr(v.channel)}"
+             style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;cursor:pointer;min-width:0;">
+          <div style="font-size:13px;font-weight:800;color:${idx===0?'var(--g)':'var(--text3)'};width:16px;flex-shrink:0;text-align:center;">${idx+1}</div>
+          <div style="position:relative;flex-shrink:0;">
+            <img src="${v.thumb}" style="width:80px;height:45px;object-fit:cover;border-radius:5px;display:block;">
+            <span style="position:absolute;top:3px;left:3px;background:#e02020;color:#fff;font-size:10px;font-weight:800;padding:1px 5px;border-radius:3px;letter-spacing:.3px;">LIVE</span>
+          </div>
+          <span style="flex:1;font-size:15px;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;">${String(v.channel||'').replace(/</g,'&lt;')}</span>
+          <span style="display:flex;align-items:center;gap:4px;color:#ff5555;font-weight:800;font-size:15px;flex-shrink:0;"><span style="font-size:12px;opacity:.8;">👁</span>${(v.viewers||0).toLocaleString()}</span>
+        </div>
+      `).join('');
+
+    el.querySelectorAll('.live-mini-row').forEach(row => {
+      row.addEventListener('click', () => {
+        openYoutubeModal(row.dataset.vid, row.dataset.title, row.dataset.channel);
+      });
+    });
+  }
+
+  async function loadYoutubeLiveMini(elementId, query, emptyMsg, cacheKey) {
     const el = document.getElementById(elementId);
     if (!el) return;
+
+    const key = cacheKey || elementId;
+    let cached = null;
+
+    // 1) 먼저 Firebase 캐시를 확인한다 (API 포인트 소모 없음)
     try {
-      // 1) 라이브 방송 검색
+      const snap = await firebase.database().ref('ytLiveCache/' + key).once('value');
+      cached = snap.val();
+      if (cached && cached.items) {
+        renderLiveMini(el, cached.items, emptyMsg);
+        const ageMin = (Date.now() - (cached.updatedAt || 0)) / 60000;
+        if (ageMin < YT_CACHE_MINUTES) return;   // 아직 신선하면 여기서 끝
+      }
+    } catch (e) {
+      console.warn('라이브 캐시 조회 실패 (' + key + '):', e.message);
+    }
+
+    try {
+      // 2) 라이브 방송 검색
       const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(query)}&eventType=live&type=video&maxResults=10&key=${YT_API_KEY}`;
       const searchRes = await fetch(searchUrl);
       const searchData = await searchRes.json();
       if (searchData.error) throw new Error(searchData.error.message);
       const liveItems = (searchData.items || []).filter(i => i.id?.videoId);
       if (!liveItems.length) {
-        el.innerHTML = `<div style="padding:5px 0;color:var(--text3);">${emptyMsg}</div>`;
+        renderLiveMini(el, [], emptyMsg);
+        try { await firebase.database().ref('ytLiveCache/' + key).set({ items: [], updatedAt: Date.now() }); } catch(e) {}
         return;
       }
 
@@ -4934,39 +4983,34 @@ footer a{color:var(--g2);}
       lives.sort((a, b) => b.viewers - a.viewers);
       lives = lives.slice(0, 5);
 
-      const escAttr = (t) => String(t || '').replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
+      renderLiveMini(el, lives, emptyMsg);
 
-      el.innerHTML = lives.map((v, idx) => `
-        <div class="live-mini-row" data-vid="${escAttr(v.id)}" data-title="${escAttr(v.title)}" data-channel="${escAttr(v.channel)}"
-             style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;cursor:pointer;min-width:0;">
-          <div style="font-size:13px;font-weight:800;color:${idx===0?'var(--g)':'var(--text3)'};width:16px;flex-shrink:0;text-align:center;">${idx+1}</div>
-          <div style="position:relative;flex-shrink:0;">
-            <img src="${v.thumb}" style="width:80px;height:45px;object-fit:cover;border-radius:5px;display:block;">
-            <span style="position:absolute;top:3px;left:3px;background:#e02020;color:#fff;font-size:10px;font-weight:800;padding:1px 5px;border-radius:3px;letter-spacing:.3px;">LIVE</span>
-          </div>
-          <span style="flex:1;font-size:15px;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;">${v.channel.replace(/</g,'&lt;')}</span>
-          <span style="display:flex;align-items:center;gap:4px;color:#ff5555;font-weight:800;font-size:15px;flex-shrink:0;"><span style="font-size:12px;opacity:.8;">👁</span>${v.viewers.toLocaleString()}</span>
-        </div>
-      `).join('');
-
-      // 클릭하면 새 창이 아니라 사이트 안 모달 플레이어로 재생
-      el.querySelectorAll('.live-mini-row').forEach(row => {
-        row.addEventListener('click', () => {
-          openYoutubeModal(row.dataset.vid, row.dataset.title, row.dataset.channel);
-        });
-      });
+      // 다음 방문자를 위해 결과를 저장해둔다
+      try {
+        await firebase.database().ref('ytLiveCache/' + key).set({ items: lives, updatedAt: Date.now() });
+      } catch (e) {
+        console.warn('라이브 캐시 저장 실패 (' + key + '):', e.message);
+      }
     } catch (e) {
       console.error('라이브 미니 로드 실패 (' + elementId + '):', e);
-      el.innerHTML = '<div style="padding:5px 0;color:#e07070;">불러오기 실패</div>';
+      const quota = String(e.message || '').includes('quota');
+      // 오래된 캐시라도 있으면 빈 화면보다는 낫다
+      if (cached && cached.items && cached.items.length) {
+        renderLiveMini(el, cached.items, emptyMsg);
+        return;
+      }
+      el.innerHTML = quota
+        ? '<div style="padding:5px 0;color:#e07070;">유튜브 일일 조회 한도를 초과했습니다. 잠시 후 다시 표시됩니다.</div>'
+        : '<div style="padding:5px 0;color:#e07070;">불러오기 실패</div>';
     }
   }
-  loadYoutubeLiveMini('main-youtube-list', '리니지 클래식', '현재 진행중인 라이브가 없습니다.');
+  loadYoutubeLiveMini('main-youtube-list', '리니지 클래식', '현재 진행중인 라이브가 없습니다.', 'classic');
 
   // ---------- 메인화면 리니지M 라이브 미니 리스트 ----------
-  loadYoutubeLiveMini('main-linm-live-list', '리니지M', '현재 진행중인 라이브가 없습니다.');
+  loadYoutubeLiveMini('main-linm-live-list', '리니지M', '현재 진행중인 라이브가 없습니다.', 'linm');
 
   // ---------- 메인화면 비트코인 선물 라이브 미니 리스트 ----------
-  loadYoutubeLiveMini('main-btc-live-list', '비트코인 선물 라이브', '현재 진행중인 라이브가 없습니다.');
+  loadYoutubeLiveMini('main-btc-live-list', '비트코인 선물 라이브', '현재 진행중인 라이브가 없습니다.', 'btc');
 
 
 </script>
