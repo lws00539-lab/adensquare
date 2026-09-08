@@ -1,3 +1,24 @@
+// ---------- 회원가입 / 프로필: 주 게임에 따른 서버 목록 ----------
+const SIGNUP_SERVERS = {
+  classic: ['데포로쥬','캔라우헬','질리언','이실로테','조우','하딘','케레니스','오웬','크리스터','아튼','가드리아','군터','아스테어','듀크데필','발센','어레인','캐스톨','세바스찬','데컨','아인하사드','파아그리오','에바','사이하','마프르','린델','하이네','로엔그린','발라카스','오렌'],
+  m: ['판도라','케레니스','라스타바드','블루디카','파푸리온','발라카스','진기르타스','이실로테','린드비오르','듀크데필','아툰','하딘','군터','데스나이트','안타라스','사이하','질리언','데포로쥬','그림리퍼','켄라우헬','기르타스','발록','그레시아','글루디오','오렌','말하는섬','켄트','윈다우드'],
+};
+
+// prefix: 'su'(회원가입) | 'profile'(프로필 설정)
+function fillSignupServers(prefix, keep) {
+  const gameSel = document.getElementById(prefix + '-game');
+  const srvSel = document.getElementById(prefix + '-server');
+  if (!gameSel || !srvSel) return;
+  const list = SIGNUP_SERVERS[gameSel.value];
+  if (!list) {
+    srvSel.innerHTML = '<option value="">먼저 게임을 선택하세요</option>';
+    return;
+  }
+  srvSel.innerHTML = '<option value="">서버 선택</option>'
+    + list.map(n => `<option value="${n}">${n}</option>`).join('');
+  if (keep && list.includes(keep)) srvSel.value = keep;
+}
+
 // ================================================================
 // 전역 변수
 // ================================================================
@@ -59,15 +80,28 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
 // 로그인 / 회원가입 / 로그아웃
 // ================================================================
 async function signUp() {
-  const nickname = document.getElementById('su-nick').value.trim();
-  const email = document.getElementById('su-email').value.trim();
-  const pw = document.getElementById('su-pw').value;
+  // 입력란 id 는 su-nickname (예전 코드가 su-nick 을 찾고 있어 가입이 실패했음)
+  const nickname = (document.getElementById('su-nickname')?.value || '').trim();
+  const email = (document.getElementById('su-email')?.value || '').trim();
+  const pw = document.getElementById('su-pw')?.value || '';
+  const pw2 = document.getElementById('su-pw2')?.value || '';
+  const game = document.getElementById('su-game')?.value || '';
+  const server = document.getElementById('su-server')?.value || '';
+
   if (!nickname || !email || !pw) { showError('su-error', '모든 항목을 입력해주세요.'); return; }
+  if (nickname.length < 2) { showError('su-error', '닉네임은 2자 이상이어야 합니다.'); return; }
+  if (pw.length < 6) { showError('su-error', '비밀번호는 6자 이상이어야 합니다.'); return; }
+  if (pw2 && pw !== pw2) { showError('su-error', '비밀번호가 일치하지 않습니다.'); return; }
+  if (!game) { showError('su-error', '주 게임을 선택해주세요.'); return; }
+  if (!server) { showError('su-error', '주 서버를 선택해주세요.'); return; }
+
   try {
     await _persistenceReady;
     const cred = await auth.createUserWithEmailAndPassword(email, pw);
     await cred.user.updateProfile({ displayName: nickname });
     localStorage.setItem('aden_nick_' + cred.user.uid, nickname);
+    localStorage.setItem('aden_game_' + cred.user.uid, game);
+    localStorage.setItem('aden_server_' + cred.user.uid, server);
     closeModal('modal-signup');
     showToast('🎉 가입 완료! 환영합니다, ' + nickname + '님!');
   } catch(e) { showError('su-error', firebaseErrorMsg(e.code)); }
@@ -96,6 +130,10 @@ async function signInGoogle() {
     const isNew = cred.additionalUserInfo && cred.additionalUserInfo.isNewUser;
     if (isNew) {
       document.getElementById('profile-nickname').value = user.displayName || '';
+      const savedGame = localStorage.getItem('aden_game_' + user.uid) || '';
+      const savedServer = localStorage.getItem('aden_server_' + user.uid) || '';
+      const pg = document.getElementById('profile-game');
+      if (pg) { pg.value = savedGame; fillSignupServers('profile', savedServer); }
       openModal('modal-profile');
     } else {
       showToast('✅ ' + (user.displayName || user.email) + '님 로그인!');
@@ -109,11 +147,18 @@ async function signInGoogle() {
 async function saveProfile() {
   const user = auth.currentUser;
   if (!user) return;
-  const nickname = document.getElementById('profile-nickname').value.trim();
+  const nickname = (document.getElementById('profile-nickname')?.value || '').trim();
+  const game = document.getElementById('profile-game')?.value || '';
+  const server = document.getElementById('profile-server')?.value || '';
   if (!nickname) { showError('profile-error', '닉네임을 입력해주세요.'); return; }
+  if (nickname.length < 2) { showError('profile-error', '닉네임은 2자 이상이어야 합니다.'); return; }
+  if (!game) { showError('profile-error', '주 게임을 선택해주세요.'); return; }
+  if (!server) { showError('profile-error', '주 서버를 선택해주세요.'); return; }
   try {
     await user.updateProfile({ displayName: nickname });
     localStorage.setItem('aden_nick_' + user.uid, nickname);
+    localStorage.setItem('aden_game_' + user.uid, game);
+    localStorage.setItem('aden_server_' + user.uid, server);
     closeModal('modal-profile');
     showToast('✅ 프로필이 저장되었습니다!');
   } catch(e) { showError('profile-error', e.message); }
