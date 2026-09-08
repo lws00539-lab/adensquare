@@ -215,6 +215,14 @@ input,select{font-family:inherit;outline:none;}
 .modal-divider{display:flex;align-items:center;gap:8px;font-size:10px;color:var(--text3);}
 .modal-divider::before,.modal-divider::after{content:'';flex:1;height:1px;background:var(--border);}
 .modal-footer{text-align:center;font-size:11px;color:var(--text3);}
+/* 외부에서 복사해 온 내용(고정 폭 표·이미지)이 레이아웃을 밀어내지 않도록 강제로 가둔다 */
+#nw-editor, #detail-body{max-width:100%;overflow-x:auto;word-break:break-word;overflow-wrap:anywhere;}
+#nw-editor *, #detail-body *{max-width:100% !important;}
+#nw-editor img, #detail-body img{height:auto !important;}
+#nw-editor table, #detail-body table{width:100% !important;table-layout:fixed;}
+#nw-editor td, #nw-editor th, #detail-body td, #detail-body th{word-break:break-word;}
+/* 콘텐츠가 아무리 넓어도 페이지 자체는 가로로 늘어나지 않게 */
+body{overflow-x:hidden;}
 .modal-footer a{color:var(--g);cursor:pointer;}
 .nav-user{display:flex;align-items:center;gap:8px;}
 .nav-nickname{font-size:12px;color:var(--text);font-weight:500;}
@@ -1430,7 +1438,7 @@ footer a{color:var(--g2);}
       </div>
       <div style="padding:20px;display:flex;flex-direction:column;gap:10px;">
         <input id="nw-title" type="text" placeholder="제목을 입력하세요" style="width:100%;padding:10px 12px;background:#0a0800;border:1px solid #3a2e10;border-radius:4px;color:#e8dcc8;font-size:14px;box-sizing:border-box;">
-        <div style="border:1px solid #3a2e10;border-radius:4px;overflow:hidden;flex:1;">
+        <div style="border:1px solid #3a2e10;border-radius:4px;overflow:hidden;flex:1;min-width:0;">
           <div style="background:#111008;padding:6px 10px;border-bottom:1px solid #3a2e10;display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
             <select onchange="nwExecCmd('fontName',this.value);this.value=''" style="padding:3px;background:#0a0800;color:#e8dcc8;border:1px solid #3a2e10;border-radius:3px;font-size:11px;">
               <option value="">글꼴</option>
@@ -1462,11 +1470,11 @@ footer a{color:var(--g2);}
             <button onclick="document.getElementById('nw-img-input').click()" title="이미지" style="padding:3px 7px;background:#0a0800;color:#70c870;border:1px solid #3a2e10;border-radius:3px;cursor:pointer;font-size:11px;">사진</button>
             <input id="nw-img-input" type="file" accept="image/*" multiple style="display:none" onchange="nwUploadImages(this.files)">
           </div>
-          <div id="nw-editor" contenteditable="true" style="height:calc(100vh - 420px);min-height:300px;padding:14px;background:#0a0800;color:#e8dcc8;font-size:13px;line-height:1.7;outline:none;overflow-y:auto;box-sizing:border-box;"
+          <div id="nw-editor" contenteditable="true" style="height:calc(100vh - 420px);min-height:300px;padding:14px;background:#0a0800;color:#e8dcc8;font-size:13px;line-height:1.7;outline:none;overflow-y:auto;overflow-x:auto;max-width:100%;box-sizing:border-box;"
             ondragover="event.preventDefault()"
             ondrop="event.preventDefault();nwUploadImages(event.dataTransfer.files)"></div>
         </div>
-        <div style="display:flex;gap:8px;justify-content:flex-end;">
+        <div style="display:flex;gap:8px;justify-content:flex-end;position:sticky;bottom:0;background:var(--dark3);padding:10px 0;z-index:5;">
           <button onclick="showNews()" style="padding:9px 20px;background:#111;color:#aaa;border:1px solid #444;border-radius:4px;cursor:pointer;font-size:13px;">취소</button>
           <button onclick="submitNewsWrite()" style="padding:9px 20px;background:linear-gradient(180deg,#4a3c18,#2e2408);color:#d4a84b;border:1px solid #8a7a38;border-radius:4px;cursor:pointer;font-size:13px;font-weight:700;">✅ 등록</button>
         </div>
