@@ -102,6 +102,7 @@ async function signUp() {
     localStorage.setItem('aden_nick_' + cred.user.uid, nickname);
     localStorage.setItem('aden_game_' + cred.user.uid, game);
     localStorage.setItem('aden_server_' + cred.user.uid, server);
+    await saveUserProfileToDb(cred.user.uid, { nickname, game, server, joinedAt: Date.now() });
     refreshUserUI();
     closeModal('modal-signup');
     showToast('🎉 가입 완료! 환영합니다, ' + nickname + '님!');
@@ -160,10 +161,54 @@ async function saveProfile() {
     localStorage.setItem('aden_nick_' + user.uid, nickname);
     localStorage.setItem('aden_game_' + user.uid, game);
     localStorage.setItem('aden_server_' + user.uid, server);
+    const ok = await saveUserProfileToDb(user.uid, { nickname, game, server });
+    if (!ok) showToast('⚠ 이 기기에만 저장되었습니다. 잠시 후 다시 시도해주세요.');
     refreshUserUI();
     closeModal('modal-profile');
     showToast('✅ 프로필이 저장되었습니다!');
   } catch(e) { showError('profile-error', e.message); }
+}
+
+// ---------- 회원 프로필 저장소 ----------
+// 닉네임/게임/서버를 Firebase(users/<uid>)에 저장한다.
+// localStorage 는 화면을 빨리 그리기 위한 캐시로만 쓰고, 진짜 원본은 Firebase 다.
+// 이렇게 해야 다른 기기·브라우저로 로그인해도 같은 정보가 따라온다.
+async function saveUserProfileToDb(uid, data) {
+  try {
+    await firebase.database().ref('users/' + uid).update(data);
+    return true;
+  } catch (e) {
+    console.error('프로필 저장 실패:', e);
+    return false;
+  }
+}
+
+async function loadUserProfileFromDb(uid) {
+  try {
+    const snap = await firebase.database().ref('users/' + uid).once('value');
+    return snap.val();
+  } catch (e) {
+    console.error('프로필 조회 실패:', e);
+    return null;
+  }
+}
+
+// Firebase 값을 읽어와 localStorage 캐시를 갱신하고 화면을 다시 그린다
+async function syncUserProfile(user) {
+  if (!user || user.isAnonymous) return;
+  const data = await loadUserProfileFromDb(user.uid);
+  if (!data) return;
+  let changed = false;
+  if (data.nickname && data.nickname !== localStorage.getItem('aden_nick_' + user.uid)) {
+    localStorage.setItem('aden_nick_' + user.uid, data.nickname); changed = true;
+  }
+  if (data.game && data.game !== localStorage.getItem('aden_game_' + user.uid)) {
+    localStorage.setItem('aden_game_' + user.uid, data.game); changed = true;
+  }
+  if (data.server && data.server !== localStorage.getItem('aden_server_' + user.uid)) {
+    localStorage.setItem('aden_server_' + user.uid, data.server); changed = true;
+  }
+  if (changed) refreshUserUI();
 }
 
 // 닉네임/게임/서버를 저장한 뒤 화면(상단 바 + 내 정보 카드)을 즉시 다시 그린다.
@@ -246,6 +291,9 @@ function _handleAuthState(user) {
     if (lcServer) lcServer.textContent = server ? '⚔ ' + server + ' 서버' : '서버 미설정';
     if (lcAvatar) { lcAvatar.textContent = nickname.charAt(0).toUpperCase(); lcAvatar.style.background = palette[idx].bg; lcAvatar.style.color = palette[idx].color; }
     if (lcAdena)  lcAdena.textContent  = '10,000 A';
+
+    // Firebase 에 저장된 프로필을 읽어와 캐시/화면을 맞춘다 (다른 기기에서 접속한 경우)
+    syncUserProfile(user);
 
     // 채팅 활성화
     const chatInput = document.getElementById('chat-input');
