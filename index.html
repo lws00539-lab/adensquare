@@ -1923,8 +1923,8 @@ footer a{color:var(--g2);}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <!-- ?v= 값을 올리면 브라우저가 캐시를 무시하고 새 파일을 받는다. auth-v2.js를 고칠 때마다 숫자를 올릴 것 -->
-<script>window.ADEN_VERSION='v311';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
-<script src="auth-v2.js?v=311"></script>
+<script>window.ADEN_VERSION='v312';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
+<script src="auth-v2.js?v=312"></script>
 <script>
   // 장비러쉬
   const SIM_SWORD='images/img6.jpg';
@@ -2498,31 +2498,58 @@ footer a{color:var(--g2);}
   // 그대로 두면 에디터와 페이지가 가로로 늘어나므로, 붙여넣는 시점에 제거한다.
   function nwStripWidths(root) {
     if (!root) return;
-    const all = root.querySelectorAll('*');
-    all.forEach(el => {
-      // width / height 속성 제거
+
+    // 1) 열 너비를 강제하는 colgroup / col 태그를 통째로 제거.
+    //    이게 남아 있으면 아무리 표에 width:100% 를 줘도 원래 폭을 고집한다.
+    root.querySelectorAll('colgroup, col').forEach(el => el.remove());
+
+    // 2) 모든 요소에서 폭 관련 지정 제거
+    root.querySelectorAll('*').forEach(el => {
       el.removeAttribute('width');
       el.removeAttribute('height');
-      // 인라인 스타일에서 폭 관련 값만 골라 제거
+      el.removeAttribute('cellspacing');
+      el.removeAttribute('cellpadding');
       const st = el.style;
       if (st) {
-        ['width','minWidth','maxWidth','height','minHeight'].forEach(k => { st[k] = ''; });
-        if (el.tagName === 'TABLE' || el.tagName === 'TD' || el.tagName === 'TH') {
-          st.tableLayout = 'fixed';
-        }
+        ['width','minWidth','maxWidth','height','minHeight','flexBasis'].forEach(k => { st[k] = ''; });
       }
-      // 이미지는 비율 유지하며 폭에 맞춤
       if (el.tagName === 'IMG') {
         el.style.maxWidth = '100%';
         el.style.height = 'auto';
       }
-      if (el.tagName === 'TABLE') {
-        el.style.width = '100%';
+    });
+
+    // 3) 표는 폭을 100%로 고정하고, 칸 너비를 균등 배분해 내용이 줄바꿈되게 한다
+    root.querySelectorAll('table').forEach(t => {
+      t.style.width = '100%';
+      t.style.maxWidth = '100%';
+      t.style.tableLayout = 'fixed';
+      t.querySelectorAll('td, th').forEach(c => {
+        c.style.wordBreak = 'break-word';
+        c.style.whiteSpace = 'normal';
+        c.style.overflowWrap = 'anywhere';
+      });
+
+      // 4) 그래도 넘칠 만큼 칸이 많은 표는 표만 좌우로 밀어 볼 수 있게 감싼다
+      if (!t.parentElement || !t.parentElement.classList.contains('table-scroll')) {
+        const box = document.createElement('div');
+        box.className = 'table-scroll';
+        box.style.cssText = 'max-width:100%;overflow-x:auto;';
+        t.parentNode.insertBefore(box, t);
+        box.appendChild(t);
       }
     });
   }
 
   // 툴바 버튼: 이미 붙여넣은 내용에도 적용
+  // 상세보기로 내용을 넣을 때도 같은 정리를 거친다 (이미 등록된 글 대응)
+  function renderDetailBody(html) {
+    const el = document.getElementById('detail-body');
+    if (!el) return;
+    el.innerHTML = html || '';
+    nwStripWidths(el);
+  }
+
   function nwFitWidth() {
     const ed = document.getElementById('nw-editor');
     nwStripWidths(ed);
@@ -4554,7 +4581,7 @@ footer a{color:var(--g2);}
     document.getElementById('detail-badge').innerHTML = `<span style="font-size:11px;padding:3px 9px;border-radius:3px;font-weight:700;background:${badgeBg};color:${badgeColor};">${badgeText}</span>`;
     document.getElementById('detail-title').textContent = n.title;
     document.getElementById('detail-date').textContent = '📅 ' + n.date;
-    document.getElementById('detail-body').innerHTML = n.desc || '<span style="color:var(--text3)">내용이 없습니다.</span>';
+    renderDetailBody(n.desc || '<span style="color:var(--text3)">내용이 없습니다.</span>');
     document.getElementById('section-news').style.display = 'none';
     document.getElementById('section-news-write').style.display = 'none';
     document.getElementById('section-news-detail').style.display = 'block';
