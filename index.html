@@ -467,6 +467,9 @@ footer a{color:var(--g2);}
     <div class="nav-link nav-dropdown">
       커뮤니티 <span class="nav-arrow">▼</span>
       <div class="dropdown-menu">
+        <div class="dropdown-item" onclick="showBoard('humor')">
+          😂 유머게시판
+        </div>
         <div class="dropdown-item" onclick="showBoard('free')">
           📋 리니지클래식 자유게시판
         </div>
@@ -1923,7 +1926,7 @@ footer a{color:var(--g2);}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <!-- ?v= 값을 올리면 브라우저가 캐시를 무시하고 새 파일을 받는다. auth-v2.js를 고칠 때마다 숫자를 올릴 것 -->
-<script>window.ADEN_VERSION='v312';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
+<script>window.ADEN_VERSION='v313';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
 <script src="auth-v2.js?v=312"></script>
 <script>
   // 장비러쉬
@@ -4103,6 +4106,7 @@ footer a{color:var(--g2);}
   function showBoard(boardType) {
     _currentBoard = boardType || 'free';
     const titleMap = {
+      'humor': '😂 유머게시판',
       'free': '📋 리니지클래식 자유게시판',
       'free_m': '📋 리니지M 자유게시판',
       'clan': '⚔ 리니지클래식 혈맹모집 게시판',
@@ -4384,6 +4388,7 @@ footer a{color:var(--g2);}
     const p = _lastBoardPost;
     if (!p) return;
     const titleMap = {
+      'humor': '유머게시판',
       'free': '리니지클래식 자유게시판',
       'free_m': '리니지M 자유게시판',
       'clan': '리니지클래식 혈맹모집 게시판',
@@ -4447,6 +4452,7 @@ footer a{color:var(--g2);}
   function showBoardWrite() {
     if (!auth.currentUser && !isAdmin) { showToast('로그인 후 이용하세요.'); return; }
     const titleMap = {
+      'humor': '유머게시판',
       'free': '리니지클래식 자유게시판',
       'free_m': '리니지M 자유게시판',
       'clan': '리니지클래식 혈맹모집 게시판',
@@ -4467,8 +4473,8 @@ footer a{color:var(--g2);}
     const srvSel = document.getElementById('bw-server');
     const jobSel = document.getElementById('bw-job');
     const extraRow = document.getElementById('bw-extra-row');
-    // play_ 게시판: 분류/서버 숨김
-    const isPlay = _currentBoard.startsWith('play_');
+    // play_ 게시판과 유머게시판: 분류/서버 숨김 (게임과 무관한 글이므로)
+    const isPlay = _currentBoard.startsWith('play_') || _currentBoard === 'humor';
     if (isPlay) {
       catSel.parentElement.style.display = 'none';
       if (srvSel) srvSel.style.display = 'none';
