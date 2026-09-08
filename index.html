@@ -639,7 +639,7 @@ footer a{color:var(--g2);}
               <div id="lc-avatar" style="width:46px;height:46px;border-radius:50%;background:#2a1e08;border:2px solid var(--g);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:var(--g);flex-shrink:0;">?</div>
               <div>
                 <div id="lc-nick" style="font-size:15px;font-weight:700;color:var(--g);">—</div>
-                <div id="lc-server" style="font-size:11px;color:var(--text3);margin-top:2px;">서버 미설정</div>
+                <div id="lc-server" onclick="openProfileModal()" title="클릭하면 게임·서버를 변경할 수 있습니다" style="font-size:11px;color:var(--text3);margin-top:2px;cursor:pointer;">서버 미설정</div>
               </div>
             </div>
             <div style="background:var(--dark);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
@@ -1946,8 +1946,8 @@ footer a{color:var(--g2);}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <!-- ?v= 값을 올리면 브라우저가 캐시를 무시하고 새 파일을 받는다. auth-v2.js를 고칠 때마다 숫자를 올릴 것 -->
-<script>window.ADEN_VERSION='v316';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
-<script src="auth-v2.js?v=316"></script>
+<script>window.ADEN_VERSION='v317';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
+<script src="auth-v2.js?v=317"></script>
 <script>
   // 장비러쉬
   const SIM_SWORD='images/img6.jpg';

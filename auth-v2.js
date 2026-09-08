@@ -102,6 +102,7 @@ async function signUp() {
     localStorage.setItem('aden_nick_' + cred.user.uid, nickname);
     localStorage.setItem('aden_game_' + cred.user.uid, game);
     localStorage.setItem('aden_server_' + cred.user.uid, server);
+    refreshUserUI();
     closeModal('modal-signup');
     showToast('🎉 가입 완료! 환영합니다, ' + nickname + '님!');
   } catch(e) { showError('su-error', firebaseErrorMsg(e.code)); }
@@ -159,9 +160,32 @@ async function saveProfile() {
     localStorage.setItem('aden_nick_' + user.uid, nickname);
     localStorage.setItem('aden_game_' + user.uid, game);
     localStorage.setItem('aden_server_' + user.uid, server);
+    refreshUserUI();
     closeModal('modal-profile');
     showToast('✅ 프로필이 저장되었습니다!');
   } catch(e) { showError('profile-error', e.message); }
+}
+
+// 닉네임/게임/서버를 저장한 뒤 화면(상단 바 + 내 정보 카드)을 즉시 다시 그린다.
+// Firebase 는 계정 생성 순간 바로 로그인 신호를 보내는데, 그때는 아직 서버 정보가
+// 저장되기 전이라 '서버 미설정'으로 그려진다. 저장이 끝난 뒤 한 번 더 그려주면 된다.
+function refreshUserUI() {
+  if (auth.currentUser) _handleAuthState(auth.currentUser);
+}
+
+// 내 정보 카드의 서버 표시를 눌렀을 때 — 게임/서버를 나중에 바꿀 수 있도록
+function openProfileModal() {
+  const user = auth.currentUser;
+  if (!user) return;
+  const nickEl = document.getElementById('profile-nickname');
+  if (nickEl) nickEl.value = localStorage.getItem('aden_nick_' + user.uid) || user.displayName || '';
+  const savedGame = localStorage.getItem('aden_game_' + user.uid) || '';
+  const savedServer = localStorage.getItem('aden_server_' + user.uid) || '';
+  const pg = document.getElementById('profile-game');
+  if (pg) { pg.value = savedGame; fillSignupServers('profile', savedServer); }
+  const err = document.getElementById('profile-error');
+  if (err) err.textContent = '';
+  openModal('modal-profile');
 }
 
 async function signOut() {
