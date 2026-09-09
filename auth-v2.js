@@ -265,11 +265,31 @@ function _handleAuthState(user) {
     // 모달 닫기
     closeAllModals();
 
-    // 지난번에 관리자로 확인된 계정이면 일반 회원 화면을 거치지 않고 바로 관리자로 그린다.
-    // (Firebase 확인 응답을 기다리는 동안 닉네임이 잠깐 바뀌어 보이는 현상 방지)
+    // 지난번에 관리자로 확인된 계정이면 곧바로 관리자로 그린다
     if (localStorage.getItem('aden_admin_uid') === user.uid) {
       adminLogin(true);
       verifyAdminStatus(user);
+      return;
+    }
+
+    // 관리자 여부를 아직 모르는 계정이면, 확인이 끝날 때까지 화면을 그리지 않는다.
+    // 먼저 일반 회원으로 그려버리면 곧이어 관리자로 바뀌면서 닉네임이 깜빡인다.
+    if (!_adminChecked[user.uid]) {
+      console.log('[아덴광장] 관리자 여부 확인 중...');
+      checkIsAdmin(user.uid).then(ok => {
+        _adminChecked[user.uid] = true;
+        if (ok) {
+          localStorage.setItem('aden_admin_uid', user.uid);
+          adminLogin(true);
+          const link = document.getElementById('nav-admin-link');
+          if (link) link.style.display = '';
+        } else {
+          _handleAuthState(user);   // 이제 일반 회원으로 그린다
+        }
+      }).catch(() => {
+        _adminChecked[user.uid] = true;
+        _handleAuthState(user);
+      });
       return;
     }
 
@@ -443,6 +463,9 @@ async function ensureFirebaseSession() {
   }
 }
 
+// 이번 페이지에서 관리자 여부 확인이 끝난 계정 목록
+const _adminChecked = {};
+
 // Firebase 에 관리자 여부를 물어보고 결과를 기억해둔다.
 // 기억해둔 값은 다음 새로고침 때 화면을 곧바로 관리자로 그리는 데 쓰인다.
 async function verifyAdminStatus(user) {
@@ -450,6 +473,7 @@ async function verifyAdminStatus(user) {
   const ok = await checkIsAdmin(user.uid);
   const link = document.getElementById('nav-admin-link');
 
+  _adminChecked[user.uid] = true;
   if (ok) {
     localStorage.setItem('aden_admin_uid', user.uid);
     if (!isAdmin) adminLogin(true);
