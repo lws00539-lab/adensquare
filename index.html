@@ -209,30 +209,37 @@ input,select{font-family:inherit;outline:none;}
 .modal-body{padding:16px;display:flex;flex-direction:column;gap:10px;}
 .modal-label{font-size:11px;font-weight:700;color:var(--text3);margin-bottom:3px;}
 .modal-input{width:100%;padding:8px 11px;border:1px solid var(--border2);border-radius:var(--r);background:var(--dark2);color:var(--text);font-size:13px;transition:border-color .15s;}
-/* 회원가입 창: 좌우에 일러스트를 깔고 가운데(어두운 부분)에 입력폼을 올린다 */
-#modal-signup{
-  background-color:#000;
-  background-image:url('images/signup_bg.png');
+/* 회원가입 창: 창 자체가 일러스트가 되고, 가운데 어두운 부분에 입력폼이 놓인다 */
+#modal-signup .modal{
+  max-width:860px;
+  background-color:#07060a;
+  background-image:url('images/signup_bg.jpg');
   background-size:cover;
   background-position:center;
   background-repeat:no-repeat;
-}
-#modal-signup::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse at center, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.85) 38%, rgba(0,0,0,0.45) 62%, rgba(0,0,0,0.25) 100%);
-  pointer-events:none;
-}
-#modal-signup .modal{
-  position:relative;z-index:1;
-  background:rgba(12,10,6,0.92);
   border:1px solid #6a5426;
-  box-shadow:0 0 40px rgba(0,0,0,0.9), 0 0 0 1px rgba(212,168,75,0.12);
-  backdrop-filter:blur(2px);
+  box-shadow:0 10px 50px rgba(0,0,0,0.8);
+  position:relative;
 }
-/* 일러스트가 잘려 사람만 크게 보이지 않도록, 화면이 좁으면 배경을 끈다 */
-@media (max-width:900px){
-  #modal-signup{background-image:none;}
-  #modal-signup::before{background:rgba(0,0,0,0.7);}
+/* 제목줄은 그림 위에 떠 있도록 투명하게 */
+#modal-signup .modal-head{
+  background:rgba(8,6,4,0.55);
+  border-bottom:1px solid rgba(212,168,75,0.25);
+  position:relative;z-index:2;
+}
+/* 입력폼은 가운데로 모으고, 뒤에 은은한 어둠을 깔아 글씨가 읽히게 */
+#modal-signup .modal-body{
+  position:relative;z-index:2;
+  max-width:330px;
+  margin:0 auto;
+  padding:22px 18px 26px;
+  background:radial-gradient(ellipse 130% 100% at center, rgba(6,5,10,0.90) 0%, rgba(6,5,10,0.80) 60%, rgba(6,5,10,0) 100%);
+}
+/* 화면이 좁으면 그림을 빼고 원래 형태로 (캐릭터 얼굴만 크게 잘려 보이는 것 방지) */
+@media (max-width:760px){
+  #modal-signup .modal{background-image:none;max-width:380px;}
+  #modal-signup .modal-body{max-width:none;background:none;padding:16px;}
+  #modal-signup .modal-head{background:var(--dark);}
 }
 .modal-input:focus{border-color:var(--g);}
 .modal-select{width:100%;padding:8px 11px;border:1px solid var(--border2);border-radius:var(--r);background:var(--dark2);color:var(--text);font-size:13px;}
@@ -2056,9 +2063,9 @@ footer a{color:var(--g2);}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <!-- ?v= 값을 올리면 브라우저가 캐시를 무시하고 새 파일을 받는다. auth-v2.js를 고칠 때마다 숫자를 올릴 것 -->
-<script>window.ADEN_VERSION='v324';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
-<script src="auth-v2.js?v=324"></script>
-<script src="admin.js?v=324"></script>
+<script>window.ADEN_VERSION='v327';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
+<script src="auth-v2.js?v=327"></script>
+<script src="admin.js?v=327"></script>
 <script>
   // 장비러쉬
   const SIM_SWORD='images/img6.jpg';
