@@ -224,6 +224,8 @@ function refreshUserUI() {
 
 // 내 정보 카드의 서버 표시를 눌렀을 때 — 게임/서버를 나중에 바꿀 수 있도록
 function openProfileModal() {
+  // 관리자는 프로필 창 대신 관리자 페이지로 보낸다
+  if (isAdmin) { if (typeof showAdminPage === 'function') showAdminPage(); return; }
   const user = auth.currentUser;
   if (!user) return;
   const nickEl = document.getElementById('profile-nickname');
@@ -476,6 +478,9 @@ function adminLogin() {
 
   const panel = document.getElementById('admin-panel');
   if (panel) panel.style.display = 'block';
+
+  const admLink = document.getElementById('nav-admin-link');
+  if (admLink) admLink.style.display = '';
 
   const chatInput = document.getElementById('chat-input');
   if (chatInput) { chatInput.placeholder = '메시지를 입력하세요...'; chatInput.disabled = false; chatInput.style.opacity='1'; }
