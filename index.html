@@ -239,13 +239,13 @@ input,select{font-family:inherit;outline:none;}
   flex:0 0 auto;
 }
 /* 폼은 그림 가운데 어두운 영역에 올린다 */
+/* 폼을 창 아래쪽에 붙여 스크롤 없이 최대한 내린다 */
 #modal-signup .modal-body{
   position:relative;z-index:2;
   width:320px;
-  margin:0 auto;
-  padding:114px 16px 18px;   /* 위쪽 14px + 100px 만큼 아래로 내림 */
-  flex:1 1 auto;
-  overflow-y:auto;
+  margin:auto auto 0;      /* 위쪽 남는 공간을 전부 밀어내 아래로 정렬 */
+  padding:14px 16px 20px;
+  flex:0 0 auto;
   box-sizing:border-box;
 }
 /* 화면이 좁으면 그림을 빼고 원래 형태로 되돌린다 */
@@ -2081,9 +2081,9 @@ footer a{color:var(--g2);}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <!-- ?v= 값을 올리면 브라우저가 캐시를 무시하고 새 파일을 받는다. auth-v2.js를 고칠 때마다 숫자를 올릴 것 -->
-<script>window.ADEN_VERSION='v333';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
-<script src="auth-v2.js?v=333"></script>
-<script src="admin.js?v=333"></script>
+<script>window.ADEN_VERSION='v334';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
+<script src="auth-v2.js?v=334"></script>
+<script src="admin.js?v=334"></script>
 <script>
   // 장비러쉬
   const SIM_SWORD='images/img6.jpg';
