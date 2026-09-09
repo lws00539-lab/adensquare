@@ -212,9 +212,12 @@ input,select{font-family:inherit;outline:none;}
 /* 회원가입 창: 그림 비율(1678 x 937) 그대로 유지하되, 화면 안에 들어오도록 축소한다.
    창 바깥은 어둡게 남겨서 뒤의 사이트가 비쳐 보이게 한다.
    전체 화면으로 키워도 창은 1250 x 698 이상으로 커지지 않는다. */
+/* 창을 화면 정중앙보다 조금 아래로 내린다 */
+#modal-signup{align-items:flex-start;}
 #modal-signup .modal{
+  margin-top:100px;
   /* 화면 크기와 무관하게 항상 이 크기로 고정 (그림 비율 1678:937 유지) */
-  width:min(1250px, 92vw, calc((100vh - 60px) * 1.791));
+  width:min(1250px, 92vw, calc((100vh - 140px) * 1.791));
   max-width:none;
   aspect-ratio:1678 / 937;
   height:auto;
@@ -247,7 +250,9 @@ input,select{font-family:inherit;outline:none;}
 }
 /* 화면이 좁으면 그림을 빼고 원래 형태로 되돌린다 */
 @media (max-width:820px){
+  #modal-signup{align-items:center;}
   #modal-signup .modal{
+    margin-top:0;
     width:100%;max-width:380px;aspect-ratio:auto;height:auto;
     background-image:none;display:block;
   }
@@ -2076,9 +2081,9 @@ footer a{color:var(--g2);}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <!-- ?v= 값을 올리면 브라우저가 캐시를 무시하고 새 파일을 받는다. auth-v2.js를 고칠 때마다 숫자를 올릴 것 -->
-<script>window.ADEN_VERSION='v331';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
-<script src="auth-v2.js?v=331"></script>
-<script src="admin.js?v=331"></script>
+<script>window.ADEN_VERSION='v332';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
+<script src="auth-v2.js?v=332"></script>
+<script src="admin.js?v=332"></script>
 <script>
   // 장비러쉬
   const SIM_SWORD='images/img6.jpg';
