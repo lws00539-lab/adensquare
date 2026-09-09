@@ -240,7 +240,9 @@ function openProfileModal() {
 }
 
 async function signOut() {
-  if (isAdmin) { adminLogout(); return; }
+  // 관리자도 이제 Firebase 계정이므로, 화면 정리와 함께 실제 세션도 끊는다.
+  // (예전에는 화면만 바꾸고 세션을 남겨서 새로고침하면 다시 로그인 상태가 됐다)
+  if (isAdmin) adminLogout(true);
   await auth.signOut();
   showToast('👋 로그아웃 되었습니다.');
 }
@@ -262,6 +264,14 @@ function _handleAuthState(user) {
   if (user) {
     // 모달 닫기
     closeAllModals();
+
+    // 지난번에 관리자로 확인된 계정이면 일반 회원 화면을 거치지 않고 바로 관리자로 그린다.
+    // (Firebase 확인 응답을 기다리는 동안 닉네임이 잠깐 바뀌어 보이는 현상 방지)
+    if (localStorage.getItem('aden_admin_uid') === user.uid) {
+      adminLogin(true);
+      verifyAdminStatus(user);
+      return;
+    }
 
     // 닉네임: localStorage 캐시 우선 사용
     const cached = localStorage.getItem('aden_nick_' + user.uid);
@@ -307,15 +317,7 @@ function _handleAuthState(user) {
     syncUserProfile(user);
 
     // 관리자 계정이면 관리자 화면으로 전환한다
-    checkIsAdmin(user.uid).then(ok => {
-      const link = document.getElementById('nav-admin-link');
-      if (ok) {
-        if (!isAdmin) adminLogin();
-        if (link) link.style.display = '';
-      } else {
-        if (link) link.style.display = 'none';
-      }
-    });
+    verifyAdminStatus(user);
 
     // 채팅 활성화
     const chatInput = document.getElementById('chat-input');
@@ -441,6 +443,27 @@ async function ensureFirebaseSession() {
   }
 }
 
+// Firebase 에 관리자 여부를 물어보고 결과를 기억해둔다.
+// 기억해둔 값은 다음 새로고침 때 화면을 곧바로 관리자로 그리는 데 쓰인다.
+async function verifyAdminStatus(user) {
+  if (!user) return;
+  const ok = await checkIsAdmin(user.uid);
+  const link = document.getElementById('nav-admin-link');
+
+  if (ok) {
+    localStorage.setItem('aden_admin_uid', user.uid);
+    if (!isAdmin) adminLogin(true);
+    if (link) link.style.display = '';
+  } else {
+    // 관리자가 아닌데 관리자로 그려져 있었다면 되돌린다
+    if (localStorage.getItem('aden_admin_uid') === user.uid) {
+      localStorage.removeItem('aden_admin_uid');
+    }
+    if (isAdmin) { isAdmin = false; _handleAuthState(user); }
+    if (link) link.style.display = 'none';
+  }
+}
+
 // 로그인한 계정이 관리자 목록에 있는지 Firebase 에 물어본다
 async function checkIsAdmin(uid) {
   if (!uid) return false;
@@ -453,7 +476,8 @@ async function checkIsAdmin(uid) {
   }
 }
 
-function adminLogin() {
+// silent=true 이면 로그인 안내 토스트를 띄우지 않는다 (새로고침 복원용)
+function adminLogin(silent) {
   isAdmin = true;
   _cachedNick = ADMIN_NICK;
   localStorage.setItem('aden_admin_session', '1');
@@ -485,11 +509,12 @@ function adminLogin() {
   const chatInput = document.getElementById('chat-input');
   if (chatInput) { chatInput.placeholder = '메시지를 입력하세요...'; chatInput.disabled = false; chatInput.style.opacity='1'; }
 
-  showToast('👑 관리자 메티스로 로그인!');
+  if (!silent) showToast('👑 관리자 메티스로 로그인!');
 }
 
-function adminLogout() {
+function adminLogout(silent) {
   isAdmin = false;
+  localStorage.removeItem('aden_admin_uid');
   const admLink = document.getElementById('nav-admin-link');
   if (admLink) admLink.style.display = 'none';
   _cachedNick = null;
