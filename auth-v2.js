@@ -304,6 +304,17 @@ function _handleAuthState(user) {
     // Firebase 에 저장된 프로필을 읽어와 캐시/화면을 맞춘다 (다른 기기에서 접속한 경우)
     syncUserProfile(user);
 
+    // 관리자 계정이면 관리자 화면으로 전환한다
+    checkIsAdmin(user.uid).then(ok => {
+      const link = document.getElementById('nav-admin-link');
+      if (ok) {
+        if (!isAdmin) adminLogin();
+        if (link) link.style.display = '';
+      } else {
+        if (link) link.style.display = 'none';
+      }
+    });
+
     // 채팅 활성화
     const chatInput = document.getElementById('chat-input');
     if (chatInput) { chatInput.placeholder = '메시지를 입력하세요...'; chatInput.disabled = false; chatInput.style.opacity='1'; }
@@ -330,8 +341,8 @@ function _handleAuthState(user) {
 // ================================================================
 // 관리자
 // ================================================================
-const ADMIN_ID = 'boss';
-const ADMIN_PW = '123456';
+// 관리자 계정은 더 이상 코드에 적지 않는다.
+// Firebase Realtime Database 의 admins/<uid> 값이 true 인 계정만 관리자다.
 const ADMIN_NICK = '메티스';
 
 const SIM_USERS = [
@@ -428,9 +439,20 @@ async function ensureFirebaseSession() {
   }
 }
 
+// 로그인한 계정이 관리자 목록에 있는지 Firebase 에 물어본다
+async function checkIsAdmin(uid) {
+  if (!uid) return false;
+  try {
+    const snap = await firebase.database().ref('admins/' + uid).once('value');
+    return snap.val() === true;
+  } catch (e) {
+    console.error('관리자 확인 실패:', e);
+    return false;
+  }
+}
+
 function adminLogin() {
   isAdmin = true;
-  ensureFirebaseSession();
   _cachedNick = ADMIN_NICK;
   localStorage.setItem('aden_admin_session', '1');
   _cachedAvatarBg = '#1a0a28';
@@ -463,6 +485,8 @@ function adminLogin() {
 
 function adminLogout() {
   isAdmin = false;
+  const admLink = document.getElementById('nav-admin-link');
+  if (admLink) admLink.style.display = 'none';
   _cachedNick = null;
   adminChatNick = null;
   localStorage.removeItem('aden_admin_session');
@@ -685,6 +709,33 @@ function appendChatMessage(msg) {
 }
 
 let _chatSending = false;
+let _lastSentAt = 0;
+let _lastSentText = '';
+let _bannedWordsCache = null;
+
+// 금지어 목록은 자주 바뀌지 않으므로 한 번 읽어 캐시한다
+async function findBannedWord(text) {
+  try {
+    if (_bannedWordsCache === null) {
+      const snap = await firebase.database().ref('config/bannedWords').once('value');
+      const v = snap.val();
+      _bannedWordsCache = Array.isArray(v) ? v : [];
+    }
+    const lower = String(text).toLowerCase();
+    return _bannedWordsCache.find(w => w && lower.includes(String(w).toLowerCase())) || null;
+  } catch (e) {
+    return null;   // 조회 실패 시 채팅을 막지는 않는다
+  }
+}
+
+async function isUserBanned(uid) {
+  try {
+    const snap = await firebase.database().ref('users/' + uid + '/banned').once('value');
+    return snap.val() === true;
+  } catch (e) {
+    return false;
+  }
+}
 
 async function sendChatMessage() {
   if (_chatSending) return;                 // 엔터 연타로 같은 글이 여러 번 올라가는 것 방지
@@ -705,6 +756,23 @@ async function sendChatMessage() {
   const nickname = _cachedNick || (user ? user.displayName : null) || '익명';
   const avatarBg = _cachedAvatarBg || palette[idx].bg;
   const avatarColor = _cachedAvatarColor || palette[idx].color;
+
+  // 차단된 회원인지 확인
+  if (user && await isUserBanned(user.uid)) {
+    showToast('채팅이 제한된 계정입니다.');
+    return;
+  }
+  // 금지어 확인
+  const bad = await findBannedWord(text);
+  if (bad) { showToast(`금지어가 포함되어 있습니다: ${bad}`); return; }
+  // 도배 차단: 3초 이내 재전송 또는 직전과 동일한 내용
+  const now = Date.now();
+  if (!isAdmin) {
+    if (now - _lastSentAt < 3000) { showToast('너무 빠릅니다. 잠시 후 다시 보내주세요.'); return; }
+    if (text === _lastSentText) { showToast('같은 내용을 연속으로 보낼 수 없습니다.'); return; }
+  }
+  _lastSentAt = now;
+  _lastSentText = text;
 
   // 서버 응답을 기다리지 않고 입력창을 먼저 비운다.
   // (기다렸다 비우면 응답이 늦을 때 글자가 남아 중복 전송으로 이어짐)
@@ -814,9 +882,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 로그인 상태 감지는 어떤 경로에서도 반드시 등록되도록 먼저 걸어둔다
   auth.onAuthStateChanged((user) => { _handleAuthState(user); });
 
-  // 관리자 세션 복원 (새로고침 후에도 유지)
-  if (localStorage.getItem('aden_admin_session') === '1') {
-    adminLogin();
+  // 관리자 여부는 Firebase 로그인 후 checkIsAdmin() 이 판정한다.
+  // (예전에는 localStorage 값만 보고 관리자로 인정해서, 값만 넣으면 통과됐다)
+  if (false) {
     initChat();
     const chatInputA = document.getElementById('chat-input');
     const chatSendA = document.getElementById('chat-send-btn');

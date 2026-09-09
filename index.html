@@ -466,6 +466,8 @@ footer a{color:var(--g2);}
 <!-- MENU BAR (moved down from nav for readability) -->
 <div class="menubar">
   <div class="nav-links">
+    <a class="nav-link" id="nav-admin-link" href="#" style="display:none;color:#d4a84b;"
+       onclick="event.preventDefault();showAdminPage()">👑 관리자</a>
     <div class="nav-link nav-dropdown">
       뉴스 <span class="nav-arrow">▼</span>
       <div class="dropdown-menu">
@@ -1172,6 +1174,88 @@ footer a{color:var(--g2);}
 
       <div style="padding:14px 16px;font-size:11px;color:var(--text3);line-height:1.6;border-top:1px solid var(--border);">
         ※ 외부 거래소(아이템베이·바로템·아이템매니아) 최저 판매가 기준, 30분~1시간 단위 자동 갱신. 표시 가격은 참고용이며 실제 거래가와 다를 수 있습니다.
+      </div>
+    </div>
+  </div>
+
+  <div id="section-admin" style="display:none;min-width:0;max-width:100%;">
+    <div style="background:var(--dark3);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;">
+      <div style="padding:12px 16px;background:linear-gradient(180deg,#2a1a08,#1a1008);border-bottom:1px solid var(--border);">
+        <div style="font-size:18px;font-weight:700;color:#d4a84b;">👑 관리자 페이지</div>
+      </div>
+
+      <div style="padding:10px 16px;border-bottom:1px solid var(--border);display:flex;gap:6px;flex-wrap:wrap;">
+        <button id="adm-tab-stats"   onclick="setAdminTab('stats')"   style="padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--dark);color:var(--text3);font-size:12px;cursor:pointer;">📊 사이트 현황</button>
+        <button id="adm-tab-members" onclick="setAdminTab('members')" style="padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--dark);color:var(--text3);font-size:12px;cursor:pointer;">👥 회원 관리</button>
+        <button id="adm-tab-posts"   onclick="setAdminTab('posts')"   style="padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--dark);color:var(--text3);font-size:12px;cursor:pointer;">📝 게시글 관리</button>
+        <button id="adm-tab-chat"    onclick="setAdminTab('chat')"    style="padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--dark);color:var(--text3);font-size:12px;cursor:pointer;">💬 채팅 관리</button>
+      </div>
+
+      <div id="adm-pane-stats" style="display:none;">
+        <div id="adm-stats-body"></div>
+      </div>
+
+      <div id="adm-pane-members" style="display:none;">
+        <div style="padding:10px 16px;border-bottom:1px solid var(--border);">
+          <input id="adm-member-search" type="text" placeholder="닉네임 또는 서버로 검색" onkeyup="renderAdminMembers()"
+                 style="padding:7px 12px;background:#0a0812;border:1px solid #2e2a44;border-radius:4px;color:#e8dcc8;font-size:12px;width:220px;">
+        </div>
+        <div id="adm-members-body"></div>
+      </div>
+
+      <div id="adm-pane-posts" style="display:none;">
+        <div style="padding:10px 16px;border-bottom:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+          <select id="adm-post-board" onchange="renderAdminPosts()"
+                  style="padding:7px 10px;background:#0a0812;border:1px solid #2e2a44;border-radius:4px;color:#e8dcc8;font-size:12px;">
+            <option value="">전체 게시판</option>
+            <option value="humor">유머게시판</option>
+            <option value="free">리니지클래식 자유게시판</option>
+            <option value="free_m">리니지M 자유게시판</option>
+            <option value="clan">리니지클래식 혈맹모집</option>
+            <option value="clan_m">리니지M 혈맹모집</option>
+            <option value="brag">리니지클래식 자랑하기</option>
+            <option value="brag_m">리니지M 자랑하기</option>
+          </select>
+          <input id="adm-post-search" type="text" placeholder="제목 또는 글쓴이로 검색" onkeyup="renderAdminPosts()"
+                 style="padding:7px 12px;background:#0a0812;border:1px solid #2e2a44;border-radius:4px;color:#e8dcc8;font-size:12px;width:220px;">
+        </div>
+        <div id="adm-posts-body"></div>
+      </div>
+
+      <div id="adm-pane-chat" style="display:none;">
+        <div style="padding:16px;">
+          <div style="font-size:13px;font-weight:700;color:var(--g);margin-bottom:6px;">금지어 설정</div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:8px;line-height:1.6;">
+            한 줄에 하나씩 입력하세요. 금지어가 포함된 채팅은 전송되지 않습니다.
+          </div>
+          <textarea id="adm-banned-words" rows="8" placeholder="한 줄에 하나씩 입력"
+                    style="width:100%;padding:10px;background:#0a0812;border:1px solid #2e2a44;border-radius:4px;color:#e8dcc8;font-size:13px;box-sizing:border-box;resize:vertical;"></textarea>
+          <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px;">
+            <button onclick="saveAdminBannedWords()"
+              style="padding:8px 16px;border:1px solid #5a4a22;background:#2a1e08;color:#d4a84b;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">금지어 저장</button>
+          </div>
+
+          <div style="height:1px;background:var(--border);margin:18px 0;"></div>
+
+          <div style="font-size:13px;font-weight:700;color:var(--g);margin-bottom:6px;">도배 차단</div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:10px;line-height:1.6;">
+            같은 사람이 3초 안에 다시 보내거나, 직전과 똑같은 내용을 반복하면 자동으로 막습니다. 항상 켜져 있습니다.
+          </div>
+
+          <div style="height:1px;background:var(--border);margin:18px 0;"></div>
+
+          <div style="font-size:13px;font-weight:700;color:var(--g);margin-bottom:6px;">자동채팅</div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:10px;line-height:1.6;">
+            왼쪽 관리자 패널의 버튼으로 켜고 끕니다. 브라우저 창이 열려 있는 동안만 동작합니다.
+          </div>
+
+          <div style="display:flex;gap:8px;">
+            <button onclick="toggleSimChat()"
+              style="padding:8px 16px;border:1px solid #5a4a22;background:#2a1e08;color:#d4a84b;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">자동채팅 켜기/끄기</button>
+            <button onclick="admClearAllChat()"
+              style="padding:8px 16px;border:1px solid #8a3a18;background:#2a0808;color:#e07070;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">🗑 채팅 전체 삭제</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -1946,8 +2030,9 @@ footer a{color:var(--g2);}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <!-- ?v= 값을 올리면 브라우저가 캐시를 무시하고 새 파일을 받는다. auth-v2.js를 고칠 때마다 숫자를 올릴 것 -->
-<script>window.ADEN_VERSION='v319';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
-<script src="auth-v2.js?v=319"></script>
+<script>window.ADEN_VERSION='v320';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
+<script src="auth-v2.js?v=320"></script>
+<script src="admin.js?v=320"></script>
 <script>
   // 장비러쉬
   const SIM_SWORD='images/img6.jpg';
@@ -2422,12 +2507,13 @@ footer a{color:var(--g2);}
     const err=document.getElementById('li-error');
     if(!email||!pw){err.textContent='이메일과 비밀번호를 입력해주세요.';return;}
     err.textContent='';
-    // 관리자 체크 (boss / 123456)
-    if(email==='boss'&&pw==='123456'){
-      if(typeof adminLogin==='function') adminLogin();
-      return;
+    // 관리자 여부는 로그인 후 Firebase 의 admins 목록으로 판정한다.
+    // (예전의 boss/123456 하드코딩은 소스만 열면 노출되므로 제거함)
+    try{
+      const cred = await auth.signInWithEmailAndPassword(email,pw);
+      if (typeof _handleAuthState === 'function') _handleAuthState(cred.user);
+      showToast('✅ 로그인 되었습니다!');
     }
-    try{await auth.signInWithEmailAndPassword(email,pw);showToast('✅ 로그인 되었습니다!');}
     catch(e){err.textContent=firebaseErrorMsg(e.code);}
   }
   document.getElementById('li-pw')?.addEventListener('keydown',e=>{if(e.key==='Enter')loginInline();});
