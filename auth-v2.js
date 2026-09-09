@@ -115,8 +115,9 @@ async function signIn() {
   if (!email || !pw) { showError('si-error', '이메일과 비밀번호를 입력해주세요.'); return; }
   try {
     await _persistenceReady;
-    await auth.signInWithEmailAndPassword(email, pw);
+    const cred = await auth.signInWithEmailAndPassword(email, pw);
     closeAllModals();
+    _handleAuthState(cred.user);   // 알림을 기다리지 않고 바로 화면 갱신
     showToast('✅ 로그인 되었습니다!');
   } catch(e) { showError('si-error', firebaseErrorMsg(e.code)); }
 }
@@ -128,6 +129,9 @@ async function signInGoogle() {
     const cred = await auth.signInWithPopup(provider);
     const user = cred.user;
     closeAllModals();
+    // 상태 변경 알림만 믿지 않고 여기서 직접 화면을 그린다.
+    // (익명 세션 전환 등과 타이밍이 겹치면 알림이 화면 갱신으로 이어지지 않을 수 있음)
+    _handleAuthState(user);
     // 신규 유저면 프로필 모달
     const isNew = cred.additionalUserInfo && cred.additionalUserInfo.isNewUser;
     if (isNew) {
@@ -246,7 +250,12 @@ async function signOut() {
 function _handleAuthState(user) {
   const navRight = document.getElementById('nav-right');
   // 익명 로그인은 채팅 권한 확보용일 뿐이므로 UI를 로그인 상태로 바꾸지 않는다
-  if (user && user.isAnonymous) return;
+  // 익명 로그인은 채팅 권한 확보용일 뿐이므로 UI를 로그인 상태로 바꾸지 않는다.
+  // 단, 실제 로그인 사용자가 이미 있으면 그 사용자로 다시 그린다.
+  if (user && user.isAnonymous) {
+    const real = auth.currentUser;
+    if (real && !real.isAnonymous) { user = real; } else { return; }
+  }
   if (isAdmin) return;
   if (user) {
     // 모달 닫기
@@ -802,6 +811,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   // persistence 설정이 완료된 후 onAuthStateChanged 등록 → 로그인 유지 보장
   await _persistenceReady;
 
+  // 로그인 상태 감지는 어떤 경로에서도 반드시 등록되도록 먼저 걸어둔다
+  auth.onAuthStateChanged((user) => { _handleAuthState(user); });
+
   // 관리자 세션 복원 (새로고침 후에도 유지)
   if (localStorage.getItem('aden_admin_session') === '1') {
     adminLogin();
@@ -819,11 +831,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   const chatSend = document.getElementById('chat-send-btn');
   if (chatInput) chatInput.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChatMessage(); } });
   if (chatSend) chatSend.onclick = sendChatMessage;
-
-  // onAuthStateChanged를 DOMContentLoaded 내부로 이동 → DOM 준비 후 UI 업데이트
-  auth.onAuthStateChanged((user) => {
-    _handleAuthState(user);
-  });
 
   initChat();
   restoreSimChat();
