@@ -238,7 +238,7 @@ input,select{font-family:inherit;outline:none;}
   width:460px;
   max-width:none;
   height:auto;
-  margin:0 0 8px -66px;   /* (460 - 328) / 2 = 66 : 폼 콘텐츠 기준 정확히 가운데 */
+  margin:0 0 7px -76px;   /* (460 - 308) / 2 = 76 : 폼 콘텐츠 기준 정확히 가운데 */
   filter:drop-shadow(0 4px 10px rgba(0,0,0,0.85));
   pointer-events:none;
 }
@@ -270,24 +270,23 @@ input,select{font-family:inherit;outline:none;}
   transform:translateY(-50%);
 }
 /* 폼은 그림 가운데 어두운 영역에 올린다 */
-/* 회원가입 폼: 아래 여유가 남으므로 글씨와 입력칸을 키워 잘 읽히게 한다 */
-#modal-signup .modal-body{gap:9px;}
+/* 회원가입 폼: 창 안에 전부 들어가면서도 읽기 편한 크기로 (v338과 v339의 중간) */
+#modal-signup .modal-body{gap:6px;}
 #modal-signup .modal-label{
-  font-size:13px;
-  color:#e8dcc8;                                  /* 회색 -> 밝은 색으로 */
-  margin-bottom:4px;
+  font-size:11px;
+  color:#e8dcc8;                                  /* 회색 -> 밝은 색 (시인성) */
+  margin-bottom:2px;
   text-shadow:0 1px 3px rgba(0,0,0,0.9);
 }
-#modal-signup .modal-input{padding:10px 12px;font-size:14px;}
-#modal-signup .modal-input::placeholder{font-size:13px;}
-#modal-signup .modal-btn{padding:11px;font-size:15px;}
-#modal-signup .modal-divider{font-size:11px;gap:8px;}
-#modal-signup .modal-footer{font-size:12px;}
+#modal-signup .modal-input{padding:7px 11px;font-size:13px;}
+#modal-signup .modal-btn{padding:8px;font-size:13px;}
+#modal-signup .modal-divider{font-size:10px;gap:7px;}
+#modal-signup .modal-footer{font-size:11px;}
 
 /* 폼을 창 위쪽에 붙여 최대한 올린다 */
 #modal-signup .modal-body{
   position:relative;z-index:2;
-  width:360px;
+  width:340px;
   margin:0 auto auto;      /* 위쪽 정렬 */
   padding:4px 16px 12px;
   flex:0 0 auto;
@@ -2127,9 +2126,9 @@ footer a{color:var(--g2);}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <!-- ?v= 값을 올리면 브라우저가 캐시를 무시하고 새 파일을 받는다. auth-v2.js를 고칠 때마다 숫자를 올릴 것 -->
-<script>window.ADEN_VERSION='v339';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
-<script src="auth-v2.js?v=339"></script>
-<script src="admin.js?v=339"></script>
+<script>window.ADEN_VERSION='v340';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
+<script src="auth-v2.js?v=340"></script>
+<script src="admin.js?v=340"></script>
 <script>
   // 장비러쉬
   const SIM_SWORD='images/img6.jpg';
