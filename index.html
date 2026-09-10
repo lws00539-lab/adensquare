@@ -238,7 +238,7 @@ input,select{font-family:inherit;outline:none;}
   width:460px;
   max-width:none;
   height:auto;
-  margin:0 0 12px -70px;
+  margin:0 0 10px -70px;
   filter:drop-shadow(0 4px 10px rgba(0,0,0,0.85));
   pointer-events:none;
 }
@@ -250,10 +250,15 @@ input,select{font-family:inherit;outline:none;}
 #modal-signup .modal-head{
   background:none;
   border-bottom:none;
-  position:relative;z-index:2;
+  position:absolute;      /* 자리를 차지하지 않게 띄운다 */
+  top:0;left:0;right:0;
+  padding:8px 12px;
+  z-index:3;
   flex:0 0 auto;
-  justify-content:center;
+  justify-content:flex-end;
+  pointer-events:none;    /* 그림 위 클릭을 막지 않게 */
 }
+#modal-signup .modal-close{pointer-events:auto;}
 #modal-signup .modal-head h2{
   text-shadow:0 2px 6px rgba(0,0,0,0.9);
 }
@@ -265,12 +270,12 @@ input,select{font-family:inherit;outline:none;}
   transform:translateY(-50%);
 }
 /* 폼은 그림 가운데 어두운 영역에 올린다 */
-/* 폼을 창 아래쪽에 붙여 스크롤 없이 최대한 내린다 */
+/* 폼을 창 위쪽에 붙여 최대한 올린다 */
 #modal-signup .modal-body{
   position:relative;z-index:2;
   width:320px;
-  margin:auto auto 0;      /* 위쪽 남는 공간을 전부 밀어내 아래로 정렬 */
-  padding:14px 16px 20px;
+  margin:0 auto auto;      /* 위쪽 정렬 */
+  padding:6px 16px 20px;
   flex:0 0 auto;
   box-sizing:border-box;
 }
@@ -2108,9 +2113,9 @@ footer a{color:var(--g2);}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <!-- ?v= 값을 올리면 브라우저가 캐시를 무시하고 새 파일을 받는다. auth-v2.js를 고칠 때마다 숫자를 올릴 것 -->
-<script>window.ADEN_VERSION='v336';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
-<script src="auth-v2.js?v=336"></script>
-<script src="admin.js?v=336"></script>
+<script>window.ADEN_VERSION='v337';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
+<script src="auth-v2.js?v=337"></script>
+<script src="admin.js?v=337"></script>
 <script>
   // 장비러쉬
   const SIM_SWORD='images/img6.jpg';
