@@ -274,7 +274,19 @@ input,select{font-family:inherit;outline:none;}
 #modal-login .modal-input{padding:7px 11px;font-size:13px;}
 #modal-login .modal-btn{padding:8px;font-size:13px;}
 #modal-login .modal-divider{font-size:10px;gap:7px;}
-#modal-login .modal-footer{font-size:11px;}
+/* 하단 안내문: 어두운 그림 위에서도 잘 보이도록 크게, 밝게 */
+#modal-login .modal-footer{
+  font-size:14px;
+  color:#e8dcc8;
+  margin-top:4px;
+  text-shadow:0 1px 4px rgba(0,0,0,0.95);
+}
+#modal-login .modal-footer a{
+  color:#f5cf6b;
+  font-weight:700;
+  text-decoration:underline;
+  text-underline-offset:2px;
+}
 #login-title-img{
   display:block;
   width:400px;
@@ -344,7 +356,18 @@ input,select{font-family:inherit;outline:none;}
 #modal-signup .modal-input{padding:7px 11px;font-size:13px;}
 #modal-signup .modal-btn{padding:8px;font-size:13px;}
 #modal-signup .modal-divider{font-size:10px;gap:7px;}
-#modal-signup .modal-footer{font-size:11px;}
+#modal-signup .modal-footer{
+  font-size:14px;
+  color:#e8dcc8;
+  margin-top:4px;
+  text-shadow:0 1px 4px rgba(0,0,0,0.95);
+}
+#modal-signup .modal-footer a{
+  color:#f5cf6b;
+  font-weight:700;
+  text-decoration:underline;
+  text-underline-offset:2px;
+}
 
 /* 폼을 창 위쪽에 붙여 최대한 올린다 */
 #modal-signup .modal-body{
@@ -2190,9 +2213,9 @@ footer a{color:var(--g2);}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <!-- ?v= 값을 올리면 브라우저가 캐시를 무시하고 새 파일을 받는다. auth-v2.js를 고칠 때마다 숫자를 올릴 것 -->
-<script>window.ADEN_VERSION='v345';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
-<script src="auth-v2.js?v=345"></script>
-<script src="admin.js?v=345"></script>
+<script>window.ADEN_VERSION='v346';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
+<script src="auth-v2.js?v=346"></script>
+<script src="admin.js?v=346"></script>
 <script>
   // 장비러쉬
   const SIM_SWORD='images/img6.jpg';
