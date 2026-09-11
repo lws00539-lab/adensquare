@@ -23,10 +23,11 @@ body{background:var(--dark2);color:var(--text);font-family:'Noto Sans KR',sans-s
    스크롤을 내리면 세로로 긴 그림의 다른 부분이 차례로 드러난다. */
 .side-bg{
   position:absolute;          /* fixed 가 아니라 absolute — 같이 스크롤됨 */
-  top:0;bottom:0;
+  top:190px;                  /* 헤더 배너 아래부터 시작 (그림 첫 장면이 가려지지 않게) */
+  bottom:0;
   width:calc((100vw - 1400px)/2);
   max-width:420px;
-  background-image:url('images/side_bg.jpg?v=349');
+  background-image:url('images/side_bg.jpg?v=350');
   background-repeat:repeat-y;      /* 페이지가 그림보다 길면 이어서 반복 */
   background-position:center top;
   background-size:100% auto;       /* 가로는 칸에 맞추고 세로는 비율 유지 */
@@ -34,11 +35,6 @@ body{background:var(--dark2);color:var(--text);font-family:'Noto Sans KR',sans-s
   pointer-events:none;
 }
 .side-bg-left{left:0;}
-/* 본문과 맞닿는 안쪽 가장자리를 어둡게 흐려 자연스럽게 이어지게 */
-.side-bg-left::after{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(to right, rgba(10,8,6,0.30) 0%, rgba(10,8,6,0.50) 65%, rgba(10,8,6,0.92) 100%);
-}
 @media(max-width:1550px){.side-bg{display:none;}}
 
 .side-deco{position:fixed;top:190px;left:0;width:calc((100vw - 1400px)/2);max-width:420px;height:calc(100vh - 190px);background:url('images/side_left.png') left top no-repeat;background-size:auto calc(100vh - 190px);z-index:10;pointer-events:none;overflow:hidden;}
@@ -2236,9 +2232,9 @@ footer a{color:var(--g2);}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <!-- ?v= 값을 올리면 브라우저가 캐시를 무시하고 새 파일을 받는다. auth-v2.js를 고칠 때마다 숫자를 올릴 것 -->
-<script>window.ADEN_VERSION='v349';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
-<script src="auth-v2.js?v=349"></script>
-<script src="admin.js?v=349"></script>
+<script>window.ADEN_VERSION='v350';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
+<script src="auth-v2.js?v=350"></script>
+<script src="admin.js?v=350"></script>
 <script>
   // 장비러쉬
   const SIM_SWORD='images/img6.jpg';
