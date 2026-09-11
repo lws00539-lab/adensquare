@@ -35,6 +35,12 @@ body{background:var(--dark2);color:var(--text);font-family:'Noto Sans KR',sans-s
   pointer-events:none;
 }
 .side-bg-left{left:0;}
+/* 오른쪽: 인물이 오른쪽에 몰려 있으므로 오른쪽을 기준으로 붙여 잘림을 최소화 */
+.side-bg-right{
+  right:0;
+  background-image:url('images/side_bg_right.jpg?v=353');
+  background-position:right top;
+}
 @media(max-width:1550px){.side-bg{display:none;}}
 
 .side-deco{position:fixed;top:190px;left:0;width:calc((100vw - 1400px)/2);max-width:420px;height:calc(100vh - 190px);background:url('images/side_left.png') left top no-repeat;background-size:auto calc(100vh - 190px);z-index:10;pointer-events:none;overflow:hidden;}
@@ -575,6 +581,7 @@ footer a{color:var(--g2);}
 </head>
 <body>
 <div class="side-bg side-bg-left"></div>
+<div class="side-bg side-bg-right"></div>
 <div class="side-deco"></div>
 <div class="side-deco-right"></div>
 
@@ -2232,9 +2239,9 @@ footer a{color:var(--g2);}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <!-- ?v= 값을 올리면 브라우저가 캐시를 무시하고 새 파일을 받는다. auth-v2.js를 고칠 때마다 숫자를 올릴 것 -->
-<script>window.ADEN_VERSION='v352';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
-<script src="auth-v2.js?v=352"></script>
-<script src="admin.js?v=352"></script>
+<script>window.ADEN_VERSION='v353';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
+<script src="auth-v2.js?v=353"></script>
+<script src="admin.js?v=353"></script>
 <script>
   // 장비러쉬
   const SIM_SWORD='images/img6.jpg';
