@@ -19,6 +19,19 @@
 }
 html{scroll-behavior:smooth;}
 body{background:var(--dark2);color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:14px;line-height:1.6;}
+/* 좌우 여백 배경: 스크롤해도 항상 채워져 있도록 화면 전체 높이에 고정 */
+.side-bg{position:fixed;top:0;height:100vh;width:calc((100vw - 1400px)/2);max-width:420px;
+  background-image:url('images/side_bg.jpg?v=347');background-repeat:no-repeat;
+  background-position:center top;background-size:cover;
+  z-index:1;pointer-events:none;}
+.side-bg-left{left:0;}
+.side-bg-right{right:0;transform:scaleX(-1);}   /* 오른쪽은 좌우 반전해서 대칭이 되게 */
+/* 안쪽 본문과 맞닿는 가장자리를 어둡게 흐려서 자연스럽게 이어지게 */
+.side-bg::after{content:'';position:absolute;inset:0;}
+.side-bg-left::after{background:linear-gradient(to right, rgba(10,8,6,0.35) 0%, rgba(10,8,6,0.55) 70%, rgba(10,8,6,0.92) 100%);}
+.side-bg-right::after{background:linear-gradient(to right, rgba(10,8,6,0.35) 0%, rgba(10,8,6,0.55) 70%, rgba(10,8,6,0.92) 100%);}
+@media(max-width:1550px){.side-bg{display:none;}}
+
 .side-deco{position:fixed;top:190px;left:0;width:calc((100vw - 1400px)/2);max-width:420px;height:calc(100vh - 190px);background:url('images/side_left.png') left top no-repeat;background-size:auto calc(100vh - 190px);z-index:10;pointer-events:none;overflow:hidden;}
 .side-deco-right{position:fixed;top:190px;right:0;width:calc((100vw - 1400px)/2);max-width:420px;height:calc(100vh - 190px);background-image:url('images/side_right_v5.png');background-repeat:no-repeat;background-position-x:50%;background-position-y:calc((100vh - 190px) * -0.038);background-size:auto calc(100vh - 190px);z-index:10;pointer-events:none;overflow:hidden;}
 @media(max-width:1550px){.side-deco{display:none;}.side-deco-right{display:none;}}
@@ -556,6 +569,8 @@ footer a{color:var(--g2);}
 </style>
 </head>
 <body>
+<div class="side-bg side-bg-left"></div>
+<div class="side-bg side-bg-right"></div>
 <div class="side-deco"></div>
 <div class="side-deco-right"></div>
 
@@ -2213,9 +2228,9 @@ footer a{color:var(--g2);}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <!-- ?v= 값을 올리면 브라우저가 캐시를 무시하고 새 파일을 받는다. auth-v2.js를 고칠 때마다 숫자를 올릴 것 -->
-<script>window.ADEN_VERSION='v346';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
-<script src="auth-v2.js?v=346"></script>
-<script src="admin.js?v=346"></script>
+<script>window.ADEN_VERSION='v347';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
+<script src="auth-v2.js?v=347"></script>
+<script src="admin.js?v=347"></script>
 <script>
   // 장비러쉬
   const SIM_SWORD='images/img6.jpg';
