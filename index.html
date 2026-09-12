@@ -29,10 +29,10 @@ body{background:var(--dark2);color:var(--text);font-family:'Noto Sans KR',sans-s
   bottom:0;
   width:calc((100vw - 1400px)/2);
   max-width:420px;
-  background-image:url('images/side_bg.jpg?v=360');
+  background-image:url('images/side_bg.jpg?v=361');
   background-repeat:repeat-y;      /* 요정 그림 + 마녀 그림이 번갈아 나온다 */
   background-position:left top;    /* 왼쪽(인물 쪽) 기준 */
-  background-size:auto 50%;        /* 두 장을 이어붙였으므로 50% 로 해야 이전과 같은 크기 */
+  background-size:auto 65%;        /* 인물이 크게 보이도록 확대 */
   z-index:1;
   pointer-events:none;
 }
@@ -2242,9 +2242,9 @@ footer a{color:var(--g2);}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <!-- ?v= 값을 올리면 브라우저가 캐시를 무시하고 새 파일을 받는다. auth-v2.js를 고칠 때마다 숫자를 올릴 것 -->
-<script>window.ADEN_VERSION='v360';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
-<script src="auth-v2.js?v=360"></script>
-<script src="admin.js?v=360"></script>
+<script>window.ADEN_VERSION='v361';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
+<script src="auth-v2.js?v=361"></script>
+<script src="admin.js?v=361"></script>
 <script>
   // 장비러쉬
   const SIM_SWORD='images/img6.jpg';
