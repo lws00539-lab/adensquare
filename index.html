@@ -25,7 +25,8 @@ body{background:var(--dark2);color:var(--text);font-family:'Noto Sans KR',sans-s
    휠을 내리면 그림의 다른 부분이 차례로 드러난다. */
 .side-bg{
   position:absolute;               /* fixed 가 아니라 absolute — 같이 스크롤됨 */
-  top:190px;                       /* 헤더 배너 아래부터 (첫 장면이 가려지지 않게) */
+  top:270px;                       /* 헤더에 가려지지 않도록 충분히 아래에서 시작
+                                      (190px 이면 첫 장 인물 머리가 헤더에 덮인다) */
   bottom:0;
   width:calc((100vw - 1400px)/2);
   max-width:420px;
@@ -49,10 +50,7 @@ body{background:var(--dark2);color:var(--text);font-family:'Noto Sans KR',sans-s
 .side-deco{position:fixed;top:190px;left:0;width:calc((100vw - 1400px)/2);max-width:420px;height:calc(100vh - 190px);background:url('images/side_left.png') left top no-repeat;background-size:auto calc(100vh - 190px);z-index:10;pointer-events:none;overflow:hidden;}
 .side-deco-right{position:fixed;top:190px;right:0;width:calc((100vw - 1400px)/2);max-width:420px;height:calc(100vh - 190px);background-image:url('images/side_right_v5.png');background-repeat:no-repeat;background-position-x:50%;background-position-y:calc((100vh - 190px) * -0.038);background-size:auto calc(100vh - 190px);z-index:10;pointer-events:none;overflow:hidden;}
 @media(max-width:1550px){.side-deco{display:none;}.side-deco-right{display:none;}}
-/* 예전 좌우 장식(돌벽·깃발·기사)은 새 배경(.side-bg)이 대신하므로 숨긴다.
-   화면 고정 + z-index 10 이라 새 배경 위를 덮어 인물 머리가 가려졌음.
-   되살리려면 아래 한 줄만 지우면 된다. */
-.side-deco, .side-deco-right{display:none !important;}
+/* 예전 좌우 장식(돌벽·깃발·기사)은 그대로 유지 */
 a{text-decoration:none;color:inherit;}
 button{font-family:inherit;cursor:pointer;}
 input,select{font-family:inherit;outline:none;}
@@ -2246,9 +2244,9 @@ footer a{color:var(--g2);}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <!-- ?v= 값을 올리면 브라우저가 캐시를 무시하고 새 파일을 받는다. auth-v2.js를 고칠 때마다 숫자를 올릴 것 -->
-<script>window.ADEN_VERSION='v367';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
-<script src="auth-v2.js?v=367"></script>
-<script src="admin.js?v=367"></script>
+<script>window.ADEN_VERSION='v368';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
+<script src="auth-v2.js?v=368"></script>
+<script src="admin.js?v=368"></script>
 <script>
   // 장비러쉬
   const SIM_SWORD='images/img6.jpg';
