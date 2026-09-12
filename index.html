@@ -21,16 +21,18 @@ html{scroll-behavior:smooth;}
 body{background:var(--dark2);color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:14px;line-height:1.6;position:relative;}
 /* 좌측 여백 배경: 화면에 고정하지 않고 문서와 함께 흘러가게 한다.
    스크롤을 내리면 세로로 긴 그림의 다른 부분이 차례로 드러난다. */
+/* 좌우 여백 배경: 문서에 붙여서 스크롤을 따라 함께 흐른다.
+   휠을 내리면 그림의 다른 부분이 차례로 드러난다. */
 .side-bg{
-  position:absolute;          /* fixed 가 아니라 absolute — 같이 스크롤됨 */
-  top:190px;                  /* 헤더 배너 아래부터 시작 (그림 첫 장면이 가려지지 않게) */
+  position:absolute;               /* fixed 가 아니라 absolute — 같이 스크롤됨 */
+  top:190px;                       /* 헤더 배너 아래부터 (첫 장면이 가려지지 않게) */
   bottom:0;
   width:calc((100vw - 1400px)/2);
   max-width:420px;
-  background-image:url('images/side_bg.jpg?v=355');
-  background-repeat:repeat-y;      /* 아래로 이어서 반복 */
-  background-position:left top;    /* 왼쪽(인물 쪽) 기준 — 잘리는 쪽은 오른쪽 풍경 */
-  background-size:auto 25%;        /* 그림이 1.5:1 비율이라 25% 로 잡아야 인물이 보인다 */
+  background-image:url('images/side_bg.jpg?v=357');
+  background-repeat:repeat-y;      /* 페이지가 그림보다 길면 이어서 반복 */
+  background-position:left top;    /* 왼쪽(인물 쪽) 기준 */
+  background-size:auto 25%;        /* 인물 얼굴이 보이는 크기 */
   z-index:1;
   pointer-events:none;
 }
@@ -39,8 +41,8 @@ body{background:var(--dark2);color:var(--text);font-family:'Noto Sans KR',sans-s
 .side-bg-right{
   right:0;
   background-image:url('images/side_bg_right.jpg?v=353');
-  background-position:right top;
-  background-size:auto 25%;   /* 왼쪽 그림보다 덜 길어서(1.5:1) 더 작게 잡아야 잘림이 줄어든다 */
+  background-position:right top;   /* 인물이 오른쪽에 몰려 있어 오른쪽 기준 */
+  background-size:auto 25%;
 }
 @media(max-width:1550px){.side-bg{display:none;}}
 
@@ -2240,9 +2242,9 @@ footer a{color:var(--g2);}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <!-- ?v= 값을 올리면 브라우저가 캐시를 무시하고 새 파일을 받는다. auth-v2.js를 고칠 때마다 숫자를 올릴 것 -->
-<script>window.ADEN_VERSION='v355';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
-<script src="auth-v2.js?v=355"></script>
-<script src="admin.js?v=355"></script>
+<script>window.ADEN_VERSION='v357';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
+<script src="auth-v2.js?v=357"></script>
+<script src="admin.js?v=357"></script>
 <script>
   // 장비러쉬
   const SIM_SWORD='images/img6.jpg';
