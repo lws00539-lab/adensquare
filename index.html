@@ -40,9 +40,9 @@ body{background:var(--dark2);color:var(--text);font-family:'Noto Sans KR',sans-s
 /* 오른쪽: 인물이 오른쪽에 몰려 있으므로 오른쪽을 기준으로 붙여 잘림을 최소화 */
 .side-bg-right{
   right:0;
-  background-image:url('images/side_bg_right.jpg?v=365');
+  background-image:url('images/side_bg_right.jpg?v=366');
   background-position:right top;   /* 인물이 오른쪽에 몰려 있어 오른쪽 기준 */
-  background-size:auto 38%;        /* 오크 머리 뒤까지 잘라낸 덕에 더 크게 확대 */
+  background-size:auto 24%;        /* 활과 도끼까지 잘리지 않고 전부 들어오는 크기 */
 }
 @media(max-width:1550px){.side-bg{display:none;}}
 
@@ -2242,9 +2242,9 @@ footer a{color:var(--g2);}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <!-- ?v= 값을 올리면 브라우저가 캐시를 무시하고 새 파일을 받는다. auth-v2.js를 고칠 때마다 숫자를 올릴 것 -->
-<script>window.ADEN_VERSION='v365';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
-<script src="auth-v2.js?v=365"></script>
-<script src="admin.js?v=365"></script>
+<script>window.ADEN_VERSION='v366';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
+<script src="auth-v2.js?v=366"></script>
+<script src="admin.js?v=366"></script>
 <script>
   // 장비러쉬
   const SIM_SWORD='images/img6.jpg';
