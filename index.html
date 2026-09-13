@@ -44,9 +44,8 @@ body{background:var(--dark2);color:var(--text);font-family:'Noto Sans KR',sans-s
 .side-bg-right{
   right:0;
   background-image:url('images/side_bg_right.jpg?v=374');
-  /* 헤더(190px) + 여유(150px) 만큼 그림을 아래로 민다.
-     위쪽 빈자리는 repeat-y 가 이전 장의 끝부분으로 채우므로 가짜 픽셀이 필요 없다. */
-  background-position:right 340px;
+  /* 그림 맨 위(켄타우로스)부터 시작. 밀면 위쪽이 이전 장의 끝(인어 꼬리)으로 채워진다. */
+  background-position:right top;
   /* 폭을 칸에 정확히 맞춘다. % 로 잡으면 페이지가 긴 게시판에서 그림이 커져
      좌우가 잘리는데(곰·인어 얼굴 잘림), 이 방식은 페이지 길이와 무관하다. */
   background-size:100% auto;
@@ -2250,9 +2249,9 @@ footer a{color:var(--g2);}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <!-- ?v= 값을 올리면 브라우저가 캐시를 무시하고 새 파일을 받는다. auth-v2.js를 고칠 때마다 숫자를 올릴 것 -->
-<script>window.ADEN_VERSION='v374';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
-<script src="auth-v2.js?v=374"></script>
-<script src="admin.js?v=374"></script>
+<script>window.ADEN_VERSION='v375';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
+<script src="auth-v2.js?v=375"></script>
+<script src="admin.js?v=375"></script>
 <script>
   // 장비러쉬
   const SIM_SWORD='images/img6.jpg';
