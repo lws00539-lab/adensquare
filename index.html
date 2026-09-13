@@ -44,7 +44,9 @@ body{background:var(--dark2);color:var(--text);font-family:'Noto Sans KR',sans-s
 .side-bg-right{
   right:0;
   background-image:url('images/side_bg_right.jpg?v=374');
-  /* 그림 맨 위(켄타우로스)부터 시작. 밀면 위쪽이 이전 장의 끝(인어 꼬리)으로 채워진다. */
+  /* 영역 자체를 헤더 아래에서 시작시킨다(top:190px).
+     그래야 그림 첫 장면(켄타우로스)이 헤더에 가려지지 않고 맨 처음 보인다. */
+  top:190px;
   background-position:right top;
   /* 폭을 칸에 정확히 맞춘다. % 로 잡으면 페이지가 긴 게시판에서 그림이 커져
      좌우가 잘리는데(곰·인어 얼굴 잘림), 이 방식은 페이지 길이와 무관하다. */
@@ -2249,9 +2251,9 @@ footer a{color:var(--g2);}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <!-- ?v= 값을 올리면 브라우저가 캐시를 무시하고 새 파일을 받는다. auth-v2.js를 고칠 때마다 숫자를 올릴 것 -->
-<script>window.ADEN_VERSION='v375';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
-<script src="auth-v2.js?v=375"></script>
-<script src="admin.js?v=375"></script>
+<script>window.ADEN_VERSION='v376';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
+<script src="auth-v2.js?v=376"></script>
+<script src="admin.js?v=376"></script>
 <script>
   // 장비러쉬
   const SIM_SWORD='images/img6.jpg';
