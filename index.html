@@ -44,9 +44,9 @@ body{background:var(--dark2);color:var(--text);font-family:'Noto Sans KR',sans-s
 .side-bg-right{
   right:0;
   background-image:url('images/side_bg_right.jpg?v=380');
-  /* 두 그림 각각이 한 화면 분량이 되도록 잘라두었으므로,
-     스크롤하면 켄타우로스 -> 인어 순으로 한 장씩 넘어간다. */
-  top:190px;
+  /* 시작 위치를 실제 헤더 높이에 맞춘다 (아래 스크립트가 --hdr 값을 채운다).
+     190px 로 고정하면 헤더가 그보다 클 때 궁수 머리가 가려진다. */
+  top:var(--hdr, 190px);
   background-position:right top;
   /* 폭을 칸에 정확히 맞춘다. % 로 잡으면 페이지가 긴 게시판에서 그림이 커져
      좌우가 잘리는데(곰·인어 얼굴 잘림), 이 방식은 페이지 길이와 무관하다. */
@@ -2251,9 +2251,22 @@ footer a{color:var(--g2);}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <!-- ?v= 값을 올리면 브라우저가 캐시를 무시하고 새 파일을 받는다. auth-v2.js를 고칠 때마다 숫자를 올릴 것 -->
-<script>window.ADEN_VERSION='v380';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
-<script src="auth-v2.js?v=380"></script>
-<script src="admin.js?v=380"></script>
+<script>window.ADEN_VERSION='v381';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
+<script>
+  // 헤더 높이를 실제로 재서 사이드 배경 시작 위치에 반영한다.
+  // (헤더 높이는 화면 크기에 따라 달라지므로 숫자를 고정하면 그림이 가려진다)
+  (function () {
+    function setHeaderVar() {
+      var h = document.querySelector('.site-header');
+      if (h) document.documentElement.style.setProperty('--hdr', h.offsetHeight + 'px');
+    }
+    document.addEventListener('DOMContentLoaded', setHeaderVar);
+    window.addEventListener('load', setHeaderVar);
+    window.addEventListener('resize', setHeaderVar);
+  })();
+</script>
+<script src="auth-v2.js?v=381"></script>
+<script src="admin.js?v=381"></script>
 <script>
   // 장비러쉬
   const SIM_SWORD='images/img6.jpg';
