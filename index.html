@@ -18,46 +18,10 @@
   --nav-bg:url("images/img1.jpg");
 }
 html{scroll-behavior:smooth;}
-body{background:var(--dark2);color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:14px;line-height:1.6;position:relative;}
-/* 좌측 여백 배경: 화면에 고정하지 않고 문서와 함께 흘러가게 한다.
-   스크롤을 내리면 세로로 긴 그림의 다른 부분이 차례로 드러난다. */
-/* 좌우 여백 배경: 문서에 붙여서 스크롤을 따라 함께 흐른다.
-   휠을 내리면 그림의 다른 부분이 차례로 드러난다. */
-.side-bg{
-  position:absolute;               /* fixed 가 아니라 absolute — 같이 스크롤됨 */
-  top:0;                           /* 영역은 페이지 맨 위부터 (빈 공간 없음) */
-  bottom:0;
-  width:calc((100vw - 1400px)/2);
-  max-width:420px;
-  background-image:url('images/side_bg.jpg?v=361');
-  background-repeat:repeat-y;      /* 요정 그림 + 마녀 그림이 번갈아 나온다 */
-  /* 헤더가 화면 위 190px 에 항상 붙어 있으므로, 그림만 그만큼 아래로 밀어
-     첫 인물(팅커벨)이 헤더에 가려지지 않게 한다.
-     위쪽 빈자리는 repeat-y 가 이전 장의 끝부분으로 자동으로 채운다. */
-  background-position:left 190px;
-  background-size:auto 65%;        /* 인물이 크게 보이도록 확대 */
-  z-index:1;
-  pointer-events:none;
-}
-.side-bg-left{left:0;}
-/* 오른쪽: 인물이 오른쪽에 몰려 있으므로 오른쪽을 기준으로 붙여 잘림을 최소화 */
-.side-bg-right{
-  right:0;
-  background-image:url('images/side_bg_right.jpg?v=387');
-  /* 시작 위치를 실제 헤더 높이에 맞춘다 (아래 스크립트가 --hdr 값을 채운다).
-     190px 로 고정하면 헤더가 그보다 클 때 궁수 머리가 가려진다. */
-  top:var(--hdr, 190px);
-  background-position:right top;
-  /* 폭을 칸에 정확히 맞춘다. % 로 잡으면 페이지가 긴 게시판에서 그림이 커져
-     좌우가 잘리는데(곰·인어 얼굴 잘림), 이 방식은 페이지 길이와 무관하다. */
-  background-size:100% auto;
-}
-@media(max-width:1550px){.side-bg{display:none;}}
-
+body{background:var(--dark2);color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:14px;line-height:1.6;}
 .side-deco{position:fixed;top:190px;left:0;width:calc((100vw - 1400px)/2);max-width:420px;height:calc(100vh - 190px);background:url('images/side_left.png') left top no-repeat;background-size:auto calc(100vh - 190px);z-index:10;pointer-events:none;overflow:hidden;}
-.side-deco-right{position:fixed;top:190px;right:0;bottom:0;width:calc((100vw - 1400px)/2);max-width:420px;background-image:url('images/side_right_v5.png');background-repeat:no-repeat;background-position-x:50%;background-position-y:calc((100vh - 190px) * -0.217);background-size:auto calc((100vh - 190px) * 1.217);z-index:10;pointer-events:none;overflow:hidden;}
+.side-deco-right{position:fixed;top:190px;right:0;width:calc((100vw - 1400px)/2);max-width:420px;height:calc(100vh - 190px);background-image:url('images/side_right_v5.png');background-repeat:no-repeat;background-position-x:50%;background-position-y:calc((100vh - 190px) * -0.038);background-size:auto calc(100vh - 190px);z-index:10;pointer-events:none;overflow:hidden;}
 @media(max-width:1550px){.side-deco{display:none;}.side-deco-right{display:none;}}
-/* 예전 좌우 장식(돌벽·깃발·기사)은 그대로 유지 */
 a{text-decoration:none;color:inherit;}
 button{font-family:inherit;cursor:pointer;}
 input,select{font-family:inherit;outline:none;}
@@ -153,13 +117,9 @@ input,select{font-family:inherit;outline:none;}
 .auth-error{font-size:11px;color:#e07070;min-height:14px;}
 
 /* MAIN GRID */
-.main-grid{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:14px;align-items:start;}
-/* 그리드/플렉스 칸은 기본값이 "내용보다 작아지지 않음"이라, 넓은 표를 붙여넣으면
-   칸 자체가 늘어나 페이지가 가로로 터진다. min-width:0 으로 그 동작을 끈다. */
-.main-grid > *{min-width:0;}
-.col-left{display:flex;flex-direction:column;gap:12px;min-width:0;}
-.col-right{display:flex;flex-direction:column;gap:12px;min-width:0;}
-.col-left > *, .col-right > *{min-width:0;max-width:100%;}
+.main-grid{display:grid;grid-template-columns:1fr 290px;gap:14px;align-items:start;}
+.col-left{display:flex;flex-direction:column;gap:12px;}
+.col-right{display:flex;flex-direction:column;gap:12px;}
 
 /* CARD */
 .card{background:var(--dark3);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
@@ -245,186 +205,6 @@ input,select{font-family:inherit;outline:none;}
 .modal-body{padding:16px;display:flex;flex-direction:column;gap:10px;}
 .modal-label{font-size:11px;font-weight:700;color:var(--text3);margin-bottom:3px;}
 .modal-input{width:100%;padding:8px 11px;border:1px solid var(--border2);border-radius:var(--r);background:var(--dark2);color:var(--text);font-size:13px;transition:border-color .15s;}
-/* 회원가입 창: 그림 비율(1678 x 937) 그대로 유지하되, 화면 안에 들어오도록 축소한다.
-   창 바깥은 어둡게 남겨서 뒤의 사이트가 비쳐 보이게 한다.
-   전체 화면으로 키워도 창은 1250 x 698 이상으로 커지지 않는다. */
-/* 창을 화면 정중앙보다 조금 아래로 내린다 */
-#modal-signup{align-items:flex-start;}
-#modal-signup .modal{
-  margin-top:100px;
-  /* 화면 크기와 무관하게 항상 이 크기로 고정 (그림 비율 1678:937 유지) */
-  width:min(1250px, 92vw, calc((100vh - 140px) * 1.791));
-  max-width:none;
-  aspect-ratio:1678 / 937;
-  height:auto;
-  background-image:url('images/signup_bg.jpg?v=343');
-  background-size:100% 100%;
-  background-position:center;
-  background-repeat:no-repeat;
-  border:1px solid #6a5426;
-  box-shadow:0 10px 60px rgba(0,0,0,0.9);
-  position:relative;
-  overflow:hidden;
-  display:flex;
-  flex-direction:column;
-}
-/* ===== 로그인 창: 회원가입 창과 같은 구조 ===== */
-#modal-login{align-items:flex-start;}
-#modal-login .modal{
-  margin-top:100px;
-  width:min(1250px, 92vw, calc((100vh - 140px) * 1.791));
-  max-width:none;
-  aspect-ratio:1250 / 698;
-  height:auto;
-  background-image:url('images/login_bg.jpg?v=344');
-  background-size:100% 100%;
-  background-position:center;
-  background-repeat:no-repeat;
-  border:1px solid #6a5426;
-  box-shadow:0 10px 60px rgba(0,0,0,0.9);
-  position:relative;
-  overflow:hidden;
-  display:flex;
-  flex-direction:column;
-}
-#modal-login .modal-head{
-  background:none;border-bottom:none;
-  position:absolute;top:0;left:0;right:0;
-  padding:8px 12px;z-index:3;flex:0 0 auto;
-  justify-content:flex-end;pointer-events:none;
-}
-#modal-login .modal-close{pointer-events:auto;}
-#modal-login .modal-body{
-  position:relative;z-index:2;
-  width:340px;
-  margin:0 auto auto;
-  padding:70px 16px 12px;   /* 위쪽 금장식 테두리와 닫기 버튼을 피해 아래로 내림 */
-  flex:0 0 auto;
-  box-sizing:border-box;
-  gap:6px;
-}
-#modal-login .modal-label{
-  font-size:11px;color:#e8dcc8;margin-bottom:2px;
-  text-shadow:0 1px 3px rgba(0,0,0,0.9);
-}
-#modal-login .modal-input{padding:7px 11px;font-size:13px;}
-#modal-login .modal-btn{padding:8px;font-size:13px;}
-#modal-login .modal-divider{font-size:10px;gap:7px;}
-/* 하단 안내문: 어두운 그림 위에서도 잘 보이도록 크게, 밝게 */
-#modal-login .modal-footer{
-  font-size:14px;
-  color:#e8dcc8;
-  margin-top:4px;
-  text-shadow:0 1px 4px rgba(0,0,0,0.95);
-}
-#modal-login .modal-footer a{
-  color:#f5cf6b;
-  font-weight:700;
-  text-decoration:underline;
-  text-underline-offset:2px;
-}
-#login-title-img{
-  display:block;
-  width:400px;
-  max-width:none;
-  height:auto;
-  margin:0 0 7px -46px;   /* (400 - 308) / 2 = 46 : 폼 콘텐츠 기준 가운데 */
-  filter:drop-shadow(0 4px 10px rgba(0,0,0,0.85));
-  pointer-events:none;
-}
-@media (max-width:820px){
-  #modal-login{align-items:center;}
-  #modal-login .modal{
-    margin-top:0;width:100%;max-width:380px;aspect-ratio:auto;height:auto;
-    background-image:none;display:block;
-  }
-  #modal-login .modal-head{background:var(--dark);position:relative;pointer-events:auto;}
-  #modal-login .modal-body{width:auto;padding:16px;}
-  #login-title-img{width:100%;margin:0 auto 10px;}
-}
-
-/* 상단 타이틀 이미지: 폼(320px)보다 넓게 좌우로 넘치도록 배치 */
-#signup-title-img{
-  display:block;
-  width:460px;
-  max-width:none;
-  height:auto;
-  margin:0 0 7px -76px;   /* (460 - 308) / 2 = 76 : 폼 콘텐츠 기준 정확히 가운데 */
-  filter:drop-shadow(0 4px 10px rgba(0,0,0,0.85));
-  pointer-events:none;
-}
-@media (max-width:820px){
-  #signup-title-img{width:100%;margin:0 auto 12px;}
-}
-
-/* 제목줄: 배경 띠와 아래 구분선을 없애고 제목을 가운데로 */
-#modal-signup .modal-head{
-  background:none;
-  border-bottom:none;
-  position:absolute;      /* 자리를 차지하지 않게 띄운다 */
-  top:0;left:0;right:0;
-  padding:8px 12px;
-  z-index:3;
-  flex:0 0 auto;
-  justify-content:flex-end;
-  pointer-events:none;    /* 그림 위 클릭을 막지 않게 */
-}
-#modal-signup .modal-close{pointer-events:auto;}
-#modal-signup .modal-head h2{
-  text-shadow:0 2px 6px rgba(0,0,0,0.9);
-}
-/* 닫기 버튼은 오른쪽 끝에 고정 */
-#modal-signup .modal-close{
-  position:absolute;
-  right:16px;
-  top:50%;
-  transform:translateY(-50%);
-}
-/* 폼은 그림 가운데 어두운 영역에 올린다 */
-/* 회원가입 폼: 창 안에 전부 들어가면서도 읽기 편한 크기로 (v338과 v339의 중간) */
-#modal-signup .modal-body{gap:6px;}
-#modal-signup .modal-label{
-  font-size:11px;
-  color:#e8dcc8;                                  /* 회색 -> 밝은 색 (시인성) */
-  margin-bottom:2px;
-  text-shadow:0 1px 3px rgba(0,0,0,0.9);
-}
-#modal-signup .modal-input{padding:7px 11px;font-size:13px;}
-#modal-signup .modal-btn{padding:8px;font-size:13px;}
-#modal-signup .modal-divider{font-size:10px;gap:7px;}
-#modal-signup .modal-footer{
-  font-size:14px;
-  color:#e8dcc8;
-  margin-top:4px;
-  text-shadow:0 1px 4px rgba(0,0,0,0.95);
-}
-#modal-signup .modal-footer a{
-  color:#f5cf6b;
-  font-weight:700;
-  text-decoration:underline;
-  text-underline-offset:2px;
-}
-
-/* 폼을 창 위쪽에 붙여 최대한 올린다 */
-#modal-signup .modal-body{
-  position:relative;z-index:2;
-  width:340px;
-  margin:0 auto auto;      /* 위쪽 정렬 */
-  padding:4px 16px 12px;
-  flex:0 0 auto;
-  box-sizing:border-box;
-}
-/* 화면이 좁으면 그림을 빼고 원래 형태로 되돌린다 */
-@media (max-width:820px){
-  #modal-signup{align-items:center;}
-  #modal-signup .modal{
-    margin-top:0;
-    width:100%;max-width:380px;aspect-ratio:auto;height:auto;
-    background-image:none;display:block;
-  }
-  #modal-signup .modal-head{background:var(--dark);}
-  #modal-signup .modal-body{width:auto;padding:16px;overflow:visible;}
-}
 .modal-input:focus{border-color:var(--g);}
 .modal-select{width:100%;padding:8px 11px;border:1px solid var(--border2);border-radius:var(--r);background:var(--dark2);color:var(--text);font-size:13px;}
 .modal-btn{width:100%;padding:10px;border-radius:var(--r);border:none;font-size:13px;font-weight:700;cursor:pointer;}
@@ -435,16 +215,6 @@ input,select{font-family:inherit;outline:none;}
 .modal-divider{display:flex;align-items:center;gap:8px;font-size:10px;color:var(--text3);}
 .modal-divider::before,.modal-divider::after{content:'';flex:1;height:1px;background:var(--border);}
 .modal-footer{text-align:center;font-size:11px;color:var(--text3);}
-/* 외부에서 복사해 온 내용(고정 폭 표·이미지)이 레이아웃을 밀어내지 않도록 강제로 가둔다 */
-#nw-editor, #detail-body, #bw-editor, #bd-body{max-width:100%;overflow-x:auto;word-break:break-word;overflow-wrap:anywhere;}
-#nw-editor *, #detail-body *, #bw-editor *, #bd-body *{max-width:100% !important;}
-#nw-editor img, #detail-body img, #bw-editor img, #bd-body img{height:auto !important;}
-#nw-editor table, #detail-body table, #bw-editor table, #bd-body table{width:100% !important;table-layout:fixed;display:table;}
-#nw-editor, #detail-body{-webkit-overflow-scrolling:touch;}
-#nw-editor td, #nw-editor th, #detail-body td, #detail-body th,
-#bw-editor td, #bw-editor th, #bd-body td, #bd-body th{word-break:break-word;}
-/* 콘텐츠가 아무리 넓어도 페이지 자체는 가로로 늘어나지 않게 */
-html,body{overflow-x:hidden;max-width:100vw;}
 .modal-footer a{color:var(--g);cursor:pointer;}
 .nav-user{display:flex;align-items:center;gap:8px;}
 .nav-nickname{font-size:12px;color:var(--text);font-weight:500;}
@@ -468,7 +238,7 @@ footer a{color:var(--g2);}
   .nav-right-area{height:100px;padding-left:12px;padding-bottom:4px;}
   .wrap{padding:0 14px 36px;}
   .top-row{grid-template-columns:240px 1fr;}
-  .main-grid{grid-template-columns:minmax(0,1fr) 240px;}
+  .main-grid{grid-template-columns:1fr 240px;}
 }
 
 /* 모바일 (768px 이하) */
@@ -492,11 +262,7 @@ footer a{color:var(--g2);}
   .wrap{padding:0 10px 28px;}
 
   .top-row{grid-template-columns:1fr;gap:10px;}
-  .main-grid{grid-template-columns:minmax(0,1fr);gap:10px;}
-  /* 좁은 화면에서는 아덴/다이아 시세를 위아래로 쌓음 */
-  .main-board-grid{grid-template-columns:repeat(2,minmax(0,1fr)) !important;}
-  .mini-price-split{grid-template-columns:1fr !important;}
-  .mini-price-split > div:first-child{border-right:none !important;border-bottom:1px solid var(--border);}
+  .main-grid{grid-template-columns:1fr;gap:10px;}
   .col-right{display:none;}
   .hot-grid{grid-template-columns:1fr;}
 
@@ -592,8 +358,6 @@ footer a{color:var(--g2);}
 </style>
 </head>
 <body>
-<div class="side-bg side-bg-left"></div>
-<div class="side-bg side-bg-right"></div>
 <div class="side-deco"></div>
 <div class="side-deco-right"></div>
 
@@ -610,9 +374,8 @@ footer a{color:var(--g2);}
 <!-- 모달들 -->
 <div class="modal-overlay" id="modal-login">
   <div class="modal">
-    <div class="modal-head"><button class="modal-close" onclick="closeModal('modal-login')">✕</button></div>
+    <div class="modal-head"><h2>⚔ 아덴광장 로그인</h2><button class="modal-close" onclick="closeModal('modal-login')">✕</button></div>
     <div class="modal-body">
-      <img id="login-title-img" src="images/login_title.png?v=343" alt="아덴광장에 오신 것을 환영합니다 - 로그인">
       <button class="modal-btn modal-btn-google" onclick="signInGoogle()">
         <svg width="14" height="14" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.08 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-3.59-13.46-8.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
         Google로 로그인
@@ -628,9 +391,8 @@ footer a{color:var(--g2);}
 </div>
 <div class="modal-overlay" id="modal-signup">
   <div class="modal">
-    <div class="modal-head"><button class="modal-close" onclick="closeModal('modal-signup')">✕</button></div>
+    <div class="modal-head"><h2>⚔ 아덴광장 회원가입</h2><button class="modal-close" onclick="closeModal('modal-signup')">✕</button></div>
     <div class="modal-body">
-      <img id="signup-title-img" src="images/signup_title.png?v=343" alt="아덴광장에 오신 것을 환영합니다 - 회원가입">
       <button class="modal-btn modal-btn-google" onclick="signInGoogle()">
         <svg width="14" height="14" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.08 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-3.59-13.46-8.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
         Google로 시작하기
@@ -640,16 +402,10 @@ footer a{color:var(--g2);}
       <div><div class="modal-label">비밀번호 (6자 이상)</div><input class="modal-input" type="password" id="su-pw" placeholder="비밀번호 입력"></div>
       <div><div class="modal-label">비밀번호 확인</div><input class="modal-input" type="password" id="su-pw2" placeholder="비밀번호 재입력"></div>
       <div><div class="modal-label">닉네임 (2자 이상)</div><input class="modal-input" type="text" id="su-nickname" placeholder="게임에서 사용할 닉네임"></div>
-      <div><div class="modal-label">주 게임</div>
-        <select class="modal-select" id="su-game" onchange="fillSignupServers('su')">
-          <option value="">게임 선택</option>
-          <option value="classic">리니지클래식</option>
-          <option value="m">리니지M</option>
-        </select>
-      </div>
       <div><div class="modal-label">주 서버</div>
         <select class="modal-select" id="su-server">
-          <option value="">먼저 게임을 선택하세요</option>
+          <option value="">서버 선택</option>
+          <option>조우</option><option>데포로쥬</option><option>글루딘</option><option>힐든</option><option>켄라우헬</option>
         </select>
       </div>
       <div class="auth-error" id="su-error"></div>
@@ -664,20 +420,14 @@ footer a{color:var(--g2);}
     <div class="modal-body">
       <div style="font-size:11px;color:var(--text3);" id="profile-email"></div>
       <div><div class="modal-label">닉네임 (2자 이상)</div><input class="modal-input" type="text" id="profile-nickname" placeholder="게임에서 사용할 닉네임"></div>
-      <div><div class="modal-label">주 게임</div>
-        <select class="modal-select" id="profile-game" onchange="fillSignupServers('profile')">
-          <option value="">게임 선택</option>
-          <option value="classic">리니지클래식</option>
-          <option value="m">리니지M</option>
-        </select>
-      </div>
       <div><div class="modal-label">주 서버</div>
         <select class="modal-select" id="profile-server">
-          <option value="">먼저 게임을 선택하세요</option>
+          <option value="">서버 선택</option>
+          <option>조우</option><option>데포로쥬</option><option>글루딘</option><option>힐든</option><option>켄라우헬</option>
         </select>
       </div>
       <div class="auth-error" id="profile-error"></div>
-      <button class="modal-btn modal-btn-gold" onclick="saveProfile()">시작하기</button>
+      <button class="modal-btn modal-btn-gold" onclick="saveGoogleProfile()">시작하기</button>
     </div>
   </div>
 </div>
@@ -686,42 +436,18 @@ footer a{color:var(--g2);}
 <!-- MENU BAR (moved down from nav for readability) -->
 <div class="menubar">
   <div class="nav-links">
-    <a class="nav-link" id="nav-admin-link" href="#" style="display:none;color:#d4a84b;"
-       onclick="event.preventDefault();showAdminPage()">👑 관리자</a>
-    <div class="nav-link nav-dropdown">
-      뉴스 <span class="nav-arrow">▼</span>
-      <div class="dropdown-menu">
-        <div class="dropdown-item" onclick="showNews('classic')">
-          📰 리니지클래식 뉴스
-        </div>
-        <div class="dropdown-item" onclick="showNews('m')">
-          📰 리니지M 뉴스
-        </div>
-      </div>
-    </div>
+    <a class="nav-link" href="#" onclick="event.preventDefault();showNews()">뉴스</a>
     <div class="nav-link nav-dropdown">
       커뮤니티 <span class="nav-arrow">▼</span>
       <div class="dropdown-menu">
-        <div class="dropdown-item" onclick="showBoard('humor')">
-          😂 유머게시판
-        </div>
         <div class="dropdown-item" onclick="showBoard('free')">
-          📋 리니지클래식 자유게시판
-        </div>
-        <div class="dropdown-item" onclick="showBoard('free_m')">
-          📋 리니지M 자유게시판
+          📋 자유게시판
         </div>
         <div class="dropdown-item" onclick="showBoard('clan')">
-          ⚔ 리니지클래식 혈맹모집
-        </div>
-        <div class="dropdown-item" onclick="showBoard('clan_m')">
-          ⚔ 리니지M 혈맹모집
+          ⚔ 혈맹모집 게시판
         </div>
         <div class="dropdown-item" onclick="showBoard('brag')">
-          🏆 리니지클래식 자랑하기
-        </div>
-        <div class="dropdown-item" onclick="showBoard('brag_m')">
-          🏆 리니지M 자랑하기
+          🏆 자랑하기 게시판
         </div>
       </div>
     </div>
@@ -736,17 +462,7 @@ footer a{color:var(--g2);}
         </div>
       </div>
     </div>
-    <div class="nav-link nav-dropdown">
-      거래소 <span class="nav-arrow">▼</span>
-      <div class="dropdown-menu">
-        <div class="dropdown-item" onclick="showMarket('classic')">
-          🎮 리니지클래식 거래소
-        </div>
-        <div class="dropdown-item" onclick="showMarket('m')">
-          💎 리니지M 거래소
-        </div>
-      </div>
-    </div>
+    <a class="nav-link" href="#" onclick="event.preventDefault();showMarket()">거래소</a>
     <div class="nav-link nav-dropdown">
       유튜브 <span class="nav-arrow">▼</span>
       <div class="dropdown-menu">
@@ -757,24 +473,18 @@ footer a{color:var(--g2);}
           ⚡ 리니지클래식 러쉬
         </div>
         <div class="dropdown-item" onclick="showYoutube();setYoutubeCategory(2)">
-          💎 리니지M
-        </div>
-        <div class="dropdown-item" onclick="showYoutube();setYoutubeCategory(3)">
-          ⚡ 리니지M 러쉬
-        </div>
-        <div class="dropdown-item" onclick="showYoutube();setYoutubeCategory(4)">
           ✨ SOL인챈트
         </div>
-        <div class="dropdown-item" onclick="showYoutube();setYoutubeCategory(5)">
+        <div class="dropdown-item" onclick="showYoutube();setYoutubeCategory(3)">
           👹 디아블로
         </div>
-        <div class="dropdown-item" onclick="showYoutube();setYoutubeCategory(6)">
+        <div class="dropdown-item" onclick="showYoutube();setYoutubeCategory(4)">
           ⭐ 스타크래프트
         </div>
-        <div class="dropdown-item" onclick="showYoutube();setYoutubeCategory(7)">
+        <div class="dropdown-item" onclick="showYoutube();setYoutubeCategory(5)">
           🏆 LOL
         </div>
-        <div class="dropdown-item" onclick="showYoutube();setYoutubeCategory(8)">
+        <div class="dropdown-item" onclick="showYoutube();setYoutubeCategory(6)">
           💰 비트코인 선물
         </div>
       </div>
@@ -861,7 +571,7 @@ footer a{color:var(--g2);}
               <div id="lc-avatar" style="width:46px;height:46px;border-radius:50%;background:#2a1e08;border:2px solid var(--g);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:var(--g);flex-shrink:0;">?</div>
               <div>
                 <div id="lc-nick" style="font-size:15px;font-weight:700;color:var(--g);">—</div>
-                <div id="lc-server" onclick="openProfileModal()" title="클릭하면 게임·서버를 변경할 수 있습니다" style="font-size:11px;color:var(--text3);margin-top:2px;cursor:pointer;">서버 미설정</div>
+                <div id="lc-server" style="font-size:11px;color:var(--text3);margin-top:2px;">서버 미설정</div>
               </div>
             </div>
             <div style="background:var(--dark);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
@@ -878,9 +588,8 @@ footer a{color:var(--g2);}
         <div style="font-size:10px;color:var(--text3);margin-bottom:4px;">현재 닉네임: <span id="admin-cur-nick" style="color:#d4a84b;">메티스</span>
           <span onclick="adminResetNick()" style="color:#6a5a30;cursor:pointer;margin-left:6px;">[초기화]</span>
         </div>
-        <button onclick="showAdminPage()" style="width:100%;padding:7px;border:1px solid #d4a84b;background:linear-gradient(180deg,#3a2a10,#2a1e08);color:#f0d78a;font-size:11px;font-weight:700;border-radius:var(--r);cursor:pointer;margin-top:6px;">👑 관리자 페이지 열기</button>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:6px;">
-          <button id="admin-sim-btn" onclick="toggleSimChat()" style="padding:6px;border:1px solid #5a4a22;background:#2a1e08;color:#d4a84b;font-size:10px;font-weight:700;border-radius:var(--r);cursor:pointer;">▶ 채팅 시작</button>
+          <button id="admin-sim-btn" onclick="startSimChat()" style="padding:6px;border:1px solid #5a4a22;background:#2a1e08;color:#d4a84b;font-size:10px;font-weight:700;border-radius:var(--r);cursor:pointer;">▶ 채팅 시작</button>
           <button onclick="adminClearAll()" style="padding:6px;border:1px solid #8a3a18;background:#2a0808;color:#e07070;font-size:10px;font-weight:700;border-radius:var(--r);cursor:pointer;">🗑 전체 삭제</button>
         </div>
         <div style="font-size:9px;color:#4a3a18;margin-top:5px;">💬 채팅 닉네임 클릭 → 해당 닉으로 채팅</div>
@@ -938,7 +647,7 @@ footer a{color:var(--g2);}
       <div style="padding:20px;">
         <div id="bd-title" style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px;"></div>
         <div id="bd-meta" style="font-size:12px;color:var(--text3);margin-bottom:20px;border-bottom:1px solid var(--border);padding-bottom:12px;"></div>
-        <div id="bd-body" style="font-size:13px;color:var(--text);line-height:1.8;overflow-x:auto;max-width:100%;min-width:0;"></div>
+        <div id="bd-body" style="font-size:13px;color:var(--text);line-height:1.8;overflow:hidden;max-width:100%;"></div>
 
         <!-- 이전글/다음글 -->
         <div id="bd-nav" style="margin-top:24px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);"></div>
@@ -973,13 +682,11 @@ footer a{color:var(--g2);}
       <div style="padding:10px 16px;border-bottom:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;">
         <button id="ytcat-0" onclick="setYoutubeCategory(0)" style="padding:5px 14px;border-radius:20px;border:1px solid #d4a84b;background:#2a1a08;color:#d4a84b;font-size:12px;cursor:pointer;">리니지클래식</button>
         <button id="ytcat-1" onclick="setYoutubeCategory(1)" style="padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--dark);color:var(--text3);font-size:12px;cursor:pointer;">리니지클래식 러쉬</button>
-        <button id="ytcat-2" onclick="setYoutubeCategory(2)" style="padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--dark);color:var(--text3);font-size:12px;cursor:pointer;">리니지M</button>
-        <button id="ytcat-3" onclick="setYoutubeCategory(3)" style="padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--dark);color:var(--text3);font-size:12px;cursor:pointer;">리니지M 러쉬</button>
-        <button id="ytcat-4" onclick="setYoutubeCategory(4)" style="padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--dark);color:var(--text3);font-size:12px;cursor:pointer;">SOL인챈트</button>
-        <button id="ytcat-5" onclick="setYoutubeCategory(5)" style="padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--dark);color:var(--text3);font-size:12px;cursor:pointer;">디아블로</button>
-        <button id="ytcat-6" onclick="setYoutubeCategory(6)" style="padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--dark);color:var(--text3);font-size:12px;cursor:pointer;">스타크래프트</button>
-        <button id="ytcat-7" onclick="setYoutubeCategory(7)" style="padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--dark);color:var(--text3);font-size:12px;cursor:pointer;">LOL</button>
-        <button id="ytcat-8" onclick="setYoutubeCategory(8)" style="padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--dark);color:var(--text3);font-size:12px;cursor:pointer;">비트코인 선물</button>
+        <button id="ytcat-2" onclick="setYoutubeCategory(2)" style="padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--dark);color:var(--text3);font-size:12px;cursor:pointer;">SOL인챈트</button>
+        <button id="ytcat-3" onclick="setYoutubeCategory(3)" style="padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--dark);color:var(--text3);font-size:12px;cursor:pointer;">디아블로</button>
+        <button id="ytcat-4" onclick="setYoutubeCategory(4)" style="padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--dark);color:var(--text3);font-size:12px;cursor:pointer;">스타크래프트</button>
+        <button id="ytcat-5" onclick="setYoutubeCategory(5)" style="padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--dark);color:var(--text3);font-size:12px;cursor:pointer;">LOL</button>
+        <button id="ytcat-6" onclick="setYoutubeCategory(6)" style="padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--dark);color:var(--text3);font-size:12px;cursor:pointer;">비트코인 선물</button>
       </div>
       <div id="youtube-list" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:16px;"></div>
       <div id="youtube-pagination" style="display:flex;justify-content:center;gap:4px;padding:14px;"></div>
@@ -1399,105 +1106,46 @@ footer a{color:var(--g2);}
     </div>
   </div>
 
-  <div id="section-admin" style="display:none;min-width:0;max-width:100%;">
-    <div style="background:var(--dark3);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;">
-      <div style="padding:12px 16px;background:linear-gradient(180deg,#2a1a08,#1a1008);border-bottom:1px solid var(--border);">
-        <div style="font-size:18px;font-weight:700;color:#d4a84b;">👑 관리자 페이지</div>
-      </div>
-
-      <div style="padding:10px 16px;border-bottom:1px solid var(--border);display:flex;gap:6px;flex-wrap:wrap;">
-        <button id="adm-tab-stats"   onclick="setAdminTab('stats')"   style="padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--dark);color:var(--text3);font-size:12px;cursor:pointer;">📊 사이트 현황</button>
-        <button id="adm-tab-members" onclick="setAdminTab('members')" style="padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--dark);color:var(--text3);font-size:12px;cursor:pointer;">👥 회원 관리</button>
-        <button id="adm-tab-posts"   onclick="setAdminTab('posts')"   style="padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--dark);color:var(--text3);font-size:12px;cursor:pointer;">📝 게시글 관리</button>
-        <button id="adm-tab-chat"    onclick="setAdminTab('chat')"    style="padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--dark);color:var(--text3);font-size:12px;cursor:pointer;">💬 채팅 관리</button>
-      </div>
-
-      <div id="adm-pane-stats" style="display:none;">
-        <div id="adm-stats-body"></div>
-      </div>
-
-      <div id="adm-pane-members" style="display:none;">
-        <div style="padding:10px 16px;border-bottom:1px solid var(--border);">
-          <input id="adm-member-search" type="text" placeholder="닉네임 또는 서버로 검색" onkeyup="renderAdminMembers()"
-                 style="padding:7px 12px;background:#0a0812;border:1px solid #2e2a44;border-radius:4px;color:#e8dcc8;font-size:12px;width:220px;">
-        </div>
-        <div id="adm-members-body"></div>
-      </div>
-
-      <div id="adm-pane-posts" style="display:none;">
-        <div style="padding:10px 16px;border-bottom:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-          <select id="adm-post-board" onchange="renderAdminPosts()"
-                  style="padding:7px 10px;background:#0a0812;border:1px solid #2e2a44;border-radius:4px;color:#e8dcc8;font-size:12px;">
-            <option value="">전체 게시판</option>
-            <option value="humor">유머게시판</option>
-            <option value="free">리니지클래식 자유게시판</option>
-            <option value="free_m">리니지M 자유게시판</option>
-            <option value="clan">리니지클래식 혈맹모집</option>
-            <option value="clan_m">리니지M 혈맹모집</option>
-            <option value="brag">리니지클래식 자랑하기</option>
-            <option value="brag_m">리니지M 자랑하기</option>
-          </select>
-          <input id="adm-post-search" type="text" placeholder="제목 또는 글쓴이로 검색" onkeyup="renderAdminPosts()"
-                 style="padding:7px 12px;background:#0a0812;border:1px solid #2e2a44;border-radius:4px;color:#e8dcc8;font-size:12px;width:220px;">
-        </div>
-        <div id="adm-posts-body"></div>
-      </div>
-
-      <div id="adm-pane-chat" style="display:none;">
-        <div style="padding:16px;">
-          <div style="font-size:13px;font-weight:700;color:var(--g);margin-bottom:6px;">금지어 설정</div>
-          <div style="font-size:11px;color:var(--text3);margin-bottom:8px;line-height:1.6;">
-            한 줄에 하나씩 입력하세요. 금지어가 포함된 채팅은 전송되지 않습니다.
-          </div>
-          <textarea id="adm-banned-words" rows="8" placeholder="한 줄에 하나씩 입력"
-                    style="width:100%;padding:10px;background:#0a0812;border:1px solid #2e2a44;border-radius:4px;color:#e8dcc8;font-size:13px;box-sizing:border-box;resize:vertical;"></textarea>
-          <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px;">
-            <button onclick="saveAdminBannedWords()"
-              style="padding:8px 16px;border:1px solid #5a4a22;background:#2a1e08;color:#d4a84b;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">금지어 저장</button>
-          </div>
-
-          <div style="height:1px;background:var(--border);margin:18px 0;"></div>
-
-          <div style="font-size:13px;font-weight:700;color:var(--g);margin-bottom:6px;">도배 차단</div>
-          <div style="font-size:11px;color:var(--text3);margin-bottom:10px;line-height:1.6;">
-            같은 사람이 3초 안에 다시 보내거나, 직전과 똑같은 내용을 반복하면 자동으로 막습니다. 항상 켜져 있습니다.
-          </div>
-
-          <div style="height:1px;background:var(--border);margin:18px 0;"></div>
-
-          <div style="font-size:13px;font-weight:700;color:var(--g);margin-bottom:6px;">자동채팅</div>
-          <div style="font-size:11px;color:var(--text3);margin-bottom:10px;line-height:1.6;">
-            왼쪽 관리자 패널의 버튼으로 켜고 끕니다. 브라우저 창이 열려 있는 동안만 동작합니다.
-          </div>
-
-          <div style="display:flex;gap:8px;">
-            <button onclick="toggleSimChat()"
-              style="padding:8px 16px;border:1px solid #5a4a22;background:#2a1e08;color:#d4a84b;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">자동채팅 켜기/끄기</button>
-            <button onclick="admClearAllChat()"
-              style="padding:8px 16px;border:1px solid #8a3a18;background:#2a0808;color:#e07070;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">🗑 채팅 전체 삭제</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <div id="section-diaprice" style="display:none;">
     <div style="background:var(--dark3);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;">
-      <div style="padding:12px 16px;background:linear-gradient(180deg,#2a1a08,#1a1008);border-bottom:1px solid var(--border);">
-        <div style="font-size:18px;font-weight:700;color:#d4a84b;">💎 리니지M 다이아 시세</div>
+      <div style="padding:12px 16px;background:linear-gradient(180deg,#1a1030,#100a1c);border-bottom:1px solid var(--border);">
+        <div style="font-size:18px;font-weight:700;color:#9b8ce0;">💎 리니지M 다이아 시세</div>
       </div>
 
       <div style="display:flex;align-items:baseline;justify-content:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--dark);flex-wrap:wrap;">
         <span style="font-size:12px;color:var(--text3);">전서버 평균 (1천 다이아당)</span>
-        <span id="dia-avg-price" style="font-size:22px;font-weight:800;color:var(--g);">19,929원</span>
+        <span id="dia-avg-price" style="font-size:22px;font-weight:800;color:#9b8ce0;">-</span>
         <span id="dia-avg-change" style="font-size:14px;font-weight:700;"></span>
         <span id="dia-updated-label" style="font-size:11px;color:var(--text3);">기본값 표시 중</span>
       </div>
 
-      <div id="dia-price-grid" style="padding:16px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;"></div>
+      <div style="padding:10px 16px;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <input id="dia-search" type="text" placeholder="서버 검색" onkeyup="renderDiaPrice(_diaPriceData)"
+               style="padding:6px 12px;background:#0a0812;border:1px solid #2e2a44;border-radius:4px;color:#e8dcc8;font-size:12px;width:160px;">
+        <div style="display:flex;gap:4px;">
+          <button id="dia-sort-price" onclick="setDiaSort('price')" style="padding:5px 12px;border-radius:20px;border:1px solid #9b8ce0;background:#1a1030;color:#9b8ce0;font-size:12px;cursor:pointer;">가격순</button>
+          <button id="dia-sort-change" onclick="setDiaSort('change')" style="padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:var(--dark);color:var(--text3);font-size:12px;cursor:pointer;">등락순</button>
+          <button id="dia-sort-name" onclick="setDiaSort('name')" style="padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:var(--dark);color:var(--text3);font-size:12px;cursor:pointer;">이름순</button>
+        </div>
+      </div>
+
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+          <thead>
+            <tr style="background:#0a0812;color:var(--text3);font-size:12px;">
+              <th style="padding:10px 14px;text-align:left;width:60px;border-bottom:1px solid var(--border);">순위</th>
+              <th style="padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);">서버</th>
+              <th style="padding:10px 14px;text-align:right;border-bottom:1px solid var(--border);">현재가</th>
+              <th style="padding:10px 14px;text-align:right;width:110px;border-bottom:1px solid var(--border);">등락</th>
+            </tr>
+          </thead>
+          <tbody id="dia-price-tbody"></tbody>
+        </table>
+      </div>
 
       <div style="padding:14px 16px;font-size:11px;color:var(--text3);line-height:1.6;border-top:1px solid var(--border);">
-        ※ 데이터 출처: 게임비트(gamebit.co.kr) 리니지M 서버별 다이아 시세, 1천 다이아 기준. 하루 1회 자동 갱신되며, 표시 가격은 참고용으로 실제 거래가와 다를 수 있습니다.
+        ※ 데이터 출처: 게임비트(gamebit.co.kr) 리니지M 서버별 다이아 시세. 1천 다이아 기준 원화 가격이며, 하루 1회 자동 갱신됩니다.<br>
+        ※ 표시 가격은 외부 거래소 데이터를 수집·가공한 참고용 정보로, 실제 거래가와 차이가 있을 수 있습니다.
       </div>
     </div>
   </div>
@@ -1505,7 +1153,7 @@ footer a{color:var(--g2);}
   <div id="section-market" style="display:none;">
     <div style="background:var(--dark3);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;">
       <div style="padding:12px 16px;background:linear-gradient(180deg,#2a1a08,#1a1008);border-bottom:1px solid var(--border);">
-        <div id="market-page-title" style="font-size:18px;font-weight:700;color:#d4a84b;">🎮 리니지클래식 거래소</div>
+        <div style="font-size:18px;font-weight:700;color:#d4a84b;">거래소</div>
       </div>
 
       <!-- 필터 영역 -->
@@ -1553,16 +1201,6 @@ footer a{color:var(--g2);}
             <option value="오렌">오렌</option>
           </select>
         </div>
-        <div id="mkt-channel-wrap" style="display:none;gap:6px;align-items:center;">
-          <span style="font-size:11px;color:var(--text3);">채널</span>
-          <select id="mkt-channel" onchange="filterMarket()" style="padding:5px 10px;background:#0a0800;border:1px solid #3a2e10;border-radius:20px;color:#e8dcc8;font-size:12px;">
-            <option value="">전체</option>
-            <option value="1">1채널</option><option value="2">2채널</option><option value="3">3채널</option>
-            <option value="4">4채널</option><option value="5">5채널</option><option value="6">6채널</option>
-            <option value="7">7채널</option><option value="8">8채널</option><option value="9">9채널</option>
-            <option value="10">10채널</option>
-          </select>
-        </div>
         <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text3);cursor:pointer;">
           <input type="checkbox" id="mkt-hide-done" onchange="filterMarket()" style="accent-color:#d4a84b;">
           거래완료 안보기
@@ -1596,7 +1234,7 @@ footer a{color:var(--g2);}
         <span style="font-size:13px;font-weight:700;color:var(--g);">거래소 등록</span>
         <div style="font-size:11px;color:var(--text3);cursor:pointer;" onclick="showMarket()">← 거래소로</div>
       </div>
-      <div style="padding:20px;display:flex;flex-direction:column;gap:10px;min-width:0;max-width:100%;">
+      <div style="padding:20px;display:flex;flex-direction:column;gap:10px;">
         <div style="display:flex;gap:10px;">
           <select id="mw-type" style="flex:1;padding:10px;background:#0a0800;border:1px solid #3a2e10;border-radius:4px;color:#e8dcc8;font-size:13px;">
             <option value="sell">판매</option>
@@ -1634,13 +1272,6 @@ footer a{color:var(--g2);}
             <option value="발라카스">발라카스</option>
             <option value="오렌">오렌</option>
           </select>
-          <select id="mw-channel" style="display:none;flex:1;padding:10px;background:#0a0800;border:1px solid #3a2e10;border-radius:4px;color:#e8dcc8;font-size:13px;">
-            <option value="">채널 선택</option>
-            <option value="1">1채널</option><option value="2">2채널</option><option value="3">3채널</option>
-            <option value="4">4채널</option><option value="5">5채널</option><option value="6">6채널</option>
-            <option value="7">7채널</option><option value="8">8채널</option><option value="9">9채널</option>
-            <option value="10">10채널</option>
-          </select>
         </div>
         <input id="mw-item" type="text" placeholder="아이템명 (예: 은장검 +9)" style="padding:10px;background:#0a0800;border:1px solid #3a2e10;border-radius:4px;color:#e8dcc8;font-size:13px;">
         <div style="display:flex;gap:10px;">
@@ -1666,7 +1297,7 @@ footer a{color:var(--g2);}
         <span id="board-write-title" style="font-size:13px;font-weight:700;color:var(--g);">✏️ 글쓰기</span>
         <div style="font-size:11px;color:var(--text3);cursor:pointer;" onclick="showBoard(_currentBoard)">← 게시판으로</div>
       </div>
-      <div style="padding:20px;display:flex;flex-direction:column;gap:10px;min-width:0;max-width:100%;">
+      <div style="padding:20px;display:flex;flex-direction:column;gap:10px;">
         <div style="display:flex;gap:10px;">
           <select id="bw-category" style="flex:1;padding:10px 12px;background:#0a0800;border:1px solid #3a2e10;border-radius:4px;color:#e8dcc8;font-size:13px;">
             <option value="">분류 선택</option>
@@ -1711,11 +1342,6 @@ footer a{color:var(--g2);}
             <option value="전체">전체서버</option>
           </select>
         </div>
-        <div id="bw-author-row" style="display:none;align-items:center;gap:8px;">
-          <span style="font-size:12px;color:var(--g);white-space:nowrap;">👑 글쓴이</span>
-          <input id="bw-author" type="text" placeholder="비워두면 GM메티스로 등록됩니다"
-                 style="flex:1;padding:10px 12px;background:#0a0800;border:1px solid #5a4a22;border-radius:4px;color:#e8dcc8;font-size:13px;box-sizing:border-box;">
-        </div>
         <input id="bw-title" type="text" placeholder="제목을 입력하세요" style="width:100%;padding:10px 12px;background:#0a0800;border:1px solid #3a2e10;border-radius:4px;color:#e8dcc8;font-size:14px;box-sizing:border-box;">
         <div style="border:1px solid #3a2e10;border-radius:4px;overflow:hidden;">
           <div style="background:#111008;padding:6px 10px;border-bottom:1px solid #3a2e10;display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
@@ -1748,14 +1374,12 @@ footer a{color:var(--g2);}
             <button onclick="bwInsertLink()" style="padding:3px 7px;background:#0a0800;color:#7090d8;border:1px solid #3a2e10;border-radius:3px;cursor:pointer;font-size:11px;">URL</button>
             <button onclick="document.getElementById('bw-img-input').click()" style="padding:3px 7px;background:#0a0800;color:#70c870;border:1px solid #3a2e10;border-radius:3px;cursor:pointer;font-size:11px;">사진</button>
             <input id="bw-img-input" type="file" accept="image/*" multiple style="display:none" onchange="bwUploadImages(this.files)">
-            <div style="width:1px;height:18px;background:#3a2e10;"></div>
-            <button onclick="bwFitWidth()" title="붙여넣은 사진·표의 고정 폭을 제거합니다" style="padding:3px 7px;background:#0a0800;color:#d4a84b;border:1px solid #3a2e10;border-radius:3px;cursor:pointer;font-size:11px;">폭 맞춤</button>
           </div>
-          <div id="bw-editor" contenteditable="true" style="height:calc(100vh - 420px);min-height:300px;padding:14px;background:#0a0800;color:#e8dcc8;font-size:13px;line-height:1.7;outline:none;overflow-y:auto;overflow-x:auto;max-width:100%;box-sizing:border-box;"
+          <div id="bw-editor" contenteditable="true" style="height:calc(100vh - 420px);min-height:300px;padding:14px;background:#0a0800;color:#e8dcc8;font-size:13px;line-height:1.7;outline:none;overflow-y:auto;box-sizing:border-box;"
             ondragover="event.preventDefault()"
             ondrop="event.preventDefault();bwUploadImages(event.dataTransfer.files)"></div>
         </div>
-        <div style="display:flex;gap:8px;justify-content:flex-end;position:sticky;bottom:0;background:var(--dark3);padding:10px 0;z-index:5;">
+        <div style="display:flex;gap:8px;justify-content:flex-end;">
           <button onclick="showBoard(_currentBoard)" style="padding:9px 20px;background:#111;color:#aaa;border:1px solid #444;border-radius:4px;cursor:pointer;font-size:13px;">취소</button>
           <button onclick="submitBoardWrite()" style="padding:9px 20px;background:linear-gradient(180deg,#4a3c18,#2e2408);color:#d4a84b;border:1px solid #8a7a38;border-radius:4px;cursor:pointer;font-size:13px;font-weight:700;">✅ 등록</button>
         </div>
@@ -1763,15 +1387,15 @@ footer a{color:var(--g2);}
     </div>
   </div>
 
-  <div id="section-news-write" style="display:none;min-width:0;max-width:100%;">
+  <div id="section-news-write" style="display:none;">
     <div style="background:var(--dark3);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;min-height:calc(100vh - 200px);">
       <div style="padding:9px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--dark);">
         <span style="font-size:13px;font-weight:700;color:var(--g);">✏️ <span id="news-write-section-title">글쓰기</span></span>
-        <div style="font-size:11px;color:var(--text3);cursor:pointer;" onclick="showNews()">← 뉴스로</div>
+        <div style="font-size:11px;color:var(--text3);cursor:pointer;" onclick="showNews()">← 뉴로</div>
       </div>
-      <div style="padding:20px;display:flex;flex-direction:column;gap:10px;min-width:0;max-width:100%;">
+      <div style="padding:20px;display:flex;flex-direction:column;gap:10px;">
         <input id="nw-title" type="text" placeholder="제목을 입력하세요" style="width:100%;padding:10px 12px;background:#0a0800;border:1px solid #3a2e10;border-radius:4px;color:#e8dcc8;font-size:14px;box-sizing:border-box;">
-        <div style="border:1px solid #3a2e10;border-radius:4px;overflow:hidden;flex:1;min-width:0;">
+        <div style="border:1px solid #3a2e10;border-radius:4px;overflow:hidden;flex:1;">
           <div style="background:#111008;padding:6px 10px;border-bottom:1px solid #3a2e10;display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
             <select onchange="nwExecCmd('fontName',this.value);this.value=''" style="padding:3px;background:#0a0800;color:#e8dcc8;border:1px solid #3a2e10;border-radius:3px;font-size:11px;">
               <option value="">글꼴</option>
@@ -1802,14 +1426,12 @@ footer a{color:var(--g2);}
             <button onclick="nwInsertLink()" title="링크" style="padding:3px 7px;background:#0a0800;color:#7090d8;border:1px solid #3a2e10;border-radius:3px;cursor:pointer;font-size:11px;">URL</button>
             <button onclick="document.getElementById('nw-img-input').click()" title="이미지" style="padding:3px 7px;background:#0a0800;color:#70c870;border:1px solid #3a2e10;border-radius:3px;cursor:pointer;font-size:11px;">사진</button>
             <input id="nw-img-input" type="file" accept="image/*" multiple style="display:none" onchange="nwUploadImages(this.files)">
-            <div style="width:1px;height:18px;background:#3a2e10;"></div>
-            <button onclick="nwFitWidth()" title="붙여넣은 표·이미지의 고정 폭을 제거합니다" style="padding:3px 7px;background:#0a0800;color:#d4a84b;border:1px solid #3a2e10;border-radius:3px;cursor:pointer;font-size:11px;">폭 맞춤</button>
           </div>
-          <div id="nw-editor" contenteditable="true" style="height:calc(100vh - 420px);min-height:300px;padding:14px;background:#0a0800;color:#e8dcc8;font-size:13px;line-height:1.7;outline:none;overflow-y:auto;overflow-x:auto;max-width:100%;box-sizing:border-box;"
+          <div id="nw-editor" contenteditable="true" style="height:calc(100vh - 420px);min-height:300px;padding:14px;background:#0a0800;color:#e8dcc8;font-size:13px;line-height:1.7;outline:none;overflow-y:auto;box-sizing:border-box;"
             ondragover="event.preventDefault()"
             ondrop="event.preventDefault();nwUploadImages(event.dataTransfer.files)"></div>
         </div>
-        <div style="display:flex;gap:8px;justify-content:flex-end;position:sticky;bottom:0;background:var(--dark3);padding:10px 0;z-index:5;">
+        <div style="display:flex;gap:8px;justify-content:flex-end;">
           <button onclick="showNews()" style="padding:9px 20px;background:#111;color:#aaa;border:1px solid #444;border-radius:4px;cursor:pointer;font-size:13px;">취소</button>
           <button onclick="submitNewsWrite()" style="padding:9px 20px;background:linear-gradient(180deg,#4a3c18,#2e2408);color:#d4a84b;border:1px solid #8a7a38;border-radius:4px;cursor:pointer;font-size:13px;font-weight:700;">✅ 등록</button>
         </div>
@@ -1818,7 +1440,7 @@ footer a{color:var(--g2);}
   </div>
 
   <!-- 뉴스 상세보기 섹션 -->
-  <div id="section-news-detail" style="display:none;min-width:0;max-width:100%;">
+  <div id="section-news-detail" style="display:none;">
     <div style="background:var(--dark3);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;">
       <div style="padding:9px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--dark);">
         <span style="font-size:13px;font-weight:700;color:var(--g);">📄 뉴스 상세</span>
@@ -1838,7 +1460,7 @@ footer a{color:var(--g2);}
       <div style="padding:9px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--dark);">
         <div style="font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;color:var(--text);">
           <div style="width:2px;height:12px;background:var(--g);border-radius:1px;"></div>
-          <span id="news-page-title">📰 리니지클래식 뉴스</span>
+          📰 리니지 클래식 뉴스
         </div>
         <div style="font-size:11px;color:var(--text3);cursor:pointer;" onclick="showMain()">← 메인으로</div>
       </div>
@@ -2010,97 +1632,70 @@ footer a{color:var(--g2);}
   </div>
             <div id="section-main">
         <div class="card" style="margin-bottom:12px;">
-          <div class="main-board-grid" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));">
-            <div style="border-right:1px solid var(--border);min-width:0;">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);">
+            <div style="border-right:1px solid var(--border);">
               <div class="card-head">
-                <div class="card-title" style="font-size:13px;"><div class="bar"></div><i class="ti ti-speakerphone"></i>리니지클래식 공지</div>
-                <div class="card-more" onclick="event.preventDefault();showNews('classic')" style="cursor:pointer;">더보기 →</div>
+                <div class="card-title"><div class="bar"></div><i class="ti ti-speakerphone"></i>공지사항</div>
               </div>
               <div id="main-notice-list" style="padding:8px 14px;font-size:11px;color:var(--text2);min-height:170px;">
                 <div style="padding:5px 0;color:var(--text3);">불러오는 중...</div>
               </div>
             </div>
-            <div style="border-right:1px solid var(--border);min-width:0;">
+            <div style="border-right:1px solid var(--border);">
               <div class="card-head">
-                <div class="card-title" style="font-size:13px;"><div class="bar"></div>📋 리니지클래식 자유게시판</div>
+                <div class="card-title"><div class="bar"></div>📋 자유게시판</div>
                 <div class="card-more" onclick="event.preventDefault();showBoard('free')" style="cursor:pointer;">더보기 →</div>
               </div>
               <div id="main-freeboard-list" style="padding:8px 14px;font-size:11px;color:var(--text2);min-height:170px;">
                 <div style="padding:5px 0;color:var(--text3);">불러오는 중...</div>
               </div>
             </div>
-            <div style="border-right:1px solid var(--border);min-width:0;">
+            <div>
               <div class="card-head">
-                <div class="card-title" style="font-size:13px;"><div class="bar"></div><i class="ti ti-speakerphone"></i>리니지M 공지</div>
-                <div class="card-more" onclick="event.preventDefault();showNews('m')" style="cursor:pointer;">더보기 →</div>
+                <div class="card-title"><div class="bar"></div>⚔ 장비러쉬 순위</div>
+                <div class="card-more" onclick="event.preventDefault();showSimulator()" style="cursor:pointer;">플레이 →</div>
               </div>
-              <div id="main-notice-list-m" style="padding:8px 14px;font-size:11px;color:var(--text2);min-height:170px;">
-                <div style="padding:5px 0;color:var(--text3);">불러오는 중...</div>
-              </div>
-            </div>
-            <div style="min-width:0;">
-              <div class="card-head">
-                <div class="card-title" style="font-size:13px;"><div class="bar"></div>📋 리니지M 자유게시판</div>
-                <div class="card-more" onclick="event.preventDefault();showBoard('free_m')" style="cursor:pointer;">더보기 →</div>
-              </div>
-              <div id="main-freeboard-list-m" style="padding:8px 14px;font-size:11px;color:var(--text2);min-height:170px;">
-                <div style="padding:5px 0;color:var(--text3);">불러오는 중...</div>
+              <div style="padding:8px 14px;font-size:11px;color:var(--text2);min-height:170px;">
+                <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);"><span><b style="color:var(--g);">1위</b>&nbsp; 강화왕철수</span><span style="color:var(--g);">+18</span></div>
+                <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);"><span><b style="color:var(--text2);">2위</b>&nbsp; 축복만믿는다</span><span style="color:var(--g);">+16</span></div>
+                <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);"><span><b style="color:var(--text2);">3위</b>&nbsp; 조우의기사</span><span style="color:var(--g);">+15</span></div>
+                <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);"><span><b style="color:var(--text3);">4위</b>&nbsp; 데포로쥬요정</span><span style="color:var(--g);">+13</span></div>
+                <div style="display:flex;justify-content:space-between;padding:5px 0;"><span><b style="color:var(--text3);">5위</b>&nbsp; 힐든다크</span><span style="color:var(--g);">+12</span></div>
               </div>
             </div>
           </div>
         </div>
-        <div class="card mini-price-card" style="margin-bottom:12px;">
-          <div class="mini-price-split" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch;">
-
-            <div style="border-right:1px solid var(--border);min-width:0;display:flex;flex-direction:column;">
-              <div class="card-head" style="display:flex;align-items:center;justify-content:space-between;gap:6px;">
-                <div class="card-title" style="flex:0 0 auto;"><div class="bar"></div><i class="ti ti-coin"></i>아덴 시세</div>
-                <div style="flex:1;text-align:center;font-size:11px;min-width:0;white-space:nowrap;overflow:hidden;">
-                  <span style="color:var(--text3);">평균</span>
-                  <span id="aden-mini-avg-price" style="font-size:14px;font-weight:800;color:var(--g);margin-left:4px;">831원</span>
-                  <span id="aden-mini-avg-change" style="font-weight:700;margin-left:4px;"></span>
-                </div>
-                <div class="card-more" onclick="event.preventDefault();showAdenPrice()" style="cursor:pointer;flex:0 0 auto;">더보기 →</div>
-              </div>
-              <div id="aden-mini-viewport" style="overflow:hidden;position:relative;padding:6px 14px 12px;">
-                <div id="aden-mini-track" style="display:flex;flex-direction:column;gap:8px;transition:transform .6s ease;"></div>
-              </div>
+        <div class="card" style="margin-bottom:12px;">
+          <div class="card-head" style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-title" style="flex:0 0 auto;"><div class="bar"></div><i class="ti ti-coin"></i>아덴 시세</div>
+            <div style="flex:1;text-align:center;font-size:12px;">
+              <span style="color:var(--text3);">전서버 평균</span>
+              <span id="aden-mini-avg-price" style="font-size:15px;font-weight:800;color:var(--g);margin-left:6px;">831원</span>
+              <span id="aden-mini-avg-change" style="font-weight:700;margin-left:6px;"></span>
             </div>
-
-            <div style="min-width:0;display:flex;flex-direction:column;">
-              <div class="card-head" style="display:flex;align-items:center;justify-content:space-between;gap:6px;">
-                <div class="card-title" style="flex:0 0 auto;"><div class="bar"></div>💎 다이아 시세</div>
-                <div style="flex:1;text-align:center;font-size:11px;min-width:0;white-space:nowrap;overflow:hidden;">
-                  <span style="color:var(--text3);">평균</span>
-                  <span id="dia-mini-avg-price" style="font-size:14px;font-weight:800;color:var(--g);margin-left:4px;">19,929원</span>
-                  <span id="dia-mini-avg-change" style="font-weight:700;margin-left:4px;"></span>
-                </div>
-                <div class="card-more" onclick="event.preventDefault();showDiaPrice()" style="cursor:pointer;flex:0 0 auto;">더보기 →</div>
-              </div>
-              <div id="dia-mini-viewport" style="overflow:hidden;position:relative;padding:6px 14px 12px;">
-                <div id="dia-mini-track" style="display:flex;flex-direction:column;gap:8px;transition:transform .6s ease;"></div>
-              </div>
-            </div>
-
+            <div class="card-more" onclick="event.preventDefault();showAdenPrice()" style="cursor:pointer;flex:0 0 auto;">아덴시세 보기 →</div>
+          </div>
+          <div id="aden-mini-viewport" style="overflow:hidden;position:relative;padding:6px 14px 12px;">
+            <div id="aden-mini-track" style="display:flex;flex-direction:column;transition:transform .6s ease;"></div>
           </div>
         </div>
         <div class="card">
           <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch;">
             <div style="border-right:1px solid var(--border);min-width:0;display:flex;flex-direction:column;">
               <div class="card-head">
-                <div class="card-title" style="font-size:14px;"><div class="bar"></div>🔴 리니지 클래식 실시간 LIVE</div>
-                <div class="card-more" onclick="event.preventDefault();showYoutube();setYoutubeTab('live');" style="cursor:pointer;">더보기 →</div>
+                <div class="card-title"><div class="bar"></div><i class="ti ti-coin"></i>거래소</div>
+                <div class="card-more" onclick="event.preventDefault();showMarket()" style="cursor:pointer;">더보기 →</div>
               </div>
-              <div id="main-youtube-list" style="padding:8px 14px;font-size:11px;color:var(--text2);flex:1;min-width:0;">
+              <div id="main-market-list" style="padding:8px 14px;font-size:11px;color:var(--text2);flex:1;">
                 <div style="padding:5px 0;color:var(--text3);">불러오는 중...</div>
               </div>
             </div>
             <div style="border-right:1px solid var(--border);min-width:0;display:flex;flex-direction:column;">
               <div class="card-head">
-                <div class="card-title" style="font-size:14px;"><div class="bar"></div>🔴 리니지M 실시간 LIVE</div>
-                <div class="card-more" onclick="event.preventDefault();window.open('https://www.youtube.com/results?search_query=' + encodeURIComponent('리니지M') + '&sp=EgJAAQ%253D%253D','_blank')" style="cursor:pointer;">더보기 →</div>
+                <div class="card-title" style="font-size:14px;"><div class="bar"></div>🔴 리니지 클래식 실시간 LIVE</div>
+                <div class="card-more" onclick="event.preventDefault();showYoutube();setYoutubeTab('live');" style="cursor:pointer;">더보기 →</div>
               </div>
-              <div id="main-linm-live-list" style="padding:8px 14px;font-size:11px;color:var(--text2);flex:1;min-width:0;">
+              <div id="main-youtube-list" style="padding:8px 14px;font-size:11px;color:var(--text2);flex:1;min-width:0;">
                 <div style="padding:5px 0;color:var(--text3);">불러오는 중...</div>
               </div>
             </div>
@@ -2250,23 +1845,7 @@ footer a{color:var(--g2);}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<!-- ?v= 값을 올리면 브라우저가 캐시를 무시하고 새 파일을 받는다. auth-v2.js를 고칠 때마다 숫자를 올릴 것 -->
-<script>window.ADEN_VERSION='v394';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
-<script>
-  // 헤더 높이를 실제로 재서 사이드 배경 시작 위치에 반영한다.
-  // (헤더 높이는 화면 크기에 따라 달라지므로 숫자를 고정하면 그림이 가려진다)
-  (function () {
-    function setHeaderVar() {
-      var h = document.querySelector('.site-header');
-      if (h) document.documentElement.style.setProperty('--hdr', h.offsetHeight + 'px');
-    }
-    document.addEventListener('DOMContentLoaded', setHeaderVar);
-    window.addEventListener('load', setHeaderVar);
-    window.addEventListener('resize', setHeaderVar);
-  })();
-</script>
-<script src="auth-v2.js?v=394"></script>
-<script src="admin.js?v=394"></script>
+<script src="auth-v2.js"></script>
 <script>
   // 장비러쉬
   const SIM_SWORD='images/img6.jpg';
@@ -2741,13 +2320,12 @@ footer a{color:var(--g2);}
     const err=document.getElementById('li-error');
     if(!email||!pw){err.textContent='이메일과 비밀번호를 입력해주세요.';return;}
     err.textContent='';
-    // 관리자 여부는 로그인 후 Firebase 의 admins 목록으로 판정한다.
-    // (예전의 boss/123456 하드코딩은 소스만 열면 노출되므로 제거함)
-    try{
-      const cred = await auth.signInWithEmailAndPassword(email,pw);
-      if (typeof _handleAuthState === 'function') _handleAuthState(cred.user);
-      showToast('✅ 로그인 되었습니다!');
+    // 관리자 체크 (boss / 123456)
+    if(email==='boss'&&pw==='123456'){
+      if(typeof adminLogin==='function') adminLogin();
+      return;
     }
+    try{await auth.signInWithEmailAndPassword(email,pw);showToast('✅ 로그인 되었습니다!');}
     catch(e){err.textContent=firebaseErrorMsg(e.code);}
   }
   document.getElementById('li-pw')?.addEventListener('keydown',e=>{if(e.key==='Enter')loginInline();});
@@ -2826,8 +2404,7 @@ footer a{color:var(--g2);}
   function autoGenerateNews(type) {
     if (!isAdmin) return;
     const typeLabel = type==='update'?'업데이트':type==='event'?'이벤트':type==='news'?'인벤뉴스':'공지';
-    const gameLabel = _newsGame === 'm' ? '리니지M' : '리니지클래식';
-    document.getElementById('news-write-section-title').textContent = gameLabel + ' ' + typeLabel + ' 글쓰기';
+    document.getElementById('news-write-section-title').textContent = typeLabel + ' 글쓰기';
     document.getElementById('nw-title').value = '';
     document.getElementById('nw-editor').innerHTML = '';
     document.getElementById('nw-editor').dataset.type = type;
@@ -2835,91 +2412,6 @@ footer a{color:var(--g2);}
     document.getElementById('section-news-write').style.display = 'block';
     document.getElementById('nw-title').focus();
   }
-
-  // ---------- 붙여넣기 정화 ----------
-  // 외부 사이트에서 복사하면 width:1000px 같은 고정 폭이 함께 딸려온다.
-  // 그대로 두면 에디터와 페이지가 가로로 늘어나므로, 붙여넣는 시점에 제거한다.
-  function nwStripWidths(root) {
-    if (!root) return;
-
-    // 1) 열 너비를 강제하는 colgroup / col 태그를 통째로 제거.
-    //    이게 남아 있으면 아무리 표에 width:100% 를 줘도 원래 폭을 고집한다.
-    root.querySelectorAll('colgroup, col').forEach(el => el.remove());
-
-    // 2) 모든 요소에서 폭 관련 지정 제거
-    root.querySelectorAll('*').forEach(el => {
-      el.removeAttribute('width');
-      el.removeAttribute('height');
-      el.removeAttribute('cellspacing');
-      el.removeAttribute('cellpadding');
-      const st = el.style;
-      if (st) {
-        ['width','minWidth','maxWidth','height','minHeight','flexBasis'].forEach(k => { st[k] = ''; });
-      }
-      if (el.tagName === 'IMG') {
-        el.style.maxWidth = '100%';
-        el.style.height = 'auto';
-      }
-    });
-
-    // 3) 표는 폭을 100%로 고정하고, 칸 너비를 균등 배분해 내용이 줄바꿈되게 한다
-    root.querySelectorAll('table').forEach(t => {
-      t.style.width = '100%';
-      t.style.maxWidth = '100%';
-      t.style.tableLayout = 'fixed';
-      t.querySelectorAll('td, th').forEach(c => {
-        c.style.wordBreak = 'break-word';
-        c.style.whiteSpace = 'normal';
-        c.style.overflowWrap = 'anywhere';
-      });
-
-      // 4) 그래도 넘칠 만큼 칸이 많은 표는 표만 좌우로 밀어 볼 수 있게 감싼다
-      if (!t.parentElement || !t.parentElement.classList.contains('table-scroll')) {
-        const box = document.createElement('div');
-        box.className = 'table-scroll';
-        box.style.cssText = 'max-width:100%;overflow-x:auto;';
-        t.parentNode.insertBefore(box, t);
-        box.appendChild(t);
-      }
-    });
-  }
-
-  // 툴바 버튼: 이미 붙여넣은 내용에도 적용
-  // 상세보기로 내용을 넣을 때도 같은 정리를 거친다 (이미 등록된 글 대응)
-  function renderDetailBody(html) {
-    const el = document.getElementById('detail-body');
-    if (!el) return;
-    el.innerHTML = html || '';
-    nwStripWidths(el);
-  }
-
-  function nwFitWidth() {
-    nwStripWidths(document.getElementById('nw-editor'));
-    showToast('폭을 화면에 맞췄습니다.');
-  }
-
-  // 게시판 에디터용 (뉴스와 같은 정리 함수를 공유)
-  function bwFitWidth() {
-    nwStripWidths(document.getElementById('bw-editor'));
-    showToast('폭을 화면에 맞췄습니다.');
-  }
-
-  // 붙여넣기를 가로채서 정화한 뒤 삽입 (뉴스 + 게시판 양쪽)
-  document.addEventListener('DOMContentLoaded', () => {
-    ['nw-editor', 'bw-editor'].forEach(id => {
-      const ed = document.getElementById(id);
-      if (!ed) return;
-      ed.addEventListener('paste', (e) => {
-        const html = e.clipboardData?.getData('text/html');
-        if (!html) return;                  // 순수 텍스트는 기본 동작에 맡긴다
-        e.preventDefault();
-        const box = document.createElement('div');
-        box.innerHTML = html;
-        nwStripWidths(box);
-        document.execCommand('insertHTML', false, box.innerHTML);
-      });
-    });
-  });
 
   function nwExecCmd(cmd, val) {
     document.getElementById('nw-editor').focus();
@@ -2973,7 +2465,7 @@ footer a{color:var(--g2);}
     const desc = editor.innerHTML.trim();
     const id = 'n' + Date.now();
     const today = new Date().toLocaleDateString('ko-KR', {year:'numeric', month:'2-digit', day:'2-digit'}).replace(/\. /g,'.').replace(/\.$/,'');
-    const news = { id, type, title, desc: desc||'', url: '', date: today, isNew: true, timestamp: Date.now(), game: _newsGame };
+    const news = { id, type, title, desc: desc||'', url: '', date: today, isNew: true, timestamp: Date.now() };
 
     try {
       const db = firebase.database();
@@ -2990,12 +2482,10 @@ footer a{color:var(--g2);}
 
   // 페이지 로드시 뉴스 자동 로드
   setTimeout(loadNews, 1000);
-  setTimeout(() => { loadMainNotice('classic'); loadMainNotice('m'); }, 1200);
+  setTimeout(loadMainNotice, 1200);
 
-  // game: 'classic' | 'm'
-  async function loadMainNotice(game) {
-    game = game || 'classic';
-    const container = document.getElementById(game === 'm' ? 'main-notice-list-m' : 'main-notice-list');
+  async function loadMainNotice() {
+    const container = document.getElementById('main-notice-list');
     if (!container) return;
     try {
       const db = firebase.database();
@@ -3011,9 +2501,7 @@ footer a{color:var(--g2);}
         if (v && v.id && !deletedIds.has(v.id)) items.push(v);
       });
       items.sort((a, b) => (b.timestamp||0) - (a.timestamp||0));
-      // 게임 구분값이 없는 예전 글은 클래식으로 취급
-      const byGame = items.filter(n => ((n.game === 'm') ? 'm' : 'classic') === game);
-      const top5 = byGame.slice(0, 5);
+      const top5 = items.slice(0, 5);
       if (top5.length === 0) {
         container.innerHTML = '<div style="padding:5px 0;color:var(--text3);">등록된 공지가 없습니다.</div>';
         return;
@@ -3022,7 +2510,7 @@ footer a{color:var(--g2);}
         const typeColor = n.type==='update'?'#70c870':n.type==='event'?'#d4a84b':'#7090d8';
         const typeText = n.type==='update'?'[업데이트]':n.type==='event'?'[이벤트]':'[공지]';
         const isLast = i === top5.length - 1;
-        return `<div style="padding:5px 0;${isLast?'':'border-bottom:1px solid var(--border);'}cursor:pointer;" onclick="showNews('${game}')">
+        return `<div style="padding:5px 0;${isLast?'':'border-bottom:1px solid var(--border);'}cursor:pointer;" onclick="showNews()">
           <span style="color:${typeColor};font-size:10px;margin-right:4px;">${typeText}</span>· ${n.title}
           <span style="color:var(--text3);float:right;">${n.date.slice(5)}</span>
         </div>`;
@@ -3046,8 +2534,6 @@ footer a{color:var(--g2);}
   const YT_CATEGORIES = [
     { name: '리니지클래식', query: '리니지 클래식 데포로쥬' },
     { name: '리니지클래식 러쉬', query: '리니지 클래식 러쉬' },
-    { name: '리니지M', query: '리니지M 린엠' },
-    { name: '리니지M 러쉬', query: '리니지M 러쉬' },
     { name: 'SOL인챈트', query: 'sol 인챈트 솔 인챈트' },
     { name: '디아블로', query: '디아블로2 레저렉션 디아블로' },
     { name: '스타크래프트', query: '스타크래프트' },
@@ -3142,7 +2628,23 @@ footer a{color:var(--g2);}
 
       const card = document.createElement('div');
       card.style.cssText = 'cursor:pointer;';
-      card.onclick = () => openYoutubeModal(vid, title, channel);
+      card.onclick = () => {
+        const modal = document.createElement('div');
+        modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;';
+        modal.innerHTML = `
+          <div style="width:100%;max-width:900px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+              <div style="font-size:14px;color:#fff;font-weight:600;flex:1;margin-right:10px;">${title}</div>
+              <button onclick="this.closest('div[style*=fixed]').remove()" style="background:#333;color:#fff;border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;">✕</button>
+            </div>
+            <div style="position:relative;padding-bottom:56.25%;height:0;">
+              <iframe src="https://www.youtube.com/embed/${vid}?autoplay=1" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;border-radius:6px;" allowfullscreen allow="autoplay"></iframe>
+            </div>
+            <div style="font-size:12px;color:#aaa;margin-top:8px;">${channel}</div>
+          </div>`;
+        modal.onclick = e => { if(e.target===modal) modal.remove(); };
+        document.body.appendChild(modal);
+      };
       card.innerHTML = `
         <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:6px;margin-bottom:8px;">
           <img src="${thumb}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">
@@ -4168,6 +3670,25 @@ footer a{color:var(--g2);}
 
   let _diaPriceListenerAttached = false;
   let _diaPriceData = DIA_PRICE_FALLBACK;
+  let _diaSort = 'price';
+
+  function setDiaSort(mode) {
+    _diaSort = mode;
+    ['price','change','name'].forEach(m => {
+      const btn = document.getElementById('dia-sort-' + m);
+      if (!btn) return;
+      if (m === mode) {
+        btn.style.border = '1px solid #9b8ce0';
+        btn.style.background = '#1a1030';
+        btn.style.color = '#9b8ce0';
+      } else {
+        btn.style.border = '1px solid var(--border)';
+        btn.style.background = 'var(--dark)';
+        btn.style.color = 'var(--text3)';
+      }
+    });
+    renderDiaPrice(_diaPriceData);
+  }
 
   function renderDiaPrice(data) {
     if (!data) return;
@@ -4176,28 +3697,24 @@ footer a{color:var(--g2);}
     const avgEl = document.getElementById('dia-avg-price');
     const avgChangeEl = document.getElementById('dia-avg-change');
     const labelEl = document.getElementById('dia-updated-label');
-    const gridEl = document.getElementById('dia-price-grid');
-    if (!avgEl || !gridEl) return;
+    const tbody = document.getElementById('dia-price-tbody');
+    if (!avgEl || !tbody) return;
 
+    let servers = (data.servers || []).slice();
+
+    // 평균값이 없으면 서버 목록에서 계산
     let avg = data.average;
-    if (typeof avg !== 'number' && data.servers && data.servers.length) {
-      avg = Math.round(data.servers.reduce((s, v) => s + (v.price || 0), 0) / data.servers.length);
+    if (typeof avg !== 'number' && servers.length) {
+      avg = Math.round(servers.reduce((s,v) => s + (v.price||0), 0) / servers.length);
     }
     avgEl.textContent = (avg || 0).toLocaleString() + '원';
 
     if (avgChangeEl) {
       const pct = data.avgChangePct;
       if (typeof pct === 'number' && !Number.isNaN(pct)) {
-        if (pct > 0) {
-          avgChangeEl.innerHTML = `▲${pct.toFixed(2)}%`;
-          avgChangeEl.style.color = '#e05a5a';
-        } else if (pct < 0) {
-          avgChangeEl.innerHTML = `▼${Math.abs(pct).toFixed(2)}%`;
-          avgChangeEl.style.color = '#5a8ee0';
-        } else {
-          avgChangeEl.innerHTML = '0%';
-          avgChangeEl.style.color = 'var(--text3)';
-        }
+        if (pct > 0)      { avgChangeEl.innerHTML = `▲${pct.toFixed(2)}%`; avgChangeEl.style.color = '#e05a5a'; }
+        else if (pct < 0) { avgChangeEl.innerHTML = `▼${Math.abs(pct).toFixed(2)}%`; avgChangeEl.style.color = '#5a8ee0'; }
+        else              { avgChangeEl.innerHTML = '0%'; avgChangeEl.style.color = 'var(--text3)'; }
       } else {
         avgChangeEl.innerHTML = '';
       }
@@ -4207,27 +3724,40 @@ footer a{color:var(--g2);}
       ? ('마지막 업데이트: ' + data.updatedAtLabel)
       : '기본값 표시 중';
 
-    const servers = (data.servers || []).slice().sort((a,b) => b.price - a.price);
-    gridEl.innerHTML = servers.map(s => {
-      let pctHtml = '';
+    // 순위는 항상 가격 기준으로 고정
+    const rankMap = {};
+    servers.slice().sort((a,b) => b.price - a.price).forEach((s,i) => { rankMap[s.name] = i + 1; });
+
+    // 검색 필터
+    const kw = (document.getElementById('dia-search')?.value || '').trim();
+    if (kw) servers = servers.filter(s => s.name.includes(kw));
+
+    // 정렬
+    if (_diaSort === 'name')        servers.sort((a,b) => a.name.localeCompare(b.name, 'ko'));
+    else if (_diaSort === 'change') servers.sort((a,b) => (b.changePct||0) - (a.changePct||0));
+    else                            servers.sort((a,b) => b.price - a.price);
+
+    if (!servers.length) {
+      tbody.innerHTML = `<tr><td colspan="4" style="padding:30px;text-align:center;color:var(--text3);">검색 결과가 없습니다.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = servers.map(s => {
+      let pctHtml = '<span style="color:var(--text3);">-</span>';
       if (typeof s.changePct === 'number' && !Number.isNaN(s.changePct)) {
-        if (s.changePct > 0) {
-          pctHtml = `<span style="color:#e05a5a;font-size:12px;">▲${s.changePct.toFixed(2)}%</span>`;
-        } else if (s.changePct < 0) {
-          pctHtml = `<span style="color:#5a8ee0;font-size:12px;">▼${Math.abs(s.changePct).toFixed(2)}%</span>`;
-        } else {
-          pctHtml = `<span style="color:var(--text3);font-size:12px;">0%</span>`;
-        }
+        if (s.changePct > 0)      pctHtml = `<span style="color:#e05a5a;">▲${s.changePct.toFixed(2)}%</span>`;
+        else if (s.changePct < 0) pctHtml = `<span style="color:#5a8ee0;">▼${Math.abs(s.changePct).toFixed(2)}%</span>`;
+        else                      pctHtml = `<span style="color:var(--text3);">0%</span>`;
       }
+      const rank = rankMap[s.name];
+      const rankColor = rank === 1 ? '#d4a84b' : (rank <= 3 ? '#9b8ce0' : 'var(--text3)');
       return `
-      <div style="padding:12px 14px;border:1px solid var(--border);border-radius:6px;background:var(--dark);">
-        <div style="font-weight:600;font-size:13px;margin-bottom:6px;">${s.name}</div>
-        <div style="display:flex;justify-content:space-between;align-items:baseline;">
-          <span style="color:var(--text2);font-size:13px;">${s.price.toLocaleString()}원</span>
-          ${pctHtml}
-        </div>
-      </div>
-    `;
+      <tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:11px 14px;color:${rankColor};font-weight:700;font-size:12px;">${rank}</td>
+        <td style="padding:11px 14px;font-weight:600;">${s.name}</td>
+        <td style="padding:11px 14px;text-align:right;color:var(--text2);font-weight:600;">${(s.price||0).toLocaleString()}원</td>
+        <td style="padding:11px 14px;text-align:right;font-size:12px;font-weight:700;">${pctHtml}</td>
+      </tr>`;
     }).join('');
   }
 
@@ -4263,27 +3793,7 @@ footer a{color:var(--g2);}
     loadDiaPrice();
   }
 
-  // 'classic' | 'm'. 게임 구분값이 없는 예전 매물은 클래식으로 취급한다.
-  let _marketGame = 'classic';
-
-  function showMarket(game) {
-    if (game === 'classic' || game === 'm') _marketGame = game;
-    const t = document.getElementById('market-page-title');
-    if (t) t.textContent = _marketGame === 'm' ? '💎 리니지M 거래소' : '🎮 리니지클래식 거래소';
-    // 거래소 필터의 서버 목록도 게임에 맞게 교체
-    const mktSrv = document.getElementById('mkt-server');
-    if (mktSrv) {
-      const keep = mktSrv.value;
-      fillBoardServerOptions(mktSrv, _marketGame === 'm' ? 'x_m' : 'x');
-      mktSrv.options[0].textContent = '전체 서버';
-      if ([...mktSrv.options].some(o => o.value === keep)) mktSrv.value = keep;
-    }
-    // 채널은 리니지M에만 있는 개념
-    const chWrap = document.getElementById('mkt-channel-wrap');
-    if (chWrap) {
-      chWrap.style.display = _marketGame === 'm' ? 'flex' : 'none';
-      if (_marketGame !== 'm') { const c = document.getElementById('mkt-channel'); if (c) c.value = ''; }
-    }
+  function showMarket() {
     ['section-main','section-news','section-news-write','section-news-detail',
      'section-simulator','section-slime','section-board','section-board-write',
      'section-board-detail','section-market-write','section-adenprice','section-diaprice','section-youtube','section-fortune','section-tarot','section-lotto'].forEach(id => {
@@ -4327,14 +3837,11 @@ footer a{color:var(--g2);}
   function filterMarket() {
     const search = (document.getElementById('mkt-search')?.value || '').toLowerCase();
     const server = document.getElementById('mkt-server')?.value || '';
-    const channel = document.getElementById('mkt-channel')?.value || '';
     const hideDone = document.getElementById('mkt-hide-done')?.checked;
     let filtered = _marketAllItems.filter(item => {
-      if (((item.game === 'm') ? 'm' : 'classic') !== _marketGame) return false;
       if (_marketTab === 'sell' && item.type !== 'sell') return false;
       if (_marketTab === 'buy' && item.type !== 'buy') return false;
       if (server && item.server !== server) return false;
-      if (channel && String(item.channel||'') !== channel) return false;
       if (hideDone && (item.status === 'done')) return false;
       if (search && !(item.item||'').toLowerCase().includes(search)) return false;
       return true;
@@ -4375,7 +3882,7 @@ footer a{color:var(--g2);}
         <div style="font-size:18px;font-weight:700;color:#d4a84b;margin-bottom:8px;">${priceStr} <span style="font-size:12px;color:var(--text3);">아데나</span></div>
         <div style="font-size:12px;color:var(--text3);line-height:1.8;">
           수량 <span style="color:var(--text);">${item.qty||1}개</span><br>
-          서버 <span style="color:var(--text);">${item.server||''}${item.channel ? ' / ' + item.channel + '채널' : ''}</span><br>
+          서버 <span style="color:var(--text);">${item.server||''}</span><br>
           캐릭터 <span style="color:var(--text);">${item.char||''}</span>
         </div>
         <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;">
@@ -4398,9 +3905,6 @@ footer a{color:var(--g2);}
 
   function showMarketWrite() {
     if (!auth.currentUser && !isAdmin) { showToast('로그인 후 이용하세요.'); return; }
-    fillBoardServerOptions(document.getElementById('mw-server'), _marketGame === 'm' ? 'x_m' : 'x');
-    const mwCh = document.getElementById('mw-channel');
-    if (mwCh) { mwCh.style.display = _marketGame === 'm' ? '' : 'none'; mwCh.value = ''; }
     document.getElementById('section-market').style.display = 'none';
     document.getElementById('section-market-write').style.display = 'block';
   }
@@ -4410,7 +3914,6 @@ footer a{color:var(--g2);}
     const price = document.getElementById('mw-price').value.trim();
     const qty = document.getElementById('mw-qty').value || '1';
     const server = document.getElementById('mw-server').value;
-    const channel = _marketGame === 'm' ? (document.getElementById('mw-channel')?.value || '') : '';
     const char = document.getElementById('mw-char').value.trim();
     const contact = document.getElementById('mw-contact').value.trim();
     const type = document.getElementById('mw-type').value;
@@ -4419,7 +3922,7 @@ footer a{color:var(--g2);}
     const user = auth.currentUser;
     const nickname = isAdmin ? 'GM메티스' : (user ? (user.displayName||user.email.split('@')[0]) : '익명');
     const id = 'm' + Date.now();
-    const data = { id, item, price, qty, server, char, contact, type, nickname, status:'active', timestamp:Date.now(), game:_marketGame, channel };
+    const data = { id, item, price, qty, server, char, contact, type, nickname, status:'active', timestamp:Date.now() };
     try {
       await firebase.database().ref('market/' + id).set(data);
       showToast('✅ 등록되었습니다.');
@@ -4453,13 +3956,9 @@ footer a{color:var(--g2);}
   function showBoard(boardType) {
     _currentBoard = boardType || 'free';
     const titleMap = {
-      'humor': '😂 유머게시판',
-      'free': '📋 리니지클래식 자유게시판',
-      'free_m': '📋 리니지M 자유게시판',
-      'clan': '⚔ 리니지클래식 혈맹모집 게시판',
-      'clan_m': '⚔ 리니지M 혈맹모집 게시판',
-      'brag': '🏆 리니지클래식 자랑하기 게시판',
-      'brag_m': '🏆 리니지M 자랑하기 게시판',
+      'free': '📋 자유게시판',
+      'clan': '⚔ 혈맹모집 게시판',
+      'brag': '🏆 자랑하기 게시판',
       'play_lineage': '🎮 게임같이해요',
       'play_star': '⭐ 스타같이해요',
       'play_lol': '🏆 LOL같이해요',
@@ -4619,7 +4118,6 @@ footer a{color:var(--g2);}
       const snap = await db.ref('board_content/' + _currentBoard + '/' + p.id).once('value');
       const data = snap.val();
       document.getElementById('bd-body').innerHTML = (data && data.desc) ? data.desc : (p.desc || '<span style="color:var(--text3)">내용이 없습니다.</span>');
-      nwStripWidths(document.getElementById('bd-body'));   // 기존 글도 폭을 맞춰서 표시
 
       // 이전/다음글
       const allSnap = await db.ref('board/' + _currentBoard).once('value');
@@ -4736,13 +4234,9 @@ footer a{color:var(--g2);}
     const p = _lastBoardPost;
     if (!p) return;
     const titleMap = {
-      'humor': '유머게시판',
-      'free': '리니지클래식 자유게시판',
-      'free_m': '리니지M 자유게시판',
-      'clan': '리니지클래식 혈맹모집 게시판',
-      'clan_m': '리니지M 혈맹모집 게시판',
-      'brag': '리니지클래식 자랑하기 게시판',
-      'brag_m': '리니지M 자랑하기 게시판',
+      'free': '자유게시판',
+      'clan': '혈맹모집 게시판',
+      'brag': '자랑하기 게시판',
       'play_star': '스타같이해요',
       'play_lol': 'LOL같이해요',
       'play_sol': 'SOL같이해요',
@@ -4751,10 +4245,6 @@ footer a{color:var(--g2);}
     };
     const boardName = titleMap[_currentBoard] || '게시판';
     document.getElementById('board-write-title').textContent = '✏️ ' + boardName + ' 수정';
-    const authorRow2 = document.getElementById('bw-author-row');
-    if (authorRow2) authorRow2.style.display = isAdmin ? 'flex' : 'none';
-    const authorInput2 = document.getElementById('bw-author');
-    if (authorInput2) authorInput2.value = isAdmin ? (p.nickname || '') : '';
     document.getElementById('bw-title').value = p.title || '';
     document.getElementById('bw-editor').innerHTML = '';
     document.getElementById('section-board-detail').style.display = 'none';
@@ -4777,9 +4267,7 @@ footer a{color:var(--g2);}
     const desc = editor.innerHTML.trim();
     try {
       const db = firebase.database();
-      // 관리자가 글쓴이를 바꿨으면 함께 반영
-      const editAuthor = isAdmin ? (document.getElementById('bw-author')?.value || '').trim() : '';
-      await db.ref('board/' + _currentBoard + '/' + id).update(editAuthor ? { title, nickname: editAuthor } : { title });
+      await db.ref('board/' + _currentBoard + '/' + id).update({ title });
       await db.ref('board_content/' + _currentBoard + '/' + id).set({ desc });
       // 버튼 원상복구
       const btn = document.querySelector(`button[onclick="submitBoardEdit('${id}')"]`);
@@ -4789,30 +4277,12 @@ footer a{color:var(--g2);}
     } catch(e) { showToast('수정 실패: ' + e.message); }
   }
 
-  // ---------- 게시판별 서버 목록 ----------
-  // 리니지클래식과 리니지M은 서버 이름이 다르므로 글쓰기 화면에서 갈아끼운다.
-  const CLASSIC_SERVERS = ['데포로쥬','캔라우헬','질리언','이실로테','조우','하딘','케레니스','오웬','크리스터','아튼','가드리아','군터','아스테어','듀크데필','발센','어레인','캐스톨','세바스찬','데컨','아인하사드','파아그리오','에바','사이하','마프르','린델','하이네','로엔그린','발라카스','오렌'];
-  const LINM_SERVERS = ['판도라','케레니스','라스타바드','블루디카','파푸리온','발라카스','진기르타스','이실로테','린드비오르','듀크데필','아툰','하딘','군터','데스나이트','안타라스','사이하','질리언','데포로쥬','그림리퍼','켄라우헬','기르타스','발록','그레시아','글루디오','오렌','말하는섬','켄트','윈다우드'];
-
-  function fillBoardServerOptions(sel, boardType) {
-    if (!sel) return;
-    const list = String(boardType || '').endsWith('_m') ? LINM_SERVERS : CLASSIC_SERVERS;
-    sel.innerHTML = '<option value="">서버 선택</option>'
-      + list.map(n => `<option value="${n}">${n}</option>`).join('')
-      + '<option value="전체">전체서버</option>';
-    sel.value = '';
-  }
-
   function showBoardWrite() {
     if (!auth.currentUser && !isAdmin) { showToast('로그인 후 이용하세요.'); return; }
     const titleMap = {
-      'humor': '유머게시판',
-      'free': '리니지클래식 자유게시판',
-      'free_m': '리니지M 자유게시판',
-      'clan': '리니지클래식 혈맹모집 게시판',
-      'clan_m': '리니지M 혈맹모집 게시판',
-      'brag': '리니지클래식 자랑하기 게시판',
-      'brag_m': '리니지M 자랑하기 게시판',
+      'free': '자유게시판',
+      'clan': '혈맹모집 게시판',
+      'brag': '자랑하기 게시판',
       'play_star': '스타같이해요',
       'play_lol': 'LOL같이해요',
       'play_sol': 'SOL같이해요',
@@ -4821,19 +4291,14 @@ footer a{color:var(--g2);}
     };
     const boardName = titleMap[_currentBoard] || '게시판';
     document.getElementById('board-write-title').textContent = '✏️ ' + boardName + ' 글쓰기';
-    // 관리자만 글쓴이를 직접 지정할 수 있다
-    const authorRow = document.getElementById('bw-author-row');
-    if (authorRow) authorRow.style.display = isAdmin ? 'flex' : 'none';
-    const authorInput = document.getElementById('bw-author');
-    if (authorInput) authorInput.value = '';
     document.getElementById('bw-title').value = '';
     document.getElementById('bw-editor').innerHTML = '';
     const catSel = document.getElementById('bw-category');
     const srvSel = document.getElementById('bw-server');
     const jobSel = document.getElementById('bw-job');
     const extraRow = document.getElementById('bw-extra-row');
-    // play_ 게시판과 유머게시판: 분류/서버 숨김 (게임과 무관한 글이므로)
-    const isPlay = _currentBoard.startsWith('play_') || _currentBoard === 'humor';
+    // play_ 게시판: 분류/서버 숨김
+    const isPlay = _currentBoard.startsWith('play_');
     if (isPlay) {
       catSel.parentElement.style.display = 'none';
       if (srvSel) srvSel.style.display = 'none';
@@ -4842,7 +4307,7 @@ footer a{color:var(--g2);}
     } else {
       catSel.parentElement.style.display = 'flex';
       if (srvSel) srvSel.style.display = '';
-      if (_currentBoard === 'clan' || _currentBoard === 'clan_m') {
+      if (_currentBoard === 'clan') {
         catSel.innerHTML = `<option value="">분류 선택</option><option value="혈맹모집해요">혈맹모집해요</option><option value="혈맹들어가고 싶어요">혈맹들어가고 싶어요</option>`;
         if (jobSel) { jobSel.style.display='flex'; jobSel.style.flex='1'; jobSel.value=''; }
         if (!document.getElementById('bw-extra-row')) {
@@ -4852,7 +4317,7 @@ footer a{color:var(--g2);}
           row2.innerHTML = `<select id="bw-level" style="flex:1;padding:10px 12px;background:#0a0800;border:1px solid #3a2e10;border-radius:4px;color:#e8dcc8;font-size:13px;"><option value="">최소레벨</option><option value="무관">무관</option><option value="20레벨">20레벨</option><option value="30레벨">30레벨</option><option value="40레벨">40레벨</option><option value="52레벨">52레벨</option></select><select id="bw-neutral" style="flex:1;padding:10px 12px;background:#0a0800;border:1px solid #3a2e10;border-radius:4px;color:#e8dcc8;font-size:13px;"><option value="">중립라인</option><option value="중립">중립</option><option value="라인">라인</option></select>`;
           catSel.parentElement.parentElement.insertBefore(row2, catSel.parentElement.nextSibling);
         } else { document.getElementById('bw-extra-row').style.display='flex'; }
-      } else if (_currentBoard === 'brag' || _currentBoard === 'brag_m') {
+      } else if (_currentBoard === 'brag') {
         catSel.innerHTML = `<option value="">분류 선택</option><option value="장비 자랑하기">장비 자랑하기</option><option value="레벨 자랑하기">레벨 자랑하기</option><option value="득템 자랑하기">득템 자랑하기</option><option value="러쉬 자랑하기">러쉬 자랑하기</option><option value="기타 자랑하기">기타 자랑하기</option>`;
         if (jobSel) { jobSel.style.display='none'; jobSel.value=''; }
         if (extraRow) extraRow.style.display='none';
@@ -4861,7 +4326,7 @@ footer a{color:var(--g2);}
         if (jobSel) { jobSel.style.display='none'; jobSel.value=''; }
         if (extraRow) extraRow.style.display='none';
       }
-      if (srvSel) fillBoardServerOptions(srvSel, _currentBoard);
+      if (srvSel) srvSel.value = '';
     }
     // 등록 버튼 원상복구
     const btn = document.querySelector('button[onclick^="submitBoardEdit"]');
@@ -4893,11 +4358,7 @@ footer a{color:var(--g2);}
     editor.querySelectorAll('img').forEach(img => { img.style.cssText='max-width:100% !important;width:auto !important;height:auto !important;display:block;'; img.removeAttribute('width'); img.removeAttribute('height'); });
     const desc = editor.innerHTML.trim();
     const user = auth.currentUser;
-    // 관리자가 글쓴이를 직접 입력했으면 그 이름으로 등록한다
-    const authorOverride = isAdmin ? (document.getElementById('bw-author')?.value || '').trim() : '';
-    const nickname = isAdmin
-      ? (authorOverride || 'GM메티스')
-      : (user ? (user.displayName||user.email.split('@')[0]) : '익명');
+    const nickname = isAdmin ? 'GM메티스' : (user ? (user.displayName||user.email.split('@')[0]) : '익명');
     const id = 'p' + Date.now();
     const today = new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'2-digit',day:'2-digit'}).replace(/\. /g,'.').replace(/\.$/,'');
     const category = (document.getElementById('bw-category')||{}).value || '';
@@ -4950,19 +4411,13 @@ footer a{color:var(--g2);}
     document.getElementById('detail-badge').innerHTML = `<span style="font-size:11px;padding:3px 9px;border-radius:3px;font-weight:700;background:${badgeBg};color:${badgeColor};">${badgeText}</span>`;
     document.getElementById('detail-title').textContent = n.title;
     document.getElementById('detail-date').textContent = '📅 ' + n.date;
-    renderDetailBody(n.desc || '<span style="color:var(--text3)">내용이 없습니다.</span>');
+    document.getElementById('detail-body').innerHTML = n.desc || '<span style="color:var(--text3)">내용이 없습니다.</span>';
     document.getElementById('section-news').style.display = 'none';
     document.getElementById('section-news-write').style.display = 'none';
     document.getElementById('section-news-detail').style.display = 'block';
   }
 
-  // 'classic' = 리니지클래식, 'm' = 리니지M. 기존 뉴스는 game 값이 없으므로 클래식으로 취급.
-  let _newsGame = 'classic';
-
-  function showNews(game) {
-    if (game === 'classic' || game === 'm') _newsGame = game;
-    const t = document.getElementById('news-page-title');
-    if (t) t.textContent = _newsGame === 'm' ? '📰 리니지M 뉴스' : '📰 리니지클래식 뉴스';
+  function showNews() {
     ['section-main','section-simulator','section-slime','section-news-write',
      'section-news-detail','section-board','section-board-write','section-board-detail',
      'section-market','section-market-write','section-adenprice','section-diaprice','section-youtube','section-fortune','section-tarot','section-lotto'].forEach(id => {
@@ -5006,9 +4461,7 @@ footer a{color:var(--g2);}
       writeBtn.setAttribute('onclick', `autoGenerateNews('${type}')`);
       writeBtn.style.display = (isAdmin && type !== 'all') ? 'inline-block' : 'none';
     }
-    // 먼저 게임(클래식/리니지M)으로 거르고, 그다음 분류 탭으로 거른다
-    const byGame = pageNewsData.filter(n => ((n.game === 'm') ? 'm' : 'classic') === _newsGame);
-    const filtered = type==='all' ? byGame : byGame.filter(n=>n.type===type);
+    const filtered = type==='all' ? pageNewsData : pageNewsData.filter(n=>n.type===type);
     renderPageNews(filtered);
   }
 
@@ -5172,42 +4625,30 @@ footer a{color:var(--g2);}
   // 실시간 카운터
   setInterval(()=>{const rand=Math.floor(Math.random()*20)-10;document.getElementById('online-count').textContent=(847+rand).toLocaleString()+'명';},4000);
 
-  // ---------- 메인화면 시세 미니 슬라이더 (아덴 / 다이아 공용) ----------
-  // 좌우 반쪽씩 쓰므로 한 페이지에 2열 x 4줄 = 8개씩, 5초마다 다음 페이지로 슬라이드
-  const MINI_PER_PAGE = 8;
-  const MINI_COLS = 2;
+  // ---------- 메인화면 아덴 시세 미니 슬라이더 ----------
+  let _adenMiniPages = [];
+  let _adenMiniIndex = 0;
+  let _adenMiniTimer = null;
+  let _adenMiniPageHeight = 0;
 
-  function createMiniSlider(opts) {
-    // opts: { key, dbPath, fallback, trackId, viewportId, avgId, changeId, pageClass }
-    let pages = [];
-    let index = 0;
-    let timer = null;
-
-    function buildPages(servers) {
-      const sorted = (servers || []).slice().sort((a, b) => b.price - a.price);
-      if (!sorted.length) return [];
-
-      // 마지막 페이지만 텅 비지 않도록 페이지 수를 먼저 정하고 고르게 나눈다.
-      // 예: 28개 / 8개씩 -> 8,8,8,4 대신 7,7,7,7
-      const pageCount = Math.ceil(sorted.length / MINI_PER_PAGE);
-      const perPage = Math.ceil(sorted.length / pageCount);
-
-      const out = [];
-      for (let i = 0; i < sorted.length; i += perPage) {
-        out.push(sorted.slice(i, i + perPage));
-      }
-      return out;
+  function buildAdenMiniPages(servers) {
+    const sorted = (servers || []).slice().sort((a,b) => b.price - a.price);
+    const pages = [];
+    for (let i = 0; i < sorted.length; i += 16) {
+      pages.push(sorted.slice(i, i + 16));
     }
+    return pages;
+  }
 
-    function renderSlide(page) {
-      return page.map(s => {
-        let pctHtml = '';
-        if (typeof s.changePct === 'number' && !Number.isNaN(s.changePct)) {
-          if (s.changePct > 0) pctHtml = `<span style="color:#e05a5a;font-size:11px;">▲${s.changePct.toFixed(2)}%</span>`;
-          else if (s.changePct < 0) pctHtml = `<span style="color:#5a8ee0;font-size:11px;">▼${Math.abs(s.changePct).toFixed(2)}%</span>`;
-          else pctHtml = `<span style="color:var(--text3);font-size:11px;">0%</span>`;
-        }
-        return `
+  function renderAdenMiniSlide(page) {
+    return page.map(s => {
+      let pctHtml = '';
+      if (typeof s.changePct === 'number' && !Number.isNaN(s.changePct)) {
+        if (s.changePct > 0) pctHtml = `<span style="color:#e05a5a;font-size:11px;">▲${s.changePct.toFixed(2)}%</span>`;
+        else if (s.changePct < 0) pctHtml = `<span style="color:#5a8ee0;font-size:11px;">▼${Math.abs(s.changePct).toFixed(2)}%</span>`;
+        else pctHtml = `<span style="color:var(--text3);font-size:11px;">0%</span>`;
+      }
+      return `
         <div style="padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--dark);display:flex;align-items:center;justify-content:space-between;gap:6px;">
           <span style="font-weight:600;font-size:12px;white-space:nowrap;">${s.name}</span>
           <div style="display:flex;align-items:center;gap:6px;white-space:nowrap;">
@@ -5215,134 +4656,105 @@ footer a{color:var(--g2);}
             ${pctHtml}
           </div>
         </div>`;
-      }).join('');
-    }
-
-    function render(data) {
-      const track = document.getElementById(opts.trackId);
-      if (!track) return;
-
-      const avgEl = document.getElementById(opts.avgId);
-      const avgChangeEl = document.getElementById(opts.changeId);
-
-      let avg = data.average;
-      if (typeof avg !== 'number' && data.servers && data.servers.length) {
-        avg = Math.round(data.servers.reduce((a, v) => a + (v.price || 0), 0) / data.servers.length);
-      }
-      if (avgEl) avgEl.textContent = (avg || 0).toLocaleString() + '원';
-
-      if (avgChangeEl) {
-        const pct = data.avgChangePct;
-        if (typeof pct === 'number' && !Number.isNaN(pct)) {
-          if (pct > 0) { avgChangeEl.textContent = `▲${pct.toFixed(2)}%`; avgChangeEl.style.color = '#e05a5a'; }
-          else if (pct < 0) { avgChangeEl.textContent = `▼${Math.abs(pct).toFixed(2)}%`; avgChangeEl.style.color = '#5a8ee0'; }
-          else { avgChangeEl.textContent = '0%'; avgChangeEl.style.color = 'var(--text3)'; }
-        } else {
-          avgChangeEl.textContent = '';
-        }
-      }
-
-      pages = buildPages(data.servers || []);
-      index = 0;
-
-      track.innerHTML = pages.map(page => `
-        <div class="${opts.pageClass}" style="flex-shrink:0;display:grid;grid-template-columns:repeat(${MINI_COLS},minmax(0,1fr));grid-auto-rows:min-content;align-content:start;gap:8px;">
-          ${renderSlide(page)}
-        </div>
-      `).join('');
-      track.style.transform = 'translateY(0px)';
-
-      // 각 페이지의 실제 위치(offsetTop)를 그대로 이동 거리로 쓴다.
-      // 높이를 계산해서 곱하는 방식은 오차가 페이지마다 누적돼 줄이 잘리므로 사용하지 않음.
-      const measureAndStart = () => {
-        const pageEls = Array.from(track.querySelectorAll('.' + opts.pageClass));
-        if (!pageEls.length) return;
-
-        // 뷰포트 높이는 가장 높은 페이지 기준 (마지막 페이지는 항목이 적을 수 있음)
-        let pageHeight = 0;
-        pageEls.forEach(el => {
-          const h = el.getBoundingClientRect().height;
-          if (h > pageHeight) pageHeight = h;
-        });
-        pageHeight = Math.ceil(pageHeight) + 2; // 여유 2px (잘림 방지)
-
-        const vp = document.getElementById(opts.viewportId);
-        if (vp) vp.style.height = pageHeight + 'px';
-
-        // 페이지별 실제 시작 위치를 미리 구해둔다 (누적 오차 없음)
-        const baseTop = pageEls[0].offsetTop;
-        const offsets = pageEls.map(el => el.offsetTop - baseTop);
-
-        if (timer) clearInterval(timer);
-        if (pages.length > 1) {
-          timer = setInterval(() => {
-            index = (index + 1) % pages.length;
-            track.style.transform = `translateY(-${offsets[index]}px)`;
-          }, 5000);
-        }
-      };
-
-      // 폰트 로딩까지 끝난 뒤, 두 번의 렌더 프레임을 기다려 정확한 높이를 측정
-      const runMeasure = () => requestAnimationFrame(() => requestAnimationFrame(measureAndStart));
-      if (document.fonts && document.fonts.ready) {
-        document.fonts.ready.then(runMeasure);
-      } else {
-        runMeasure();
-      }
-    }
-
-    function load() {
-      render(opts.fallback);
-      try {
-        const db = firebase.database();
-        db.ref(opts.dbPath).on('value', (snap) => {
-          const data = snap.val();
-          if (data && data.servers && data.servers.length) render(data);
-        }, (err) => {
-          console.error(`메인 ${opts.key} 위젯 로드 실패:`, err);
-        });
-      } catch (e) {
-        console.error('Firebase 연결 실패(메인 위젯):', e);
-      }
-    }
-
-    return { load, render };
+    }).join('');
   }
 
-  const adenMiniSlider = createMiniSlider({
-    key: '아덴 시세',
-    dbPath: 'adenPrice',
-    fallback: ADEN_PRICE_FALLBACK,
-    trackId: 'aden-mini-track',
-    viewportId: 'aden-mini-viewport',
-    avgId: 'aden-mini-avg-price',
-    changeId: 'aden-mini-avg-change',
-    pageClass: 'aden-mini-page'
-  });
+  function renderAdenMiniSlider(data) {
+    const tracks = document.querySelectorAll('#aden-mini-track');
+    if (!tracks.length) return;
 
-  const diaMiniSlider = createMiniSlider({
-    key: '다이아 시세',
-    dbPath: 'diaPrice',
-    fallback: DIA_PRICE_FALLBACK,
-    trackId: 'dia-mini-track',
-    viewportId: 'dia-mini-viewport',
-    avgId: 'dia-mini-avg-price',
-    changeId: 'dia-mini-avg-change',
-    pageClass: 'dia-mini-page'
-  });
+    const avgEl = document.getElementById('aden-mini-avg-price');
+    const avgChangeEl = document.getElementById('aden-mini-avg-change');
+    if (avgEl) avgEl.textContent = (data.average || 0).toLocaleString() + '원';
+    if (avgChangeEl) {
+      const pct = data.avgChangePct;
+      if (typeof pct === 'number' && !Number.isNaN(pct)) {
+        if (pct > 0) { avgChangeEl.textContent = `▲${pct.toFixed(2)}%`; avgChangeEl.style.color = '#e05a5a'; }
+        else if (pct < 0) { avgChangeEl.textContent = `▼${Math.abs(pct).toFixed(2)}%`; avgChangeEl.style.color = '#5a8ee0'; }
+        else { avgChangeEl.textContent = '0%'; avgChangeEl.style.color = 'var(--text3)'; }
+      } else {
+        avgChangeEl.textContent = '';
+      }
+    }
 
-  adenMiniSlider.load();
-  diaMiniSlider.load();
+    _adenMiniPages = buildAdenMiniPages(data.servers || []);
+    _adenMiniIndex = 0;
+
+    const pagesHtml = _adenMiniPages.map(page => `
+      <div class="aden-mini-page" style="flex-shrink:0;display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:min-content;align-content:start;gap:8px;">
+        ${renderAdenMiniSlide(page)}
+      </div>
+    `).join('');
+
+    tracks.forEach(track => {
+      track.innerHTML = pagesHtml;
+      track.style.transform = 'translateY(0px)';
+    });
+
+    // 실제 렌더된 페이지 높이를 측정해서 뷰포트/이동 거리를 정확히 맞춤 (잘림 방지)
+    const measureAndStart = () => {
+      const pageEls = tracks[0] ? Array.from(tracks[0].querySelectorAll('.aden-mini-page')) : [];
+      if (!pageEls.length) return;
+
+      // 모든 페이지 중 가장 큰 실제 높이를 기준으로 삼음 (마지막 페이지 등 항목 수가 달라도 안전)
+      let pageHeight = 0;
+      pageEls.forEach(el => {
+        const h = el.getBoundingClientRect().height;
+        if (h > pageHeight) pageHeight = h;
+      });
+      pageHeight = Math.ceil(pageHeight) + 2; // 여유 2px (잘림 방지)
+      _adenMiniPageHeight = pageHeight;
+
+      document.querySelectorAll('#aden-mini-viewport').forEach(vp => {
+        vp.style.height = pageHeight + 'px';
+      });
+
+      if (_adenMiniTimer) clearInterval(_adenMiniTimer);
+      if (_adenMiniPages.length > 1) {
+        _adenMiniTimer = setInterval(() => {
+          _adenMiniIndex = (_adenMiniIndex + 1) % _adenMiniPages.length;
+          tracks.forEach(track => {
+            track.style.transform = `translateY(-${_adenMiniIndex * (pageHeight + 8)}px)`;
+          });
+        }, 5000);
+      }
+    };
+
+    // 폰트 로딩까지 끝난 뒤, 두 번의 렌더 프레임을 기다려 정확한 높이를 측정 (잘림/겹침 방지)
+    const runMeasure = () => requestAnimationFrame(() => requestAnimationFrame(measureAndStart));
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(runMeasure);
+    } else {
+      runMeasure();
+    }
+  }
+
+  function loadAdenMiniWidget() {
+    renderAdenMiniSlider(ADEN_PRICE_FALLBACK);
+    try {
+      const db = firebase.database();
+      db.ref('adenPrice').on('value', (snap) => {
+        const data = snap.val();
+        if (data && data.servers && data.servers.length) {
+          renderAdenMiniSlider(data);
+        }
+      }, (err) => {
+        console.error('메인 아덴 시세 위젯 로드 실패:', err);
+      });
+    } catch (e) {
+      console.error('Firebase 연결 실패(메인 위젯):', e);
+    }
+  }
+
+  loadAdenMiniWidget();
 
   // ---------- 메인화면 자유게시판 미니 리스트 ----------
-  // boardKey: 'free'(클래식) | 'free_m'(리니지M)
-  async function loadMainFreeBoardMini(boardKey) {
-    boardKey = boardKey || 'free';
-    const el = document.getElementById(boardKey === 'free_m' ? 'main-freeboard-list-m' : 'main-freeboard-list');
+  async function loadMainFreeBoardMini() {
+    const el = document.getElementById('main-freeboard-list');
     if (!el) return;
     try {
       const db = firebase.database();
-      const snap = await db.ref('board/' + boardKey).once('value');
+      const snap = await db.ref('board/free').once('value');
       const posts = [];
       snap.forEach(child => {
         const val = child.val();
@@ -5355,18 +4767,17 @@ footer a{color:var(--g2);}
         return;
       }
       el.innerHTML = top.map(p => `
-        <div style="padding:5px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;gap:6px;cursor:pointer;" onclick="showBoard('${boardKey}')">
+        <div style="padding:5px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;gap:6px;cursor:pointer;" onclick="showBoard('free')">
           <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${(p.title || '').replace(/</g,'&lt;')}</span>
           <span style="color:var(--text3);flex-shrink:0;">${p.nickname ? p.nickname : ''}</span>
         </div>
       `).join('');
     } catch (e) {
-      console.error('메인 자유게시판 미니 로드 실패 (' + boardKey + '):', e);
+      console.error('메인 자유게시판 미니 로드 실패:', e);
       el.innerHTML = '<div style="padding:5px 0;color:#e07070;">불러오기 실패</div>';
     }
   }
-  loadMainFreeBoardMini('free');
-  loadMainFreeBoardMini('free_m');
+  loadMainFreeBoardMini();
 
   // ---------- 메인화면 거래소 미니 리스트 ----------
   async function loadMainMarketMini() {
@@ -5396,104 +4807,19 @@ footer a{color:var(--g2);}
   }
   loadMainMarketMini();
 
-  // ---------- 공용 유튜브 모달 플레이어 ----------
-  // 사이트를 벗어나지 않고 영상을 재생한다. 유튜브 메뉴와 메인화면 라이브가 함께 사용.
-  function openYoutubeModal(vid, title, channel) {
-    if (!vid) return;
-    const esc = (t) => String(t || '').replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
-
-    const modal = document.createElement('div');
-    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;';
-    modal.innerHTML = `
-      <div style="width:100%;max-width:900px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-          <div style="font-size:14px;color:#fff;font-weight:600;flex:1;margin-right:10px;">${esc(title)}</div>
-          <button class="yt-modal-close" style="background:#333;color:#fff;border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;">✕</button>
-        </div>
-        <div style="position:relative;padding-bottom:56.25%;height:0;">
-          <iframe src="https://www.youtube.com/embed/${encodeURIComponent(vid)}?autoplay=1" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;border-radius:6px;" allowfullscreen allow="autoplay"></iframe>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;gap:10px;">
-          <div style="font-size:12px;color:#aaa;">${esc(channel)}</div>
-          <a href="https://www.youtube.com/watch?v=${encodeURIComponent(vid)}" target="_blank" rel="noopener"
-             style="font-size:11px;color:#aaa;text-decoration:underline;flex-shrink:0;">재생이 안 되면 유튜브에서 열기 →</a>
-        </div>
-      </div>`;
-
-    const close = () => {
-      modal.remove();
-      document.removeEventListener('keydown', onKey);
-    };
-    const onKey = (e) => { if (e.key === 'Escape') close(); };
-
-    modal.onclick = e => { if (e.target === modal) close(); };
-    modal.querySelector('.yt-modal-close').onclick = close;
-    document.addEventListener('keydown', onKey);
-    document.body.appendChild(modal);
-  }
-
-  // ---------- 메인화면 라이브 미니 리스트 (Firebase 캐시 사용) ----------
-  // 유튜브 검색 API는 1회에 100포인트를 쓰고 무료 한도가 하루 10,000포인트다.
-  // 방문할 때마다 3개 칸이 검색하면 33명만 들어와도 한도가 바닥나므로,
-  // 결과를 Firebase에 저장해두고 일정 시간 동안 재사용한다.
-  const YT_CACHE_MINUTES = 60;
-
-  function renderLiveMini(el, lives, emptyMsg) {
-    if (!lives || !lives.length) {
-      el.innerHTML = `<div style="padding:5px 0;color:var(--text3);">${emptyMsg}</div>`;
-      return;
-    }
-    const escAttr = (t) => String(t || '').replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
-    el.innerHTML = lives.map((v, idx) => `
-        <div class="live-mini-row" data-vid="${escAttr(v.id)}" data-title="${escAttr(v.title)}" data-channel="${escAttr(v.channel)}"
-             style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;cursor:pointer;min-width:0;">
-          <div style="font-size:13px;font-weight:800;color:${idx===0?'var(--g)':'var(--text3)'};width:16px;flex-shrink:0;text-align:center;">${idx+1}</div>
-          <div style="position:relative;flex-shrink:0;">
-            <img src="${v.thumb}" style="width:80px;height:45px;object-fit:cover;border-radius:5px;display:block;">
-            <span style="position:absolute;top:3px;left:3px;background:#e02020;color:#fff;font-size:10px;font-weight:800;padding:1px 5px;border-radius:3px;letter-spacing:.3px;">LIVE</span>
-          </div>
-          <span style="flex:1;font-size:15px;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;">${String(v.channel||'').replace(/</g,'&lt;')}</span>
-          <span style="display:flex;align-items:center;gap:4px;color:#ff5555;font-weight:800;font-size:15px;flex-shrink:0;"><span style="font-size:12px;opacity:.8;">👁</span>${(v.viewers||0).toLocaleString()}</span>
-        </div>
-      `).join('');
-
-    el.querySelectorAll('.live-mini-row').forEach(row => {
-      row.addEventListener('click', () => {
-        openYoutubeModal(row.dataset.vid, row.dataset.title, row.dataset.channel);
-      });
-    });
-  }
-
-  async function loadYoutubeLiveMini(elementId, query, emptyMsg, cacheKey) {
+  // ---------- 메인화면 유튜브(리니지클래식) 미니 리스트 ----------
+  async function loadYoutubeLiveMini(elementId, query, emptyMsg) {
     const el = document.getElementById(elementId);
     if (!el) return;
-
-    const key = cacheKey || elementId;
-    let cached = null;
-
-    // 1) 먼저 Firebase 캐시를 확인한다 (API 포인트 소모 없음)
     try {
-      const snap = await firebase.database().ref('ytLiveCache/' + key).once('value');
-      cached = snap.val();
-      if (cached && cached.items) {
-        renderLiveMini(el, cached.items, emptyMsg);
-        const ageMin = (Date.now() - (cached.updatedAt || 0)) / 60000;
-        if (ageMin < YT_CACHE_MINUTES) return;   // 아직 신선하면 여기서 끝
-      }
-    } catch (e) {
-      console.warn('라이브 캐시 조회 실패 (' + key + '):', e.message);
-    }
-
-    try {
-      // 2) 라이브 방송 검색
+      // 1) 라이브 방송 검색
       const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(query)}&eventType=live&type=video&maxResults=10&key=${YT_API_KEY}`;
       const searchRes = await fetch(searchUrl);
       const searchData = await searchRes.json();
       if (searchData.error) throw new Error(searchData.error.message);
       const liveItems = (searchData.items || []).filter(i => i.id?.videoId);
       if (!liveItems.length) {
-        renderLiveMini(el, [], emptyMsg);
-        try { await firebase.database().ref('ytLiveCache/' + key).set({ items: [], updatedAt: Date.now() }); } catch(e) {}
+        el.innerHTML = `<div style="padding:5px 0;color:var(--text3);">${emptyMsg}</div>`;
         return;
       }
 
@@ -5514,34 +4840,26 @@ footer a{color:var(--g2);}
       lives.sort((a, b) => b.viewers - a.viewers);
       lives = lives.slice(0, 5);
 
-      renderLiveMini(el, lives, emptyMsg);
-
-      // 다음 방문자를 위해 결과를 저장해둔다
-      try {
-        await firebase.database().ref('ytLiveCache/' + key).set({ items: lives, updatedAt: Date.now() });
-      } catch (e) {
-        console.warn('라이브 캐시 저장 실패 (' + key + '):', e.message);
-      }
+      el.innerHTML = lives.map((v, idx) => `
+        <div style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;cursor:pointer;min-width:0;" onclick="event.preventDefault();window.open('https://www.youtube.com/watch?v=${v.id}','_blank')">
+          <div style="font-size:13px;font-weight:800;color:${idx===0?'var(--g)':'var(--text3)'};width:16px;flex-shrink:0;text-align:center;">${idx+1}</div>
+          <div style="position:relative;flex-shrink:0;">
+            <img src="${v.thumb}" style="width:80px;height:45px;object-fit:cover;border-radius:5px;display:block;">
+            <span style="position:absolute;top:3px;left:3px;background:#e02020;color:#fff;font-size:10px;font-weight:800;padding:1px 5px;border-radius:3px;letter-spacing:.3px;">LIVE</span>
+          </div>
+          <span style="flex:1;font-size:15px;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;">${v.channel.replace(/</g,'&lt;')}</span>
+          <span style="display:flex;align-items:center;gap:4px;color:#ff5555;font-weight:800;font-size:15px;flex-shrink:0;"><span style="font-size:12px;opacity:.8;">👁</span>${v.viewers.toLocaleString()}</span>
+        </div>
+      `).join('');
     } catch (e) {
       console.error('라이브 미니 로드 실패 (' + elementId + '):', e);
-      const quota = String(e.message || '').includes('quota');
-      // 오래된 캐시라도 있으면 빈 화면보다는 낫다
-      if (cached && cached.items && cached.items.length) {
-        renderLiveMini(el, cached.items, emptyMsg);
-        return;
-      }
-      el.innerHTML = quota
-        ? '<div style="padding:5px 0;color:#e07070;">유튜브 일일 조회 한도를 초과했습니다. 잠시 후 다시 표시됩니다.</div>'
-        : '<div style="padding:5px 0;color:#e07070;">불러오기 실패</div>';
+      el.innerHTML = '<div style="padding:5px 0;color:#e07070;">불러오기 실패</div>';
     }
   }
-  loadYoutubeLiveMini('main-youtube-list', '리니지 클래식', '현재 진행중인 라이브가 없습니다.', 'classic');
-
-  // ---------- 메인화면 리니지M 라이브 미니 리스트 ----------
-  loadYoutubeLiveMini('main-linm-live-list', '리니지M', '현재 진행중인 라이브가 없습니다.', 'linm');
+  loadYoutubeLiveMini('main-youtube-list', '리니지 클래식', '현재 진행중인 라이브가 없습니다.');
 
   // ---------- 메인화면 비트코인 선물 라이브 미니 리스트 ----------
-  loadYoutubeLiveMini('main-btc-live-list', '비트코인 선물 라이브', '현재 진행중인 라이브가 없습니다.', 'btc');
+  loadYoutubeLiveMini('main-btc-live-list', '비트코인 선물 라이브', '현재 진행중인 라이브가 없습니다.');
 
 
 </script>
