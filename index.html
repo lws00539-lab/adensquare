@@ -55,7 +55,7 @@ body{background:var(--dark2);color:var(--text);font-family:'Noto Sans KR',sans-s
 @media(max-width:1550px){.side-bg{display:none;}}
 
 .side-deco{position:fixed;top:190px;left:0;width:calc((100vw - 1400px)/2);max-width:420px;height:calc(100vh - 190px);background:url('images/side_left.png') left top no-repeat;background-size:auto calc(100vh - 190px);z-index:10;pointer-events:none;overflow:hidden;}
-.side-deco-right{position:fixed;top:190px;right:0;bottom:0;width:calc((100vw - 1400px)/2);max-width:420px;background-image:url('images/side_right_v5.png');background-repeat:no-repeat;background-position-x:50%;background-position-y:-3.8%;background-size:auto 103.8%;z-index:10;pointer-events:none;overflow:hidden;}
+.side-deco-right{position:fixed;top:190px;right:0;bottom:0;width:calc((100vw - 1400px)/2);max-width:420px;background-image:url('images/side_right_v5.png');background-repeat:no-repeat;background-position-x:50%;background-position-y:calc((100vh - 190px) * -0.217);background-size:auto calc((100vh - 190px) * 1.217);z-index:10;pointer-events:none;overflow:hidden;}
 @media(max-width:1550px){.side-deco{display:none;}.side-deco-right{display:none;}}
 /* 예전 좌우 장식(돌벽·깃발·기사)은 그대로 유지 */
 a{text-decoration:none;color:inherit;}
@@ -2251,7 +2251,7 @@ footer a{color:var(--g2);}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <!-- ?v= 값을 올리면 브라우저가 캐시를 무시하고 새 파일을 받는다. auth-v2.js를 고칠 때마다 숫자를 올릴 것 -->
-<script>window.ADEN_VERSION='v393';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
+<script>window.ADEN_VERSION='v394';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
 <script>
   // 헤더 높이를 실제로 재서 사이드 배경 시작 위치에 반영한다.
   // (헤더 높이는 화면 크기에 따라 달라지므로 숫자를 고정하면 그림이 가려진다)
@@ -2265,8 +2265,8 @@ footer a{color:var(--g2);}
     window.addEventListener('resize', setHeaderVar);
   })();
 </script>
-<script src="auth-v2.js?v=393"></script>
-<script src="admin.js?v=393"></script>
+<script src="auth-v2.js?v=394"></script>
+<script src="admin.js?v=394"></script>
 <script>
   // 장비러쉬
   const SIM_SWORD='images/img6.jpg';
