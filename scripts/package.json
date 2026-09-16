@@ -5,7 +5,8 @@
   "main": "update-aden-price.js",
   "scripts": {
     "update": "node update-aden-price.js",
-    "update:dia": "node update-dia-price.js"
+    "update:dia": "node update-dia-price.js",
+    "post": "node auto-post.js"
   },
   "dependencies": {
     "cheerio": "^1.0.0",
