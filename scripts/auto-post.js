@@ -1,56 +1,58 @@
 /**
  * auto-post.js
  * ------------------------------------------------------------
- * 게시판 / 게임같이해요 / 거래소에 글을 자동으로 등록합니다.
+ * 게시판 / 게임같이해요 / 거래소에 글을 자동 등록합니다.
  *
- * GitHub Actions 가 하루 여러 번 실행하고, 매 실행마다 글을 올릴지 말지를
- * 확률로 정합니다. 그래서 하루 총 3~5개 정도가 불규칙하게 올라갑니다.
- * (정해진 시각에 정확히 N개가 올라오면 자동이라는 게 바로 드러납니다)
+ * 한 번 실행하면 모든 게시판을 돌면서 각각 0~2개씩 올립니다.
+ * 하루 2회 실행하므로 게시판당 하루 평균 3~4개가 올라갑니다.
+ *
+ * 제목·본문의 {서버} {레벨} {시간} {요일} {횟수} 는 매번 다른 값으로 채워지므로
+ * 같은 글감이라도 다르게 보입니다.
  *
  * 최근에 쓴 글감과 닉네임은 Firebase 의 autoPostState 에 기록해두고
- * 다음번에 피해서 고릅니다. 같은 글이 연달아 올라오는 걸 막기 위해서입니다.
+ * 다음번에 피해서 고릅니다.
  * ------------------------------------------------------------
  */
 
 const admin = require('firebase-admin');
 const D = require('./auto-post-data');
 
-// 이번 실행에서 글을 올릴 확률 (하루 5회 실행 x 0.8 = 평균 4개)
-const POST_CHANCE = 0.8;
+// 한 번 실행에서 게시판당 올릴 글 수 (아래 값 중 무작위)
+// 하루 2회 실행 -> 게시판당 하루 2~4개
+const PER_BOARD = [1, 2, 2, 2, 1, 0];
 
-// 어느 게시판에 올릴지 가중치. 숫자가 클수록 자주 뽑힙니다.
 const TARGETS = [
-  { key: 'humor',       weight: 5, pool: () => D.HUMOR,        game: null },
-  { key: 'free',        weight: 5, pool: () => D.FREE_CLASSIC, game: 'classic' },
-  { key: 'free_m',      weight: 4, pool: () => D.FREE_M,       game: 'm' },
-  { key: 'clan',        weight: 2, pool: () => D.CLAN,         game: 'classic' },
-  { key: 'clan_m',      weight: 2, pool: () => D.CLAN,         game: 'm' },
-  { key: 'brag',        weight: 2, pool: () => D.BRAG,         game: 'classic' },
-  { key: 'brag_m',      weight: 1, pool: () => D.BRAG,         game: 'm' },
-  { key: 'play_sol',    weight: 1, pool: () => D.PLAY.play_sol,    game: null },
-  { key: 'play_diablo', weight: 1, pool: () => D.PLAY.play_diablo, game: null },
-  { key: 'play_star',   weight: 1, pool: () => D.PLAY.play_star,   game: null },
-  { key: 'play_lol',    weight: 1, pool: () => D.PLAY.play_lol,    game: null },
-  { key: 'play_coin',   weight: 1, pool: () => D.PLAY.play_coin,   game: null },
-  { key: 'market',      weight: 2, pool: () => D.MARKET,       game: 'classic' },
+  { key: 'humor',       pool: () => D.HUMOR,        game: null,      server: false },
+  { key: 'free',        pool: () => D.FREE_CLASSIC, game: 'classic', server: true  },
+  { key: 'free_m',      pool: () => D.FREE_M,       game: 'm',       server: true  },
+  { key: 'clan',        pool: () => D.CLAN,         game: 'classic', server: true, category: '혈맹모집해요' },
+  { key: 'clan_m',      pool: () => D.CLAN,         game: 'm',       server: true, category: '혈맹모집해요' },
+  { key: 'brag',        pool: () => D.BRAG,         game: 'classic', server: true, category: '강화자랑' },
+  { key: 'brag_m',      pool: () => D.BRAG,         game: 'm',       server: true, category: '강화자랑' },
+  { key: 'play_sol',    pool: () => D.PLAY.play_sol,    game: null, server: false },
+  { key: 'play_diablo', pool: () => D.PLAY.play_diablo, game: null, server: false },
+  { key: 'play_star',   pool: () => D.PLAY.play_star,   game: null, server: false },
+  { key: 'play_lol',    pool: () => D.PLAY.play_lol,    game: null, server: false },
+  { key: 'play_coin',   pool: () => D.PLAY.play_coin,   game: null, server: false },
 ];
 
 const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
-
-function pickWeighted(list) {
-  const total = list.reduce((s, t) => s + t.weight, 0);
-  let r = Math.random() * total;
-  for (const t of list) {
-    r -= t.weight;
-    if (r <= 0) return t;
-  }
-  return list[list.length - 1];
-}
+const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
 // 최근에 쓴 것은 피해서 고른다
-function pickFresh(pool, recent, keyOf) {
-  const fresh = pool.filter(x => !recent.includes(keyOf(x)));
+function pickFresh(pool, recent) {
+  const fresh = pool.filter(x => !recent.includes(typeof x === 'string' ? x : x.title));
   return pick(fresh.length ? fresh : pool);
+}
+
+// {서버} {레벨} 같은 자리표시자를 실제 값으로 채운다
+function fill(text, servers) {
+  return String(text || '')
+    .replace(/\{서버\}/g, () => pick(servers))
+    .replace(/\{레벨\}/g, () => rand(40, 75))
+    .replace(/\{시간\}/g, () => pick(D.TIMES))
+    .replace(/\{요일\}/g, () => pick(D.DAYS))
+    .replace(/\{횟수\}/g, () => rand(3, 50));
 }
 
 function initFirebase() {
@@ -79,46 +81,50 @@ async function loadState(db) {
 }
 
 async function saveState(db, state) {
-  // 최근 40개만 기억 (그 이상은 다시 써도 티가 안 남)
   await db.ref('autoPostState').set({
-    titles: state.titles.slice(-40),
-    nicks: state.nicks.slice(-15),
+    titles: state.titles.slice(-150),
+    nicks: state.nicks.slice(-40),
     updatedAt: Date.now(),
   });
 }
 
-async function postToBoard(db, target, state) {
-  const post = pickFresh(target.pool(), state.titles, x => x.title);
-  const nickname = pickFresh(D.NICKNAMES, state.nicks, x => x);
-  const id = 'p' + Date.now() + Math.floor(Math.random() * 1000);
+// 등록 시각을 과거 몇 시간 안쪽으로 흩어놓는다 (한꺼번에 올라온 티가 안 나게)
+function spreadTime(index, total) {
+  const hoursBack = 10;
+  const slot = (hoursBack * 3600 * 1000) / Math.max(total, 1);
+  const base = Date.now() - slot * (total - index);
+  return base + rand(0, Math.floor(slot * 0.8));
+}
 
+async function postToBoard(db, target, state, stamp) {
+  const raw = pickFresh(target.pool(), state.titles);
   const servers = target.game === 'm' ? D.LINM_SERVERS : D.CLASSIC_SERVERS;
-  const needsServer = !target.key.startsWith('play_') && target.key !== 'humor';
+  const nickname = pickFresh(D.NICKNAMES, state.nicks);
+  const id = 'p' + stamp + rand(100, 999);
 
   const data = {
     id,
-    title: post.title,
+    title: fill(raw.title, servers),
     nickname,
-    timestamp: Date.now(),
-    views: Math.floor(Math.random() * 30) + 3,
-    desc: post.desc,
+    timestamp: stamp,
+    views: rand(3, 40),
+    desc: fill(raw.desc, servers),
   };
-  if (needsServer) data.server = pick(servers);
-  if (target.key.startsWith('clan')) data.category = '혈맹모집해요';
-  if (target.key.startsWith('brag')) data.category = '강화자랑';
+  if (target.server) data.server = pick(servers);
+  if (target.category) data.category = target.category;
 
   await db.ref('board/' + target.key + '/' + id).set(data);
-  await db.ref('board_content/' + target.key + '/' + id).set({ desc: post.desc });
+  await db.ref('board_content/' + target.key + '/' + id).set({ desc: data.desc });
 
-  state.titles.push(post.title);
+  state.titles.push(raw.title);
   state.nicks.push(nickname);
-  return `${target.key} / ${nickname} / ${post.title}`;
+  return data.title;
 }
 
-async function postToMarket(db, state) {
+async function postToMarket(db, state, stamp) {
   const m = pick(D.MARKET);
-  const nickname = pickFresh(D.NICKNAMES, state.nicks, x => x);
-  const id = 'm' + Date.now() + Math.floor(Math.random() * 1000);
+  const nickname = pickFresh(D.NICKNAMES, state.nicks);
+  const id = 'm' + stamp + rand(100, 999);
 
   await db.ref('market/' + id).set({
     id,
@@ -133,36 +139,49 @@ async function postToMarket(db, state) {
     status: 'active',
     game: 'classic',
     channel: '',
-    timestamp: Date.now(),
+    timestamp: stamp,
   });
 
   state.nicks.push(nickname);
-  return `market / ${nickname} / ${m.item}`;
+  return m.item;
 }
 
 (async () => {
   try {
-    // 1) 이번 실행에서 올릴지 결정
-    if (Math.random() > POST_CHANCE) {
-      console.log('이번 실행은 건너뜁니다 (확률).');
-      process.exit(0);
-    }
-
-    // 2) 실행 시각 안에서 0~40분 무작위 지연 (정각마다 올라오면 티가 남)
-    const delayMin = Math.floor(Math.random() * 40);
-    console.log(`${delayMin}분 대기 후 등록합니다.`);
-    await new Promise(r => setTimeout(r, delayMin * 60 * 1000));
-
     const db = initFirebase();
     const state = await loadState(db);
 
-    const target = pickWeighted(TARGETS);
-    const result = target.key === 'market'
-      ? await postToMarket(db, state)
-      : await postToBoard(db, target, state);
+    // 이번 실행에서 올릴 작업 목록을 먼저 만든다
+    const jobs = [];
+    for (const t of TARGETS) {
+      const n = pick(PER_BOARD);
+      for (let i = 0; i < n; i++) jobs.push({ type: 'board', target: t });
+    }
+    const marketCount = pick([0, 1, 1, 2]);
+    for (let i = 0; i < marketCount; i++) jobs.push({ type: 'market' });
+
+    // 순서를 섞어서 게시판 순서대로 올라온 티가 안 나게
+    jobs.sort(() => Math.random() - 0.5);
+
+    console.log(`이번 실행에서 ${jobs.length}개 등록합니다.`);
+    let ok = 0;
+    for (let i = 0; i < jobs.length; i++) {
+      const stamp = spreadTime(i, jobs.length);
+      try {
+        const job = jobs[i];
+        const title = job.type === 'market'
+          ? await postToMarket(db, state, stamp)
+          : await postToBoard(db, job.target, state, stamp);
+        const where = job.type === 'market' ? 'market' : job.target.key;
+        console.log(`  [${where}] ${title}`);
+        ok++;
+      } catch (e) {
+        console.error('  등록 실패:', e.message);
+      }
+    }
 
     await saveState(db, state);
-    console.log('등록 완료:', result);
+    console.log(`완료: ${ok}개 등록`);
     process.exit(0);
   } catch (err) {
     console.error('실패:', err.message);
