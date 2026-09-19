@@ -437,12 +437,16 @@ input,select{font-family:inherit;outline:none;}
 .modal-footer{text-align:center;font-size:11px;color:var(--text3);}
 
 /* ===== 사주 로딩 연출 ===== */
-#sj-loading{min-height:430px;background:#0a0712;}
-.sj-load-img{position:absolute;inset:0;background:url('images/saju_loading.jpg?v=408') center/cover no-repeat;
-  animation:sjZoom 9s ease-in-out infinite alternate;}
-@keyframes sjZoom{from{transform:scale(1.04)}to{transform:scale(1.14)}}
+/* 그림 비율(3:2)을 그대로 지켜서 잘리지 않게 한다 */
+#sj-loading{background:#120c1e;aspect-ratio:3 / 2;max-height:76vh;min-height:300px;}
+.sj-load-img{position:absolute;inset:0;
+  background:url('images/saju_loading.jpg?v=409') center/contain no-repeat;
+  filter:brightness(1.35) saturate(1.1);
+  animation:sjGlow 6s ease-in-out infinite alternate;}
+@keyframes sjGlow{from{filter:brightness(1.28) saturate(1.05)}to{filter:brightness(1.5) saturate(1.18)}}
+/* 가운데만 살짝 어둡게 해서 글씨만 읽히게 (그림은 최대한 살림) */
 .sj-load-veil{position:absolute;inset:0;
-  background:radial-gradient(ellipse at 50% 55%, rgba(8,5,18,0.35) 0%, rgba(8,5,18,0.78) 55%, rgba(8,5,18,0.94) 100%);}
+  background:radial-gradient(ellipse 42% 46% at 50% 52%, rgba(10,6,20,0.62) 0%, rgba(10,6,20,0.34) 55%, rgba(10,6,20,0) 100%);}
 
 /* 떠다니는 빛 입자 */
 .sj-sparks{position:absolute;inset:0;pointer-events:none;}
@@ -471,8 +475,8 @@ input,select{font-family:inherit;outline:none;}
   100%{transform:translateY(-15%) scale(1.15);opacity:0}
 }
 
-.sj-load-center{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;
-  justify-content:center;min-height:430px;padding:20px;}
+.sj-load-center{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:20px;}
 
 /* 회전하는 태극 고리 */
 .sj-ring{width:112px;height:112px;border-radius:50%;position:relative;
@@ -490,8 +494,8 @@ input,select{font-family:inherit;outline:none;}
   animation:sjPulse 2.4s ease-in-out infinite;}
 @keyframes sjPulse{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.1);opacity:1}}
 
-.sj-load-text{margin-top:22px;font-size:17px;color:#f0e0b8;letter-spacing:2px;
-  text-shadow:0 2px 12px rgba(0,0,0,.95);min-height:24px;
+.sj-load-text{margin-top:22px;font-size:17px;color:#fff3d6;letter-spacing:2px;font-weight:600;
+  text-shadow:0 2px 6px #000, 0 0 18px rgba(0,0,0,.95);min-height:24px;
   animation:sjBreathe 2s ease-in-out infinite;}
 @keyframes sjBreathe{0%,100%{opacity:.62}50%{opacity:1}}
 
@@ -503,8 +507,8 @@ input,select{font-family:inherit;outline:none;}
 
 /* 한 글자씩 떠오르는 四柱八字 */
 .sj-hanja{margin-top:24px;display:flex;gap:16px;}
-.sj-hanja span{font-size:26px;font-weight:800;color:#f5d98a;opacity:0;
-  text-shadow:0 0 18px rgba(240,200,110,.8);
+.sj-hanja span{font-size:26px;font-weight:800;color:#ffe9a8;opacity:0;
+  text-shadow:0 2px 6px #000, 0 0 20px rgba(240,200,110,.9);
   animation:sjRise 3.2s ease-in-out infinite;
   animation-delay:calc(var(--i) * .35s);}
 @keyframes sjRise{
@@ -515,10 +519,12 @@ input,select{font-family:inherit;outline:none;}
 }
 
 @media(max-width:600px){
-  #sj-loading,.sj-load-center{min-height:340px;}
-  .sj-ring{width:92px;height:92px;}
-  .sj-ring-inner{font-size:34px;}
-  .sj-hanja span{font-size:21px;}
+  #sj-loading{min-height:230px;}
+  .sj-ring{width:80px;height:80px;}
+  .sj-ring-inner{font-size:30px;}
+  .sj-load-text{font-size:14px;margin-top:16px;}
+  .sj-hanja span{font-size:19px;}
+  .sj-hanja{margin-top:16px;gap:12px;}
 }
 /* 외부에서 복사해 온 내용(고정 폭 표·이미지)이 레이아웃을 밀어내지 않도록 강제로 가둔다 */
 #nw-editor, #detail-body, #bw-editor, #bd-body{max-width:100%;overflow-x:auto;word-break:break-word;overflow-wrap:anywhere;}
@@ -2465,7 +2471,7 @@ footer a{color:var(--g2);}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <!-- ?v= 값을 올리면 브라우저가 캐시를 무시하고 새 파일을 받는다. auth-v2.js를 고칠 때마다 숫자를 올릴 것 -->
-<script>window.ADEN_VERSION='v408';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
+<script>window.ADEN_VERSION='v409';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
 <script>
   // 헤더 높이를 실제로 재서 사이드 배경 시작 위치에 반영한다.
   // (헤더 높이는 화면 크기에 따라 달라지므로 숫자를 고정하면 그림이 가려진다)
@@ -2479,9 +2485,9 @@ footer a{color:var(--g2);}
     window.addEventListener('resize', setHeaderVar);
   })();
 </script>
-<script src="auth-v2.js?v=408"></script>
-<script src="admin.js?v=408"></script>
-<script src="saju.js?v=408"></script>
+<script src="auth-v2.js?v=409"></script>
+<script src="admin.js?v=409"></script>
+<script src="saju.js?v=409"></script>
 <script>
   // 장비러쉬
   const SIM_SWORD='images/img6.jpg';
