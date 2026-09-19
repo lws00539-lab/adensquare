@@ -380,6 +380,7 @@ function runSaju() {
   const hh = unknown ? null : parseInt(document.getElementById('sj-hour').value, 10);
   const mi = unknown ? null : (parseInt(document.getElementById('sj-min').value, 10) || 0);
   const gender = document.getElementById('sj-gender').value;
+  const name = (document.getElementById('sj-name').value || '').trim();
   const lon = parseFloat(document.getElementById('sj-city').value);
 
   if (!y || !mo || !d) { err.textContent = '생년월일을 모두 입력해주세요.'; return; }
@@ -439,12 +440,25 @@ function runSaju() {
   }).join('');
 
   const dayGanKo = T.day.ganKo, dayGanOh = T.day.ganOh;
+  const ILGAN = ILGAN_DESC[dayGanKo];
+  const ST = calcStrength(r);
+  const SSC = Object.entries(sipseongCount(r)).sort((a,b)=>b[1]-a[1]);
+
+  // 십성 구성 한줄 해설
+  let SS_TEXT = '';
+  if (SSC.length) {
+    const top = SSC[0];
+    const missing = Object.keys(SIPSEONG_DESC).filter(k => !SSC.find(x=>x[0]===k));
+    SS_TEXT = `<b style="color:var(--g)">${top[0]}</b>이(가) ${top[1]}개로 가장 두드러집니다. ${SIPSEONG_DESC[top[0]]} 쪽 성향이 강하게 나타납니다.`;
+    if (missing.length >= 6) SS_TEXT += ` 없는 십성이 많아 한쪽으로 치우친 구조입니다.`;
+    else if (missing.length) SS_TEXT += ` ${missing.slice(0,3).join('·')} 기운은 약한 편입니다.`;
+  }
 
   box.style.display = 'block';
   box.innerHTML = `
     <div style="padding:16px;">
       <div style="font-size:12px;color:var(--text3);margin-bottom:10px;">
-        ${y}년 ${mo}월 ${d}일${r.trueSolarTime ? ` · 진태양시 ${r.trueSolarTime}` : ' · 시간 모름'}
+        ${name ? `<b style="color:var(--g);font-size:14px;">${name.replace(/</g,'&lt;')}</b> · ` : ''}${y}년 ${mo}월 ${d}일${r.trueSolarTime ? ` · 진태양시 ${r.trueSolarTime}` : ' · 시간 모름'}
         · ${r.tti}띠 · 절기 기준 <span style="color:var(--g);">${r.term}</span> 이후
       </div>
 
@@ -476,6 +490,48 @@ function runSaju() {
 
       <div style="height:1px;background:var(--border);margin:14px 0;"></div>
 
+      <div style="font-size:13px;font-weight:700;color:var(--g);margin-bottom:8px;">일간 풀이</div>
+      <div style="background:var(--dark);border:1px solid var(--border);border-radius:6px;padding:12px;font-size:12px;line-height:1.8;color:var(--text2);">
+        <div style="margin-bottom:6px;">
+          <b style="color:${OH_COLOR[dayGanOh]};font-size:14px;">${T.day.ganHanja} ${dayGanKo}</b>
+          <span style="color:var(--text3);">· ${ILGAN.symbol}</span>
+        </div>
+        ${ILGAN.trait}
+        <div style="margin-top:8px;color:var(--text3);">어울리는 분야 · ${ILGAN.job}</div>
+      </div>
+
+      <div style="height:1px;background:var(--border);margin:14px 0;"></div>
+
+      <div style="font-size:13px;font-weight:700;color:var(--g);margin-bottom:8px;">
+        신강·신약 <span style="font-size:11px;color:var(--text3);font-weight:400;">지수 ${ST.score}</span>
+      </div>
+      <div style="background:var(--dark);border:1px solid var(--border);border-radius:6px;padding:12px;font-size:12px;line-height:1.8;color:var(--text2);">
+        <div style="font-size:15px;font-weight:800;color:var(--g);margin-bottom:6px;">${ST.level}</div>
+        ${ST.desc}
+        <div style="margin-top:10px;display:flex;gap:16px;flex-wrap:wrap;">
+          <div><span style="color:var(--text3);">도움이 되는 기운</span>
+            ${ST.yongsin.map(k=>`<b style="color:${OH_COLOR[k]};margin-left:4px;">${k}</b>`).join('')}</div>
+          <div><span style="color:var(--text3);">조심할 기운</span>
+            ${ST.gisin.map(k=>`<b style="color:${OH_COLOR[k]};margin-left:4px;">${k}</b>`).join('')}</div>
+        </div>
+      </div>
+
+      <div style="height:1px;background:var(--border);margin:14px 0;"></div>
+
+      <div style="font-size:13px;font-weight:700;color:var(--g);margin-bottom:8px;">십성 구성</div>
+      <div style="display:flex;flex-direction:column;gap:5px;">
+        ${SSC.length ? SSC.map(([k,n])=>`
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;">
+            <span style="width:40px;font-weight:700;color:var(--g);">${k}</span>
+            <span style="width:28px;color:var(--text2);">${n}개</span>
+            <span style="color:var(--text3);flex:1;min-width:0;">${SIPSEONG_DESC[k]||''}</span>
+          </div>`).join('')
+          : '<div style="font-size:12px;color:var(--text3);">—</div>'}
+      </div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.8;margin-top:10px;">${SS_TEXT}</div>
+
+      <div style="height:1px;background:var(--border);margin:14px 0;"></div>
+
       <div style="font-size:11px;color:var(--text3);line-height:1.7;">
         ※ 절기와 진태양시(경도 ${r.correction.lonMin >= 0 ? '+' : ''}${Math.round(r.correction.lonMin)}분,
         균시차 ${r.correction.eotMin >= 0 ? '+' : ''}${Math.round(r.correction.eotMin)}분)를 반영한 결과입니다.<br>
@@ -484,4 +540,92 @@ function runSaju() {
         ※ 재미로 보는 콘텐츠입니다. 중요한 결정은 스스로 판단하시기 바랍니다.
       </div>
     </div>`;
+}
+
+/* ================================================================
+ * 해석
+ * ================================================================ */
+
+// 일간별 성격 (천간 10종)
+const ILGAN_DESC = {
+  '갑': { symbol:'큰 나무', trait:'곧고 추진력이 있습니다. 한번 정하면 밀고 나가는 힘이 강하고 윗자리에 서는 것을 자연스러워합니다. 다만 유연하게 굽히는 일에 서툴러 부러지기 쉬운 면이 있습니다.', job:'경영, 교육, 건설, 공공기관' },
+  '을': { symbol:'풀과 넝쿨', trait:'부드럽고 적응이 빠릅니다. 환경이 바뀌어도 살아남는 생명력이 있고 사람 사이를 잘 엮습니다. 대신 결정을 미루거나 남에게 기대는 경향이 있습니다.', job:'기획, 상담, 디자인, 원예, 서비스' },
+  '병': { symbol:'태양', trait:'밝고 거침이 없습니다. 감정 표현이 솔직하고 주변을 환하게 만듭니다. 뒤끝이 없는 대신 성급하고 뒷마무리가 약할 수 있습니다.', job:'방송, 영업, 홍보, 강연, 예술' },
+  '정': { symbol:'촛불', trait:'섬세하고 따뜻합니다. 남을 배려하고 속이 깊습니다. 겉으로는 조용해도 안에 고집이 있으며 상처를 오래 담아두는 편입니다.', job:'연구, 의료, 교육, 요리, 공예' },
+  '무': { symbol:'큰 산', trait:'묵직하고 믿음직합니다. 쉽게 흔들리지 않고 사람을 품는 그릇이 있습니다. 대신 변화를 싫어하고 움직임이 느릴 수 있습니다.', job:'부동산, 건축, 행정, 금융, 농업' },
+  '기': { symbol:'논밭의 흙', trait:'실속 있고 현실적입니다. 남을 키우고 뒷받침하는 데 능합니다. 걱정이 많고 속내를 잘 드러내지 않는 편입니다.', job:'교육, 회계, 농업, 중개, 관리' },
+  '경': { symbol:'무쇠', trait:'결단이 빠르고 원칙이 분명합니다. 불의를 참지 못하고 맺고 끊음이 확실합니다. 대신 말이 직설적이라 부딪히기 쉽습니다.', job:'군경, 법조, 의료, 기계, 스포츠' },
+  '신': { symbol:'보석', trait:'깔끔하고 예리합니다. 안목이 뛰어나고 완성도에 집착합니다. 자존심이 강해 상처를 잘 받고 까다롭게 보일 수 있습니다.', job:'금융, 회계, 디자인, 의료, 보석·정밀' },
+  '임': { symbol:'큰 물', trait:'생각이 넓고 포용력이 있습니다. 상황을 읽는 눈이 좋고 임기응변에 강합니다. 대신 속을 알기 어렵고 한곳에 머물지 못하는 면이 있습니다.', job:'무역, 물류, 기획, 외교, 수산' },
+  '계': { symbol:'이슬비', trait:'조용하고 사려 깊습니다. 관찰력이 좋고 남이 놓친 것을 봅니다. 예민하고 걱정이 많아 스스로를 소모시킬 수 있습니다.', job:'연구, 상담, 기획, 문학, 의료' },
+};
+
+// 십성별 의미
+const SIPSEONG_DESC = {
+  '비견':'자립심과 경쟁심. 동료·형제 인연',
+  '겁재':'승부욕과 추진력. 재물 다툼 주의',
+  '식신':'표현력과 여유. 먹을 복과 건강',
+  '상관':'재능과 반항. 말솜씨와 창의성',
+  '편재':'큰 재물과 사교. 변동이 큰 돈',
+  '정재':'꾸준한 재물과 성실. 안정적 수입',
+  '편관':'추진력과 압박. 도전과 위기 관리',
+  '정관':'명예와 질서. 직장운과 책임감',
+  '편인':'직관과 전문성. 독특한 공부',
+  '정인':'학문과 보호. 어른 복과 문서운',
+};
+
+const SAENG = { 목:'화', 화:'토', 토:'금', 금:'수', 수:'목' };   // 생하는 관계
+const GEUK  = { 목:'토', 토:'수', 수:'화', 화:'금', 금:'목' };   // 극하는 관계
+
+// 신강 / 신약 판정
+function calcStrength(r) {
+  const P = r.pillars;
+  const me = GAN_OHAENG[P.day.gan];
+  const helper = Object.keys(SAENG).find(k => SAENG[k] === me);   // 나를 생하는 오행
+
+  let score = 0;
+  const weigh = (oh, w) => {
+    if (oh === me) score += w;                 // 비겁
+    else if (oh === helper) score += w * 0.8;  // 인성
+    else if (SAENG[me] === oh) score -= w * 0.6;   // 식상
+    else if (GEUK[me] === oh) score -= w * 0.5;    // 재성
+    else score -= w * 0.9;                     // 관성
+  };
+
+  // 월지 비중을 가장 크게 둔다
+  weigh(JI_OHAENG[P.month.ji], 3.0);
+  weigh(GAN_OHAENG[P.month.gan], 1.2);
+  weigh(JI_OHAENG[P.day.ji], 1.5);
+  weigh(GAN_OHAENG[P.year.gan], 1.0);
+  weigh(JI_OHAENG[P.year.ji], 1.0);
+  if (P.hour) {
+    weigh(GAN_OHAENG[P.hour.gan], 1.0);
+    weigh(JI_OHAENG[P.hour.ji], 1.2);
+  }
+
+  let level, desc;
+  if (score >= 2.0)       { level = '신강';   desc = '일간의 기운이 강한 편입니다. 스스로 밀고 나가는 힘이 있어 주도적이지만, 고집으로 흐르면 주변과 부딪칩니다.'; }
+  else if (score >= 0.5)  { level = '중화(강)'; desc = '일간이 적당히 힘을 갖춘 편입니다. 균형이 좋아 상황에 따라 유연하게 대응할 수 있습니다.'; }
+  else if (score >= -0.5) { level = '중화';   desc = '일간의 강약이 고른 편입니다. 치우침이 적어 무난하게 풀리는 구조입니다.'; }
+  else if (score >= -2.0) { level = '중화(약)'; desc = '일간이 다소 약한 편입니다. 혼자보다 사람을 곁에 두고 가는 쪽이 유리합니다.'; }
+  else                    { level = '신약';   desc = '일간의 기운이 약한 편입니다. 무리해서 끌고 가기보다 도움을 받고 때를 기다리는 편이 낫습니다.'; }
+
+  // 용신 (강하면 빼주는 오행, 약하면 채워주는 오행)
+  const strong = score >= 0.5;
+  const yongsin = strong
+    ? [SAENG[me], GEUK[me]]                                  // 식상·재성으로 설기
+    : [helper, me];                                          // 인성·비겁으로 보강
+  const gisin = strong ? [helper, me] : [SAENG[me], GEUK[me]];
+
+  return { score: Math.round(score * 10) / 10, level, desc, me, yongsin, gisin, strong };
+}
+
+// 십성 개수 집계
+function sipseongCount(r) {
+  const cnt = {};
+  Object.values(r.sipseong).forEach(v => {
+    if (!v) return;
+    [v.gan, v.ji].forEach(k => { if (k && k !== '일간') cnt[k] = (cnt[k] || 0) + 1; });
+  });
+  return cnt;
 }
