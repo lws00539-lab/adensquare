@@ -681,7 +681,52 @@ function daeunHint(dayGan, u) {
 function sjReset() {
   document.getElementById('sj-form').style.display = 'flex';
   document.getElementById('sj-result').style.display = 'none';
+  document.getElementById('sj-loading').style.display = 'none';
   window.scrollTo(0, 0);
+}
+
+// 풀이하는 동안 보여줄 단계별 문구
+const SJ_STEPS = [
+  '생년월일을 만세력으로 옮기는 중',
+  '절기를 짚어 연주와 월주를 세우는 중',
+  '진태양시를 계산해 시주를 맞추는 중',
+  '여덟 글자의 오행을 헤아리는 중',
+  '십성을 살펴 타고난 힘을 읽는 중',
+  '십 년마다 바뀌는 흐름을 펼치는 중',
+  '풀이를 정리하는 중',
+];
+
+// 로딩 연출을 보여준 뒤 결과를 그린다
+function sjRunWithLoading(render) {
+  const form = document.getElementById('sj-form');
+  const load = document.getElementById('sj-loading');
+  const text = document.getElementById('sj-load-text');
+  const fill = document.getElementById('sj-load-fill');
+
+  form.style.display = 'none';
+  load.style.display = 'block';
+  load.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+  let i = 0;
+  text.textContent = SJ_STEPS[0];
+  fill.style.width = '6%';
+
+  const timer = setInterval(() => {
+    i++;
+    if (i < SJ_STEPS.length) {
+      text.textContent = SJ_STEPS[i];
+      fill.style.width = Math.round((i + 1) / SJ_STEPS.length * 94 + 6) + '%';
+    }
+  }, 620);
+
+  setTimeout(() => {
+    clearInterval(timer);
+    fill.style.width = '100%';
+    setTimeout(() => {
+      load.style.display = 'none';
+      render();
+    }, 300);
+  }, 620 * SJ_STEPS.length);
 }
 
 function runSaju() {
@@ -790,9 +835,7 @@ function runSaju() {
     ${sub ? `<div style="font-size:14px;color:${INK_DIM};margin-bottom:12px;line-height:1.7;">${sub}</div>` : ''}`;
   const LINE = `<div style="height:1px;background:${LINE_C};margin:24px 0;"></div>`;
 
-  document.getElementById('sj-form').style.display = 'none';
-  box.style.display = 'block';
-  box.innerHTML = `
+  const html = `
     <div style="background:${PAPER};padding:24px 22px;color:${INK};">
 
       <div style="text-align:center;margin-bottom:18px;">
@@ -892,5 +935,10 @@ function runSaju() {
         ※ 재미로 보는 콘텐츠입니다. 중요한 결정은 스스로 판단하시기 바랍니다.
       </div>
     </div>`;
-  box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  sjRunWithLoading(() => {
+    box.style.display = 'block';
+    box.innerHTML = html;
+    box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
 }
