@@ -1246,106 +1246,85 @@ footer a{color:var(--g2);}
   </div>
   <div id="section-saju" style="display:none;min-width:0;max-width:100%;">
     <div style="background:var(--dark3);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;">
-      <div style="padding:12px 16px;background:linear-gradient(180deg,#2a1a08,#1a1008);border-bottom:1px solid var(--border);">
-        <div style="font-size:18px;font-weight:700;color:#d4a84b;">☯ 사주팔자</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:4px;">절기와 진태양시를 반영해 사주 네 기둥을 계산합니다.</div>
+      <div style="padding:18px 20px;background:linear-gradient(180deg,#3a2810,#1a1008);border-bottom:1px solid #5a4a22;text-align:center;">
+        <div style="font-size:28px;font-weight:800;color:#f0d78a;letter-spacing:4px;">☯ 사 주 팔 자</div>
+        <div style="font-size:13px;color:#a89878;margin-top:6px;letter-spacing:2px;">FOUR PILLARS OF DESTINY</div>
       </div>
 
-      <div id="sj-form" style="padding:16px;display:flex;flex-direction:column;gap:10px;max-width:520px;">
+      <div id="sj-form" style="padding:24px 20px;display:flex;flex-direction:column;gap:20px;max-width:560px;margin:0 auto;">
         <div>
-          <div style="font-size:12px;color:var(--text3);margin-bottom:4px;">이름 (선택)</div>
-          <input id="sj-name" type="text" placeholder="이름을 입력하면 풀이에 표시됩니다" maxlength="12"
-                 style="width:100%;padding:9px 10px;background:#0a0800;border:1px solid #3a2e10;border-radius:4px;color:#e8dcc8;font-size:13px;box-sizing:border-box;">
+          <div style="font-size:15px;color:#d4a84b;font-weight:700;margin-bottom:8px;">이름 <span style="color:#8a7a58;font-weight:400;font-size:13px;">(선택)</span></div>
+          <input id="sj-name" type="text" placeholder="이름을 입력하세요" maxlength="12"
+                 style="width:100%;padding:14px 14px;background:#0f0c06;border:1px solid #5a4a22;border-radius:6px;color:#f0e6d2;font-size:17px;box-sizing:border-box;text-align:center;">
         </div>
 
         <div>
-          <div style="font-size:12px;color:var(--text3);margin-bottom:4px;">생년월일 (양력)</div>
-          <div style="display:flex;gap:6px;">
-            <input id="sj-year" type="number" placeholder="1990" style="flex:1;padding:9px 10px;background:#0a0800;border:1px solid #3a2e10;border-radius:4px;color:#e8dcc8;font-size:13px;">
-            <input id="sj-month" type="number" placeholder="3" min="1" max="12" style="width:70px;padding:9px 10px;background:#0a0800;border:1px solid #3a2e10;border-radius:4px;color:#e8dcc8;font-size:13px;">
-            <input id="sj-day" type="number" placeholder="15" min="1" max="31" style="width:70px;padding:9px 10px;background:#0a0800;border:1px solid #3a2e10;border-radius:4px;color:#e8dcc8;font-size:13px;">
+          <div style="font-size:15px;color:#d4a84b;font-weight:700;margin-bottom:8px;">생년월일 <span style="color:#8a7a58;font-weight:400;font-size:13px;">(양력)</span></div>
+          <div style="display:flex;gap:8px;">
+            <input id="sj-year" type="number" placeholder="1990" style="flex:1.4;padding:14px 10px;background:#0f0c06;border:1px solid #5a4a22;border-radius:6px;color:#f0e6d2;font-size:17px;text-align:center;">
+            <input id="sj-month" type="number" placeholder="3" min="1" max="12" style="flex:1;padding:14px 10px;background:#0f0c06;border:1px solid #5a4a22;border-radius:6px;color:#f0e6d2;font-size:17px;text-align:center;">
+            <input id="sj-day" type="number" placeholder="15" min="1" max="31" style="flex:1;padding:14px 10px;background:#0f0c06;border:1px solid #5a4a22;border-radius:6px;color:#f0e6d2;font-size:17px;text-align:center;">
           </div>
         </div>
 
         <div>
-          <div style="font-size:12px;color:var(--text3);margin-bottom:4px;">태어난 시각</div>
-          <div style="display:flex;gap:6px;align-items:center;">
-            <input id="sj-hour" type="number" placeholder="시" min="0" max="23" style="width:70px;padding:9px 10px;background:#0a0800;border:1px solid #3a2e10;border-radius:4px;color:#e8dcc8;font-size:13px;">
-            <input id="sj-min" type="number" placeholder="분" min="0" max="59" style="width:70px;padding:9px 10px;background:#0a0800;border:1px solid #3a2e10;border-radius:4px;color:#e8dcc8;font-size:13px;">
-            <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text2);cursor:pointer;margin-left:4px;">
-              <input id="sj-unknown" type="checkbox" onchange="sjToggleTime()" style="width:15px;height:15px;accent-color:#d4a84b;cursor:pointer;">
-              시간 모름
+          <div style="font-size:15px;color:#d4a84b;font-weight:700;margin-bottom:8px;">태어난 시각</div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input id="sj-hour" type="number" placeholder="시" min="0" max="23" style="flex:1;padding:14px 10px;background:#0f0c06;border:1px solid #5a4a22;border-radius:6px;color:#f0e6d2;font-size:17px;text-align:center;">
+            <input id="sj-min" type="number" placeholder="분" min="0" max="59" style="flex:1;padding:14px 10px;background:#0f0c06;border:1px solid #5a4a22;border-radius:6px;color:#f0e6d2;font-size:17px;text-align:center;">
+            <label style="display:flex;align-items:center;gap:7px;font-size:15px;color:#e0d4b8;cursor:pointer;white-space:nowrap;padding:0 4px;">
+              <input id="sj-unknown" type="checkbox" onchange="sjToggleTime()" style="width:19px;height:19px;accent-color:#d4a84b;cursor:pointer;">
+              모름
             </label>
           </div>
         </div>
 
-        <div style="display:flex;gap:6px;">
+        <div style="display:flex;gap:8px;">
           <div style="flex:1;">
-            <div style="font-size:12px;color:var(--text3);margin-bottom:4px;">성별</div>
-            <select id="sj-gender" style="width:100%;padding:9px 10px;background:#0a0800;border:1px solid #3a2e10;border-radius:4px;color:#e8dcc8;font-size:13px;">
+            <div style="font-size:15px;color:#d4a84b;font-weight:700;margin-bottom:8px;">성별</div>
+            <select id="sj-gender" style="width:100%;padding:14px 10px;background:#0f0c06;border:1px solid #5a4a22;border-radius:6px;color:#f0e6d2;font-size:16px;">
               <option value="남">남자</option>
               <option value="여">여자</option>
             </select>
           </div>
-          <div style="flex:1;">
-            <div style="font-size:12px;color:var(--text3);margin-bottom:4px;">출생 지역</div>
-            <select id="sj-city" style="width:100%;padding:9px 10px;background:#0a0800;border:1px solid #3a2e10;border-radius:4px;color:#e8dcc8;font-size:13px;">
+          <div style="flex:1.4;">
+            <div style="font-size:15px;color:#d4a84b;font-weight:700;margin-bottom:8px;">태어난 지역</div>
+            <select id="sj-city" style="width:100%;padding:14px 10px;background:#0f0c06;border:1px solid #5a4a22;border-radius:6px;color:#f0e6d2;font-size:16px;">
               <optgroup label="특별시 · 광역시">
-                <option value="126.978">서울</option>
-                <option value="129.075">부산</option>
-                <option value="128.601">대구</option>
-                <option value="126.705">인천</option>
-                <option value="126.851">광주</option>
-                <option value="127.385">대전</option>
-                <option value="129.311">울산</option>
-                <option value="127.289">세종</option>
+                <option value="126.978">서울</option><option value="129.075">부산</option>
+                <option value="128.601">대구</option><option value="126.705">인천</option>
+                <option value="126.851">광주</option><option value="127.385">대전</option>
+                <option value="129.311">울산</option><option value="127.289">세종</option>
               </optgroup>
               <optgroup label="경기도">
-                <option value="127.010">수원</option>
-                <option value="126.734">부천</option>
-                <option value="127.138">성남</option>
-                <option value="127.177">용인</option>
-                <option value="126.917">안양</option>
-                <option value="126.803">안산</option>
-                <option value="127.047">의정부</option>
-                <option value="127.420">이천</option>
-                <option value="126.832">김포</option>
-                <option value="127.200">평택</option>
+                <option value="127.010">수원</option><option value="126.734">부천</option>
+                <option value="127.138">성남</option><option value="127.177">용인</option>
+                <option value="126.917">안양</option><option value="126.803">안산</option>
+                <option value="127.047">의정부</option><option value="127.420">이천</option>
+                <option value="126.832">김포</option><option value="127.200">평택</option>
               </optgroup>
               <optgroup label="강원도">
-                <option value="127.730">춘천</option>
-                <option value="128.896">강릉</option>
-                <option value="127.945">원주</option>
-                <option value="129.114">속초</option>
+                <option value="127.730">춘천</option><option value="128.896">강릉</option>
+                <option value="127.945">원주</option><option value="129.114">속초</option>
               </optgroup>
               <optgroup label="충청도">
-                <option value="127.491">청주</option>
-                <option value="126.800">천안</option>
-                <option value="126.657">아산</option>
-                <option value="127.735">충주</option>
-                <option value="126.298">서산</option>
-                <option value="126.712">공주</option>
+                <option value="127.491">청주</option><option value="126.800">천안</option>
+                <option value="126.657">아산</option><option value="127.735">충주</option>
+                <option value="126.298">서산</option><option value="126.712">공주</option>
               </optgroup>
               <optgroup label="전라도">
-                <option value="127.147">전주</option>
-                <option value="126.393">군산</option>
-                <option value="126.392">목포</option>
-                <option value="127.662">여수</option>
-                <option value="127.487">순천</option>
-                <option value="126.957">익산</option>
+                <option value="127.147">전주</option><option value="126.393">군산</option>
+                <option value="126.392">목포</option><option value="127.662">여수</option>
+                <option value="127.487">순천</option><option value="126.957">익산</option>
               </optgroup>
               <optgroup label="경상도">
-                <option value="129.365">포항</option>
-                <option value="128.688">창원</option>
-                <option value="128.106">진주</option>
-                <option value="128.505">구미</option>
-                <option value="129.224">경주</option>
-                <option value="128.741">김해</option>
+                <option value="129.365">포항</option><option value="128.688">창원</option>
+                <option value="128.106">진주</option><option value="128.505">구미</option>
+                <option value="129.224">경주</option><option value="128.741">김해</option>
                 <option value="128.629">안동</option>
               </optgroup>
               <optgroup label="제주">
-                <option value="126.531">제주시</option>
-                <option value="126.560">서귀포</option>
+                <option value="126.531">제주시</option><option value="126.560">서귀포</option>
               </optgroup>
               <optgroup label="기타">
                 <option value="135">보정 안함 (동경 135도)</option>
@@ -1354,8 +1333,8 @@ footer a{color:var(--g2);}
           </div>
         </div>
 
-        <button onclick="runSaju()" style="padding:11px;background:linear-gradient(180deg,#4a3c18,#2e2408);color:#d4a84b;border:1px solid #8a7a38;border-radius:4px;font-size:14px;font-weight:700;cursor:pointer;margin-top:4px;">사주 풀이 보기</button>
-        <div id="sj-error" style="font-size:12px;color:#e07070;min-height:16px;"></div>
+        <button onclick="runSaju()" style="padding:18px;background:linear-gradient(180deg,#6a5420,#3a2c0c);color:#f5d98a;border:1px solid #a08838;border-radius:6px;font-size:19px;font-weight:800;letter-spacing:6px;cursor:pointer;margin-top:6px;">운 명 의 문 열 기</button>
+        <div id="sj-error" style="font-size:14px;color:#ff8080;min-height:18px;text-align:center;"></div>
       </div>
 
       <div id="sj-result" style="display:none;border-top:1px solid var(--border);"></div>
@@ -2380,7 +2359,7 @@ footer a{color:var(--g2);}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <!-- ?v= 값을 올리면 브라우저가 캐시를 무시하고 새 파일을 받는다. auth-v2.js를 고칠 때마다 숫자를 올릴 것 -->
-<script>window.ADEN_VERSION='v403';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
+<script>window.ADEN_VERSION='v404';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
 <script>
   // 헤더 높이를 실제로 재서 사이드 배경 시작 위치에 반영한다.
   // (헤더 높이는 화면 크기에 따라 달라지므로 숫자를 고정하면 그림이 가려진다)
@@ -2394,9 +2373,9 @@ footer a{color:var(--g2);}
     window.addEventListener('resize', setHeaderVar);
   })();
 </script>
-<script src="auth-v2.js?v=403"></script>
-<script src="admin.js?v=403"></script>
-<script src="saju.js?v=403"></script>
+<script src="auth-v2.js?v=404"></script>
+<script src="admin.js?v=404"></script>
+<script src="saju.js?v=404"></script>
 <script>
   // 장비러쉬
   const SIM_SWORD='images/img6.jpg';
