@@ -808,6 +808,9 @@ footer a{color:var(--g2);}
         <div class="dropdown-item" onclick="showTarot()">
           🃏 스포츠타로 운세
         </div>
+        <div class="dropdown-item" onclick="showSaju()">
+          ☯ 사주팔자 <span class="game-new">NEW</span>
+        </div>
         <div class="dropdown-item" onclick="showLotto()">
           🎱 로또번호 추첨
         </div>
@@ -1241,6 +1244,68 @@ footer a{color:var(--g2);}
       </div>
     </div>
   </div>
+  <div id="section-saju" style="display:none;min-width:0;max-width:100%;">
+    <div style="background:var(--dark3);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;">
+      <div style="padding:12px 16px;background:linear-gradient(180deg,#2a1a08,#1a1008);border-bottom:1px solid var(--border);">
+        <div style="font-size:18px;font-weight:700;color:#d4a84b;">☯ 사주팔자</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:4px;">절기와 진태양시를 반영해 사주 네 기둥을 계산합니다.</div>
+      </div>
+
+      <div style="padding:16px;display:flex;flex-direction:column;gap:10px;max-width:520px;">
+        <div>
+          <div style="font-size:12px;color:var(--text3);margin-bottom:4px;">생년월일 (양력)</div>
+          <div style="display:flex;gap:6px;">
+            <input id="sj-year" type="number" placeholder="1990" style="flex:1;padding:9px 10px;background:#0a0800;border:1px solid #3a2e10;border-radius:4px;color:#e8dcc8;font-size:13px;">
+            <input id="sj-month" type="number" placeholder="3" min="1" max="12" style="width:70px;padding:9px 10px;background:#0a0800;border:1px solid #3a2e10;border-radius:4px;color:#e8dcc8;font-size:13px;">
+            <input id="sj-day" type="number" placeholder="15" min="1" max="31" style="width:70px;padding:9px 10px;background:#0a0800;border:1px solid #3a2e10;border-radius:4px;color:#e8dcc8;font-size:13px;">
+          </div>
+        </div>
+
+        <div>
+          <div style="font-size:12px;color:var(--text3);margin-bottom:4px;">태어난 시각</div>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <input id="sj-hour" type="number" placeholder="시" min="0" max="23" style="width:70px;padding:9px 10px;background:#0a0800;border:1px solid #3a2e10;border-radius:4px;color:#e8dcc8;font-size:13px;">
+            <input id="sj-min" type="number" placeholder="분" min="0" max="59" style="width:70px;padding:9px 10px;background:#0a0800;border:1px solid #3a2e10;border-radius:4px;color:#e8dcc8;font-size:13px;">
+            <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text2);cursor:pointer;margin-left:4px;">
+              <input id="sj-unknown" type="checkbox" onchange="sjToggleTime()" style="width:15px;height:15px;accent-color:#d4a84b;cursor:pointer;">
+              시간 모름
+            </label>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:6px;">
+          <div style="flex:1;">
+            <div style="font-size:12px;color:var(--text3);margin-bottom:4px;">성별</div>
+            <select id="sj-gender" style="width:100%;padding:9px 10px;background:#0a0800;border:1px solid #3a2e10;border-radius:4px;color:#e8dcc8;font-size:13px;">
+              <option value="남">남자</option>
+              <option value="여">여자</option>
+            </select>
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:12px;color:var(--text3);margin-bottom:4px;">출생 지역</div>
+            <select id="sj-city" style="width:100%;padding:9px 10px;background:#0a0800;border:1px solid #3a2e10;border-radius:4px;color:#e8dcc8;font-size:13px;">
+              <option value="126.978">서울</option>
+              <option value="129.075">부산</option>
+              <option value="128.601">대구</option>
+              <option value="126.705">인천</option>
+              <option value="126.851">광주</option>
+              <option value="127.385">대전</option>
+              <option value="129.311">울산</option>
+              <option value="127.489">강원(춘천)</option>
+              <option value="126.531">제주</option>
+              <option value="135">보정 안함(동경 135도)</option>
+            </select>
+          </div>
+        </div>
+
+        <button onclick="runSaju()" style="padding:11px;background:linear-gradient(180deg,#4a3c18,#2e2408);color:#d4a84b;border:1px solid #8a7a38;border-radius:4px;font-size:14px;font-weight:700;cursor:pointer;margin-top:4px;">사주 풀이 보기</button>
+        <div id="sj-error" style="font-size:12px;color:#e07070;min-height:16px;"></div>
+      </div>
+
+      <div id="sj-result" style="display:none;border-top:1px solid var(--border);"></div>
+    </div>
+  </div>
+
   <div id="section-tarot" style="display:none;">
     <style>
       .tr-wrap { min-height:100vh; background:#0a0c10; font-family:'Noto Serif KR',Georgia,serif; position:relative; overflow:hidden; }
@@ -2259,7 +2324,7 @@ footer a{color:var(--g2);}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <!-- ?v= 값을 올리면 브라우저가 캐시를 무시하고 새 파일을 받는다. auth-v2.js를 고칠 때마다 숫자를 올릴 것 -->
-<script>window.ADEN_VERSION='v400';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
+<script>window.ADEN_VERSION='v401';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
 <script>
   // 헤더 높이를 실제로 재서 사이드 배경 시작 위치에 반영한다.
   // (헤더 높이는 화면 크기에 따라 달라지므로 숫자를 고정하면 그림이 가려진다)
@@ -2273,8 +2338,9 @@ footer a{color:var(--g2);}
     window.addEventListener('resize', setHeaderVar);
   })();
 </script>
-<script src="auth-v2.js?v=400"></script>
-<script src="admin.js?v=400"></script>
+<script src="auth-v2.js?v=401"></script>
+<script src="admin.js?v=401"></script>
+<script src="saju.js?v=401"></script>
 <script>
   // 장비러쉬
   const SIM_SWORD='images/img6.jpg';
