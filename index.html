@@ -435,6 +435,91 @@ input,select{font-family:inherit;outline:none;}
 .modal-divider{display:flex;align-items:center;gap:8px;font-size:10px;color:var(--text3);}
 .modal-divider::before,.modal-divider::after{content:'';flex:1;height:1px;background:var(--border);}
 .modal-footer{text-align:center;font-size:11px;color:var(--text3);}
+
+/* ===== 사주 로딩 연출 ===== */
+#sj-loading{min-height:430px;background:#0a0712;}
+.sj-load-img{position:absolute;inset:0;background:url('images/saju_loading.jpg?v=408') center/cover no-repeat;
+  animation:sjZoom 9s ease-in-out infinite alternate;}
+@keyframes sjZoom{from{transform:scale(1.04)}to{transform:scale(1.14)}}
+.sj-load-veil{position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 55%, rgba(8,5,18,0.35) 0%, rgba(8,5,18,0.78) 55%, rgba(8,5,18,0.94) 100%);}
+
+/* 떠다니는 빛 입자 */
+.sj-sparks{position:absolute;inset:0;pointer-events:none;}
+.sj-sparks span{position:absolute;width:4px;height:4px;border-radius:50%;
+  background:#ffe9a8;box-shadow:0 0 8px 3px rgba(255,214,120,.75);opacity:0;
+  animation:sjFloat 5s linear infinite;}
+.sj-sparks span:nth-child(1){left:8%;animation-delay:0s}
+.sj-sparks span:nth-child(2){left:16%;animation-delay:.6s}
+.sj-sparks span:nth-child(3){left:24%;animation-delay:1.2s}
+.sj-sparks span:nth-child(4){left:32%;animation-delay:2.1s}
+.sj-sparks span:nth-child(5){left:40%;animation-delay:.3s}
+.sj-sparks span:nth-child(6){left:48%;animation-delay:1.7s}
+.sj-sparks span:nth-child(7){left:56%;animation-delay:2.6s}
+.sj-sparks span:nth-child(8){left:64%;animation-delay:.9s}
+.sj-sparks span:nth-child(9){left:72%;animation-delay:2.3s}
+.sj-sparks span:nth-child(10){left:80%;animation-delay:1.4s}
+.sj-sparks span:nth-child(11){left:88%;animation-delay:3.1s}
+.sj-sparks span:nth-child(12){left:12%;animation-delay:3.6s}
+.sj-sparks span:nth-child(13){left:44%;animation-delay:4.1s}
+.sj-sparks span:nth-child(14){left:68%;animation-delay:3.3s}
+.sj-sparks span:nth-child(15){left:92%;animation-delay:2.8s}
+@keyframes sjFloat{
+  0%{transform:translateY(105%) scale(.6);opacity:0}
+  15%{opacity:1}
+  85%{opacity:.9}
+  100%{transform:translateY(-15%) scale(1.15);opacity:0}
+}
+
+.sj-load-center{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;min-height:430px;padding:20px;}
+
+/* 회전하는 태극 고리 */
+.sj-ring{width:112px;height:112px;border-radius:50%;position:relative;
+  border:2px solid rgba(240,200,110,.22);
+  box-shadow:0 0 40px rgba(240,200,110,.28), inset 0 0 26px rgba(240,200,110,.14);}
+.sj-ring::before{content:'';position:absolute;inset:-2px;border-radius:50%;
+  border:2px solid transparent;border-top-color:#f0c86e;border-right-color:rgba(240,200,110,.45);
+  animation:sjSpin 1.5s linear infinite;}
+.sj-ring::after{content:'';position:absolute;inset:11px;border-radius:50%;
+  border:1px solid transparent;border-bottom-color:rgba(240,200,110,.6);
+  animation:sjSpin 2.6s linear infinite reverse;}
+@keyframes sjSpin{to{transform:rotate(360deg)}}
+.sj-ring-inner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-size:42px;color:#f5d98a;text-shadow:0 0 22px rgba(240,200,110,.85);
+  animation:sjPulse 2.4s ease-in-out infinite;}
+@keyframes sjPulse{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.1);opacity:1}}
+
+.sj-load-text{margin-top:22px;font-size:17px;color:#f0e0b8;letter-spacing:2px;
+  text-shadow:0 2px 12px rgba(0,0,0,.95);min-height:24px;
+  animation:sjBreathe 2s ease-in-out infinite;}
+@keyframes sjBreathe{0%,100%{opacity:.62}50%{opacity:1}}
+
+.sj-load-bar{margin-top:16px;width:230px;height:3px;border-radius:2px;
+  background:rgba(255,255,255,.12);overflow:hidden;}
+#sj-load-fill{height:100%;width:0%;border-radius:2px;
+  background:linear-gradient(90deg,#8a6a20,#f5d98a,#fff2c9);
+  box-shadow:0 0 12px rgba(245,217,138,.9);transition:width .35s ease;}
+
+/* 한 글자씩 떠오르는 四柱八字 */
+.sj-hanja{margin-top:24px;display:flex;gap:16px;}
+.sj-hanja span{font-size:26px;font-weight:800;color:#f5d98a;opacity:0;
+  text-shadow:0 0 18px rgba(240,200,110,.8);
+  animation:sjRise 3.2s ease-in-out infinite;
+  animation-delay:calc(var(--i) * .35s);}
+@keyframes sjRise{
+  0%{opacity:0;transform:translateY(14px) scale(.85)}
+  25%{opacity:1;transform:translateY(0) scale(1)}
+  70%{opacity:1}
+  100%{opacity:0;transform:translateY(-8px) scale(.95)}
+}
+
+@media(max-width:600px){
+  #sj-loading,.sj-load-center{min-height:340px;}
+  .sj-ring{width:92px;height:92px;}
+  .sj-ring-inner{font-size:34px;}
+  .sj-hanja span{font-size:21px;}
+}
 /* 외부에서 복사해 온 내용(고정 폭 표·이미지)이 레이아웃을 밀어내지 않도록 강제로 가둔다 */
 #nw-editor, #detail-body, #bw-editor, #bd-body{max-width:100%;overflow-x:auto;word-break:break-word;overflow-wrap:anywhere;}
 #nw-editor *, #detail-body *, #bw-editor *, #bd-body *{max-width:100% !important;}
@@ -1335,6 +1420,27 @@ footer a{color:var(--g2);}
 
         <button onclick="runSaju()" style="padding:18px;background:linear-gradient(180deg,#6a5420,#3a2c0c);color:#f5d98a;border:1px solid #a08838;border-radius:6px;font-size:19px;font-weight:800;letter-spacing:6px;cursor:pointer;margin-top:6px;">운 명 의 문 열 기</button>
         <div id="sj-error" style="font-size:14px;color:#ff8080;min-height:18px;text-align:center;"></div>
+      </div>
+
+      <div id="sj-loading" style="display:none;border-top:1px solid var(--border);position:relative;overflow:hidden;">
+        <div class="sj-load-img"></div>
+        <div class="sj-load-veil"></div>
+        <div class="sj-sparks">
+          <span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <div class="sj-load-center">
+          <div class="sj-ring">
+            <div class="sj-ring-inner">☯</div>
+          </div>
+          <div id="sj-load-text" class="sj-load-text">천간과 지지를 세우는 중</div>
+          <div class="sj-load-bar"><div id="sj-load-fill"></div></div>
+          <div class="sj-hanja">
+            <span style="--i:0">四</span><span style="--i:1">柱</span>
+            <span style="--i:2">八</span><span style="--i:3">字</span>
+          </div>
+        </div>
       </div>
 
       <div id="sj-result" style="display:none;border-top:1px solid var(--border);"></div>
@@ -2359,7 +2465,7 @@ footer a{color:var(--g2);}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <!-- ?v= 값을 올리면 브라우저가 캐시를 무시하고 새 파일을 받는다. auth-v2.js를 고칠 때마다 숫자를 올릴 것 -->
-<script>window.ADEN_VERSION='v406';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
+<script>window.ADEN_VERSION='v408';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
 <script>
   // 헤더 높이를 실제로 재서 사이드 배경 시작 위치에 반영한다.
   // (헤더 높이는 화면 크기에 따라 달라지므로 숫자를 고정하면 그림이 가려진다)
@@ -2373,9 +2479,9 @@ footer a{color:var(--g2);}
     window.addEventListener('resize', setHeaderVar);
   })();
 </script>
-<script src="auth-v2.js?v=406"></script>
-<script src="admin.js?v=406"></script>
-<script src="saju.js?v=406"></script>
+<script src="auth-v2.js?v=408"></script>
+<script src="admin.js?v=408"></script>
+<script src="saju.js?v=408"></script>
 <script>
   // 장비러쉬
   const SIM_SWORD='images/img6.jpg';
