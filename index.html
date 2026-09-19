@@ -2359,7 +2359,7 @@ footer a{color:var(--g2);}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <!-- ?v= 값을 올리면 브라우저가 캐시를 무시하고 새 파일을 받는다. auth-v2.js를 고칠 때마다 숫자를 올릴 것 -->
-<script>window.ADEN_VERSION='v405';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
+<script>window.ADEN_VERSION='v406';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
 <script>
   // 헤더 높이를 실제로 재서 사이드 배경 시작 위치에 반영한다.
   // (헤더 높이는 화면 크기에 따라 달라지므로 숫자를 고정하면 그림이 가려진다)
@@ -2373,9 +2373,9 @@ footer a{color:var(--g2);}
     window.addEventListener('resize', setHeaderVar);
   })();
 </script>
-<script src="auth-v2.js?v=405"></script>
-<script src="admin.js?v=405"></script>
-<script src="saju.js?v=405"></script>
+<script src="auth-v2.js?v=406"></script>
+<script src="admin.js?v=406"></script>
+<script src="saju.js?v=406"></script>
 <script>
   // 장비러쉬
   const SIM_SWORD='images/img6.jpg';
@@ -2402,7 +2402,7 @@ footer a{color:var(--g2);}
   function showSlimeRace(){
     ['section-main','section-simulator','section-news','section-news-write','section-news-detail',
      'section-board','section-board-write','section-board-detail',
-     'section-market','section-market-write','section-adenprice','section-diaprice','section-youtube','section-fortune','section-tarot','section-lotto'].forEach(id => {
+     'section-market','section-market-write','section-adenprice','section-diaprice','section-youtube','section-fortune','section-tarot','section-saju','section-lotto'].forEach(id => {
       const el = document.getElementById(id); if(el) el.style.display='none';
     });
     document.getElementById('section-slime').style.display='block';
@@ -2539,7 +2539,7 @@ footer a{color:var(--g2);}
   function showSimulator(){
     ['section-main','section-news','section-news-write','section-news-detail',
      'section-slime','section-board','section-board-write','section-board-detail',
-     'section-market','section-market-write','section-adenprice','section-diaprice','section-youtube','section-fortune','section-tarot','section-lotto'].forEach(id => {
+     'section-market','section-market-write','section-adenprice','section-diaprice','section-youtube','section-fortune','section-tarot','section-saju','section-lotto'].forEach(id => {
       const el = document.getElementById(id); if(el) el.style.display='none';
     });
     document.getElementById('section-simulator').style.display='block';
@@ -3187,7 +3187,8 @@ footer a{color:var(--g2);}
   function showYoutube() {
     ['section-main','section-news','section-news-write','section-news-detail',
      'section-simulator','section-slime','section-board','section-board-write',
-     'section-board-detail','section-market','section-market-write','section-adenprice','section-diaprice'].forEach(id => {
+     'section-board-detail','section-market','section-market-write','section-adenprice','section-diaprice',
+     'section-fortune','section-tarot','section-saju','section-lotto'].forEach(id => {
       const el = document.getElementById(id); if(el) el.style.display='none';
     });
     document.getElementById('section-youtube').style.display = 'block';
@@ -3297,7 +3298,7 @@ footer a{color:var(--g2);}
     ['section-main','section-news','section-news-write','section-news-detail',
      'section-simulator','section-slime','section-board','section-board-write',
      'section-board-detail','section-market','section-market-write','section-adenprice','section-diaprice','section-youtube',
-     'section-fortune','section-tarot','section-lotto'].forEach(id => {
+     'section-fortune','section-tarot','section-saju','section-lotto'].forEach(id => {
       const el = document.getElementById(id); if(el) el.style.display='none';
     });
     document.getElementById('section-lotto').style.display = 'block';
@@ -3427,7 +3428,7 @@ footer a{color:var(--g2);}
   function showTarot() {
     ['section-main','section-news','section-news-write','section-news-detail',
      'section-simulator','section-slime','section-board','section-board-write',
-     'section-board-detail','section-market','section-market-write','section-adenprice','section-diaprice','section-youtube','section-fortune','section-tarot','section-lotto'].forEach(id => {
+     'section-board-detail','section-market','section-market-write','section-adenprice','section-diaprice','section-youtube','section-fortune','section-tarot','section-saju','section-lotto'].forEach(id => {
       const el = document.getElementById(id); if(el) el.style.display='none';
     });
     document.getElementById('section-tarot').style.display = 'block';
@@ -3993,7 +3994,7 @@ footer a{color:var(--g2);}
   function showFortune() {
     ['section-main','section-news','section-news-write','section-news-detail',
      'section-simulator','section-slime','section-board','section-board-write',
-     'section-board-detail','section-market','section-market-write','section-adenprice','section-diaprice','section-youtube','section-fortune','section-tarot','section-lotto'].forEach(id => {
+     'section-board-detail','section-market','section-market-write','section-adenprice','section-diaprice','section-youtube','section-fortune','section-tarot','section-saju','section-lotto'].forEach(id => {
       const el = document.getElementById(id); if (el) el.style.display = 'none';
     });
     document.getElementById('section-fortune').style.display = 'block';
@@ -4142,7 +4143,7 @@ footer a{color:var(--g2);}
   function showAdenPrice() {
     ['section-main','section-news','section-news-write','section-news-detail',
      'section-simulator','section-slime','section-board','section-board-write',
-     'section-board-detail','section-market','section-market-write','section-youtube','section-fortune','section-tarot','section-lotto'].forEach(id => {
+     'section-board-detail','section-market','section-market-write','section-youtube','section-fortune','section-tarot','section-saju','section-lotto'].forEach(id => {
       const el = document.getElementById(id); if(el) el.style.display='none';
     });
     document.getElementById('section-adenprice').style.display = 'block';
@@ -4364,7 +4365,7 @@ footer a{color:var(--g2);}
     ['section-main','section-news','section-news-write','section-news-detail',
      'section-simulator','section-slime','section-board','section-board-write',
      'section-board-detail','section-market','section-market-write','section-adenprice',
-     'section-youtube','section-fortune','section-tarot','section-lotto'].forEach(id => {
+     'section-youtube','section-fortune','section-tarot','section-saju','section-lotto'].forEach(id => {
       const el = document.getElementById(id); if(el) el.style.display='none';
     });
     document.getElementById('section-diaprice').style.display = 'block';
@@ -4395,7 +4396,7 @@ footer a{color:var(--g2);}
     }
     ['section-main','section-news','section-news-write','section-news-detail',
      'section-simulator','section-slime','section-board','section-board-write',
-     'section-board-detail','section-market-write','section-adenprice','section-diaprice','section-youtube','section-fortune','section-tarot','section-lotto'].forEach(id => {
+     'section-board-detail','section-market-write','section-adenprice','section-diaprice','section-youtube','section-fortune','section-tarot','section-saju','section-lotto'].forEach(id => {
       const el = document.getElementById(id); if(el) el.style.display='none';
     });
     document.getElementById('section-market').style.display = 'block';
@@ -4589,7 +4590,7 @@ footer a{color:var(--g2);}
     if (writeBtn) writeBtn.style.display = (auth.currentUser || isAdmin) ? 'inline-block' : 'none';
     ['section-main','section-news','section-news-write','section-news-detail',
      'section-simulator','section-slime','section-board-write','section-board-detail',
-     'section-market','section-market-write','section-adenprice','section-diaprice','section-youtube','section-fortune','section-tarot','section-lotto'].forEach(id => {
+     'section-market','section-market-write','section-adenprice','section-diaprice','section-youtube','section-fortune','section-tarot','section-saju','section-lotto'].forEach(id => {
       const el = document.getElementById(id); if (el) el.style.display = 'none';
     });
     document.getElementById('section-board').style.display = 'block';
@@ -5060,7 +5061,7 @@ footer a{color:var(--g2);}
   function showMain() {
     ['section-news','section-news-write','section-news-detail','section-simulator',
      'section-slime','section-board','section-board-write','section-board-detail',
-     'section-market','section-market-write','section-adenprice','section-diaprice','section-youtube','section-fortune','section-tarot','section-lotto'].forEach(id => {
+     'section-market','section-market-write','section-adenprice','section-diaprice','section-youtube','section-fortune','section-tarot','section-saju','section-lotto'].forEach(id => {
       const el = document.getElementById(id); if (el) el.style.display = 'none';
     });
     document.getElementById('section-main').style.display = 'block';
@@ -5088,7 +5089,7 @@ footer a{color:var(--g2);}
     if (t) t.textContent = _newsGame === 'm' ? '📰 리니지M 뉴스' : '📰 리니지클래식 뉴스';
     ['section-main','section-simulator','section-slime','section-news-write',
      'section-news-detail','section-board','section-board-write','section-board-detail',
-     'section-market','section-market-write','section-adenprice','section-diaprice','section-youtube','section-fortune','section-tarot','section-lotto'].forEach(id => {
+     'section-market','section-market-write','section-adenprice','section-diaprice','section-youtube','section-fortune','section-tarot','section-saju','section-lotto'].forEach(id => {
       const el = document.getElementById(id); if(el) el.style.display='none';
     });
     document.getElementById('section-news').style.display='block';
