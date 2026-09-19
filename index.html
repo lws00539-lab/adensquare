@@ -1253,6 +1253,12 @@ footer a{color:var(--g2);}
 
       <div style="padding:16px;display:flex;flex-direction:column;gap:10px;max-width:520px;">
         <div>
+          <div style="font-size:12px;color:var(--text3);margin-bottom:4px;">이름 (선택)</div>
+          <input id="sj-name" type="text" placeholder="이름을 입력하면 풀이에 표시됩니다" maxlength="12"
+                 style="width:100%;padding:9px 10px;background:#0a0800;border:1px solid #3a2e10;border-radius:4px;color:#e8dcc8;font-size:13px;box-sizing:border-box;">
+        </div>
+
+        <div>
           <div style="font-size:12px;color:var(--text3);margin-bottom:4px;">생년월일 (양력)</div>
           <div style="display:flex;gap:6px;">
             <input id="sj-year" type="number" placeholder="1990" style="flex:1;padding:9px 10px;background:#0a0800;border:1px solid #3a2e10;border-radius:4px;color:#e8dcc8;font-size:13px;">
@@ -1284,16 +1290,66 @@ footer a{color:var(--g2);}
           <div style="flex:1;">
             <div style="font-size:12px;color:var(--text3);margin-bottom:4px;">출생 지역</div>
             <select id="sj-city" style="width:100%;padding:9px 10px;background:#0a0800;border:1px solid #3a2e10;border-radius:4px;color:#e8dcc8;font-size:13px;">
-              <option value="126.978">서울</option>
-              <option value="129.075">부산</option>
-              <option value="128.601">대구</option>
-              <option value="126.705">인천</option>
-              <option value="126.851">광주</option>
-              <option value="127.385">대전</option>
-              <option value="129.311">울산</option>
-              <option value="127.489">강원(춘천)</option>
-              <option value="126.531">제주</option>
-              <option value="135">보정 안함(동경 135도)</option>
+              <optgroup label="특별시 · 광역시">
+                <option value="126.978">서울</option>
+                <option value="129.075">부산</option>
+                <option value="128.601">대구</option>
+                <option value="126.705">인천</option>
+                <option value="126.851">광주</option>
+                <option value="127.385">대전</option>
+                <option value="129.311">울산</option>
+                <option value="127.289">세종</option>
+              </optgroup>
+              <optgroup label="경기도">
+                <option value="127.010">수원</option>
+                <option value="126.734">부천</option>
+                <option value="127.138">성남</option>
+                <option value="127.177">용인</option>
+                <option value="126.917">안양</option>
+                <option value="126.803">안산</option>
+                <option value="127.047">의정부</option>
+                <option value="127.420">이천</option>
+                <option value="126.832">김포</option>
+                <option value="127.200">평택</option>
+              </optgroup>
+              <optgroup label="강원도">
+                <option value="127.730">춘천</option>
+                <option value="128.896">강릉</option>
+                <option value="127.945">원주</option>
+                <option value="129.114">속초</option>
+              </optgroup>
+              <optgroup label="충청도">
+                <option value="127.491">청주</option>
+                <option value="126.800">천안</option>
+                <option value="126.657">아산</option>
+                <option value="127.735">충주</option>
+                <option value="126.298">서산</option>
+                <option value="126.712">공주</option>
+              </optgroup>
+              <optgroup label="전라도">
+                <option value="127.147">전주</option>
+                <option value="126.393">군산</option>
+                <option value="126.392">목포</option>
+                <option value="127.662">여수</option>
+                <option value="127.487">순천</option>
+                <option value="126.957">익산</option>
+              </optgroup>
+              <optgroup label="경상도">
+                <option value="129.365">포항</option>
+                <option value="128.688">창원</option>
+                <option value="128.106">진주</option>
+                <option value="128.505">구미</option>
+                <option value="129.224">경주</option>
+                <option value="128.741">김해</option>
+                <option value="128.629">안동</option>
+              </optgroup>
+              <optgroup label="제주">
+                <option value="126.531">제주시</option>
+                <option value="126.560">서귀포</option>
+              </optgroup>
+              <optgroup label="기타">
+                <option value="135">보정 안함 (동경 135도)</option>
+              </optgroup>
             </select>
           </div>
         </div>
@@ -2324,7 +2380,7 @@ footer a{color:var(--g2);}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <!-- ?v= 값을 올리면 브라우저가 캐시를 무시하고 새 파일을 받는다. auth-v2.js를 고칠 때마다 숫자를 올릴 것 -->
-<script>window.ADEN_VERSION='v401';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
+<script>window.ADEN_VERSION='v402';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
 <script>
   // 헤더 높이를 실제로 재서 사이드 배경 시작 위치에 반영한다.
   // (헤더 높이는 화면 크기에 따라 달라지므로 숫자를 고정하면 그림이 가려진다)
@@ -2338,9 +2394,9 @@ footer a{color:var(--g2);}
     window.addEventListener('resize', setHeaderVar);
   })();
 </script>
-<script src="auth-v2.js?v=401"></script>
-<script src="admin.js?v=401"></script>
-<script src="saju.js?v=401"></script>
+<script src="auth-v2.js?v=402"></script>
+<script src="admin.js?v=402"></script>
+<script src="saju.js?v=402"></script>
 <script>
   // 장비러쉬
   const SIM_SWORD='images/img6.jpg';
