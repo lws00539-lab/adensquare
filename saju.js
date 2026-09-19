@@ -493,6 +493,174 @@ const SS_EASY = {
   '정인':{ n:'배우고 받는 힘',  t:'공부와 문서에 강하고 윗사람이 잘 챙겨줍니다. 급하게 가기보다 차근차근 쌓아 올리는 쪽입니다.' },
 };
 
+/* ---------------- 분야별 운세 ---------------- */
+
+// 십성을 분야별로 묶는다
+const SS_GROUP = {
+  재물: ['편재','정재'],
+  직업: ['정관','편관'],
+  표현: ['식신','상관'],
+  학문: ['정인','편인'],
+  자립: ['비견','겁재'],
+};
+
+function groupCount(cnt, key) {
+  return SS_GROUP[key].reduce((a, k) => a + (cnt[k] || 0), 0);
+}
+
+// 점수를 별로
+function stars(n) {
+  const full = Math.max(1, Math.min(5, n));
+  return '★'.repeat(full) + '☆'.repeat(5 - full);
+}
+
+/**
+ * 분야별 운세 산출
+ * 십성 구성 + 오행 균형 + 신강약을 조합해 점수와 문장을 만든다.
+ */
+function calcLuck(r, ST, cnt, gender) {
+  const oh = r.ohaeng;
+  const P = r.pillars;
+  const total = Object.values(oh).reduce((a,b)=>a+b,0) || 1;
+  const hasHour = !!P.hour;
+
+  const jae = groupCount(cnt, '재물');
+  const gwan = groupCount(cnt, '직업');
+  const sik = groupCount(cnt, '표현');
+  const inn = groupCount(cnt, '학문');
+  const bi  = groupCount(cnt, '자립');
+
+  const out = [];
+
+  // ---------- 직업운 ----------
+  {
+    let sc = 2 + gwan + (inn > 0 ? 1 : 0) + (ST.strong ? 0 : 1);
+    if (gwan === 0) sc -= 1;
+    let head, body;
+    if (gwan >= 3) {
+      head = '조직에서 빛나는 사람';
+      body = '책임이 주어질수록 힘이 나는 구조입니다. 회사나 단체처럼 질서가 있는 곳에서 인정받고, 맡은 자리를 끝까지 지켜내는 뚝심이 있습니다. 다만 짊어지는 게 많아 스스로를 몰아붙이기 쉬우니 쉬는 날은 진짜로 쉬세요.';
+    } else if (gwan === 0 && sik >= 2) {
+      head = '내 이름 걸고 하는 사람';
+      body = '남이 시키는 대로 하는 자리에서는 답답함을 느낍니다. 프리랜서, 창작, 기술직처럼 실력으로 증명하는 쪽이 훨씬 잘 맞습니다. 조직에 들어가더라도 재량이 있는 자리를 고르세요.';
+    } else if (gwan === 0) {
+      head = '천천히 자리를 찾는 사람';
+      body = '한 번에 딱 맞는 일을 만나기보다 여러 경험을 거치며 길을 찾는 편입니다. 조급해하지 않아도 됩니다. 쌓인 경험이 나중에 남들이 못 가진 무기가 됩니다.';
+    } else {
+      head = '균형 잡힌 직업운';
+      body = '조직 생활도 독립도 무난하게 해내는 구조입니다. 어느 쪽이든 크게 어긋나지 않으니, 사람과 분위기를 보고 고르셔도 좋습니다.';
+    }
+    out.push({ icon:'💼', title:'직업운', head, body, score: sc,
+               tip: `잘 맞는 분야 · ${ILGAN_DESC[GAN[P.day.gan]].job}` });
+  }
+
+  // ---------- 금전운 ----------
+  {
+    let sc = 2 + jae + (ST.strong ? 1 : 0);
+    if (jae === 0) sc -= 1;
+    if ((cnt['겁재']||0) >= 2) sc -= 1;
+    let head, body, tip;
+    const pyeon = cnt['편재'] || 0, jeong = cnt['정재'] || 0;
+    if (pyeon > jeong && pyeon > 0) {
+      head = '크게 벌고 크게 쓰는 돈';
+      body = '한 번에 큰 돈이 오가는 흐름입니다. 기회를 보는 눈이 밝아 남들이 못 본 자리를 찾아내지만, 들어온 만큼 나가기도 쉽습니다. 버는 계좌와 쓰는 계좌를 나눠두는 것만으로도 크게 달라집니다.';
+      tip = '들어올 때 일부를 무조건 떼어 묶어두세요.';
+    } else if (jeong > 0) {
+      head = '차곡차곡 쌓이는 돈';
+      body = '한 방보다 매달 쌓이는 쪽이 잘 맞습니다. 급하게 불리려 들면 오히려 새고, 꾸준히 모으면 어느 순간 든든해져 있습니다. 목돈보다 습관이 재산이 되는 구조예요.';
+      tip = '자동이체로 강제 저축하는 방식이 잘 맞습니다.';
+    } else {
+      head = '돈보다 사람이 재산';
+      body = '재물 글자가 뚜렷하지 않습니다. 돈을 쫓기보다 실력과 사람을 쌓으면 그게 나중에 돈으로 바뀌는 흐름입니다. 조급하게 굴릴수록 손해가 큽니다.';
+      tip = '투기성 자산은 되도록 멀리하세요.';
+    }
+    if ((cnt['겁재']||0) >= 2) body += ' 특히 지인과 돈이 얽히는 일은 처음부터 선을 그어두는 편이 낫습니다.';
+    out.push({ icon:'💰', title:'금전운', head, body, score: sc, tip });
+  }
+
+  // ---------- 연애운 / 결혼운 ----------
+  {
+    // 남자는 재성이 배우자, 여자는 관성이 배우자
+    const spouse = gender === '여' ? gwan : jae;
+    let sc = 2 + spouse + (sik > 0 ? 1 : 0);
+    if (spouse === 0) sc -= 1;
+    if (bi >= 3) sc -= 1;
+    const dayJiOh = JI_OHAENG[P.day.ji];
+    let head, body, tip;
+    if (spouse >= 3) {
+      head = '인연이 끊이지 않는 사람';
+      body = '이성의 관심을 받는 기운이 넉넉합니다. 다가오는 사람이 많은 만큼 고르는 눈이 중요해집니다. 조건보다 함께 있을 때 편한 사람을 보세요.';
+      tip = '여러 인연 중 오래 갈 사람을 가려내는 게 과제입니다.';
+    } else if (spouse === 0) {
+      head = '늦게 만나 오래 가는 인연';
+      body = '배우자 글자가 뚜렷하지 않아 인연이 늦게 닿는 편입니다. 대신 한번 자리 잡으면 흔들림이 적습니다. 급하게 맞추려다 아닌 사람을 붙잡지 않는 게 중요합니다.';
+      tip = '주변 소개나 오래 알던 사이에서 인연이 열립니다.';
+    } else if (bi >= 3) {
+      head = '내 공간이 필요한 사람';
+      body = '자기 세계가 뚜렷해 혼자 있는 시간이 꼭 필요합니다. 붙어 있기를 바라는 상대와는 부딪히기 쉽고, 서로의 영역을 존중해주는 사람과 오래 갑니다.';
+      tip = '거리를 두는 게 아니라는 걸 말로 설명해주세요.';
+    } else {
+      head = '무난하게 풀리는 인연';
+      body = '만남과 관계가 크게 어긋나지 않는 구조입니다. 극적인 드라마는 적어도 안정적으로 이어집니다. 일상을 함께 쌓아가는 관계에서 힘이 납니다.';
+      tip = '큰 이벤트보다 매일의 대화가 관계를 지킵니다.';
+    }
+    body += ` 일지(배우자 자리)가 ${OH_EASY[dayJiOh].name}이라, 배우자는 ${OH_EASY[dayJiOh].key.split(' · ')[0]}의 성향을 가진 사람일 가능성이 높습니다.`;
+    out.push({ icon:'💕', title: gender === '여' ? '연애운 · 결혼운' : '연애운 · 결혼운', head, body, score: sc, tip });
+  }
+
+  // ---------- 건강운 ----------
+  {
+    const zero = Object.entries(oh).filter(([,v]) => v === 0).map(([k]) => k);
+    const over = Object.entries(oh).filter(([,v]) => v >= 4).map(([k]) => k);
+    let sc = 4 - zero.length - over.length + (ST.level.startsWith('중화') ? 1 : 0);
+    const BODY_MAP = { 목:'간·눈·근육', 화:'심장·혈압·수면', 토:'위장·소화', 금:'폐·호흡기·피부', 수:'신장·방광·허리' };
+    let head, body, tip;
+    if (zero.length === 0 && over.length === 0) {
+      head = '고르게 타고난 몸';
+      body = '다섯 기운이 치우침 없이 갖춰져 있습니다. 큰 병치레 없이 무난하게 가는 편이고, 기본만 지켜도 잘 버팁니다.';
+      tip = '지금 습관을 유지하는 것이 최선입니다.';
+    } else if (over.length) {
+      head = `${OH_EASY[over[0]].name}이 몰린 몸`;
+      body = `${OH_EASY[over[0]].name}이 지나치게 많습니다. 한쪽으로 쏠린 기운은 그 자리에 부담을 줍니다. ${BODY_MAP[over[0]]} 쪽을 평소에 챙기시면 좋습니다.`;
+      tip = `무리한 몰입보다 규칙적인 리듬이 중요합니다.`;
+    } else {
+      head = `${OH_EASY[zero[0]].name}이 비어 있는 몸`;
+      body = `${OH_EASY[zero[0]].name}이 없습니다. 그쪽 기능이 약해지기 쉬우니 ${BODY_MAP[zero[0]]} 쪽을 미리 관리하시는 게 좋습니다. 큰 문제라기보다 신경 써야 할 부분이라는 뜻입니다.`;
+      tip = `${OH_EASY[zero[0]].name}을 채우는 생활(${zero[0]==='목'?'산책과 초록':zero[0]==='화'?'햇빛과 활동':zero[0]==='토'?'규칙적인 식사':zero[0]==='금'?'맑은 공기와 정리':'충분한 물과 휴식'})이 도움이 됩니다.`;
+    }
+    out.push({ icon:'🌿', title:'건강운', head, body, score: sc, tip });
+  }
+
+  // ---------- 자녀운 ----------
+  {
+    // 남자는 관성이 자식, 여자는 식상이 자식
+    const child = gender === '여' ? sik : gwan;
+    let sc = 2 + child + (hasHour ? 1 : 0);
+    let head, body, tip;
+    if (!hasHour) {
+      head = '시각을 알면 더 정확합니다';
+      body = '자녀운은 시주(태어난 시각)를 함께 봐야 제대로 읽힙니다. 시각을 모르는 상태에서는 참고 정도로만 보시는 게 좋습니다.';
+      tip = '출생 시각을 확인하시면 다시 봐드릴 수 있습니다.';
+      sc = 3;
+    } else if (child >= 3) {
+      head = '자식 복이 넉넉한 편';
+      body = '자녀와 인연이 두터운 구조입니다. 아이에게 쏟는 마음이 크고 그만큼 돌아오는 것도 있습니다. 다만 기대가 커지면 서로 부담이 되니 한 발 물러서 보는 여유도 필요합니다.';
+      tip = '아이의 속도를 존중해주는 게 관계를 지킵니다.';
+    } else if (child === 0) {
+      head = '늦게 인연이 닿는 자녀운';
+      body = '자녀 글자가 뚜렷하지 않아 인연이 늦게 오거나 수가 적은 편입니다. 적은 만큼 깊게 가는 관계가 되고, 자식 외의 영역에서 보람을 찾는 경우도 많습니다.';
+      tip = '조급해하지 않아도 되는 흐름입니다.';
+    } else {
+      head = '무난한 자녀운';
+      body = '자녀와의 관계가 크게 어긋나지 않습니다. 평범하게 낳고 기르는 흐름이고, 큰 갈등 없이 지나가는 편입니다.';
+      tip = '말년의 시주 기운이 자녀 관계를 좌우합니다.';
+    }
+    out.push({ icon:'👶', title:'자녀운', head, body, score: sc, tip });
+  }
+
+  return out.map(o => ({ ...o, score: Math.max(1, Math.min(5, o.score)) }));
+}
+
 function daeunHint(dayGan, u) {
   const rel = sipseongOf(dayGan, u.gan);
   const M = {
@@ -546,7 +714,9 @@ function runSaju() {
   const dayGanKo = T.day.ganKo, dayGanOh = T.day.ganOh;
   const ILGAN = ILGAN_DESC[dayGanKo];
   const ST = calcStrength(r);
-  const SSC = Object.entries(sipseongCount(r)).sort((a, b) => b[1] - a[1]);
+  const CNT = sipseongCount(r);
+  const SSC = Object.entries(CNT).sort((a, b) => b[1] - a[1]);
+  const LUCK = calcLuck(r, ST, CNT, gender);
   const total = Object.values(r.ohaeng).reduce((a, b) => a + b, 0) || 1;
   const maxOh = Object.entries(r.ohaeng).sort((a, b) => b[1] - a[1])[0];
   const minOh = Object.entries(r.ohaeng).sort((a, b) => a[1] - b[1])[0];
@@ -689,6 +859,22 @@ function runSaju() {
       ${LINE}
       ${H('두드러지는 힘', '타고난 여덟 글자가 나에게 어떤 힘으로 나타나는지입니다.')}
       ${ssList || `<div style="font-size:15px;color:${INK_DIM};">—</div>`}
+
+      ${LINE}
+      ${H('분야별 운세', '타고난 여덟 글자를 분야별로 나눠서 봅니다.')}
+      ${LUCK.map(L => `
+        <div style="background:${PAPER2};border:1px solid ${LINE_C};border-radius:8px;padding:16px 18px;margin-bottom:12px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;">
+            <span style="font-size:22px;">${L.icon}</span>
+            <span style="font-size:17px;font-weight:800;color:${INK};">${L.title}</span>
+            <span style="font-size:16px;color:#c9a227;letter-spacing:1px;margin-left:auto;">${stars(L.score)}</span>
+          </div>
+          <div style="font-size:18px;font-weight:800;color:${ACCENT};margin-bottom:8px;">${L.head}</div>
+          <div style="font-size:15px;line-height:1.9;color:${INK};">${L.body}</div>
+          <div style="margin-top:12px;padding-top:12px;border-top:1px dashed ${LINE_C};font-size:14px;color:${INK_DIM};">
+            💡 ${L.tip}
+          </div>
+        </div>`).join('')}
 
       ${LINE}
       ${H('10년마다 바뀌는 흐름', `사주는 평생 고정이 아닙니다. 약 ${Math.floor(r.daeun.startAge)}세부터 10년마다 새로운 기운이 들어옵니다.`)}
