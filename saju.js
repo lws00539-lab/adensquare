@@ -456,32 +456,52 @@ function sipseongCount(r) {
   return cnt;
 }
 
+
 /* ================================================================
  * 결과 화면
  * ================================================================ */
 
-// 오행을 쉬운 말로
+// 어두운 배경에서도 잘 보이도록 밝게 보정한 오행 색
+const OH_BRIGHT = { 목:'#7ad17a', 화:'#ff7b7b', 토:'#f0c260', 금:'#d8d8e4', 수:'#7ab0ff' };
+
 const OH_EASY = {
-  목: '나무 기운 (자라남, 시작, 성장)',
-  화: '불 기운 (밝음, 표현, 열정)',
-  토: '흙 기운 (안정, 신용, 버팀)',
-  금: '쇠 기운 (결단, 정리, 원칙)',
-  수: '물 기운 (지혜, 유연함, 생각)',
+  목: { name:'나무 기운', key:'자라남 · 시작 · 성장' },
+  화: { name:'불 기운',   key:'밝음 · 표현 · 열정' },
+  토: { name:'흙 기운',   key:'안정 · 신용 · 버팀' },
+  금: { name:'쇠 기운',   key:'결단 · 정리 · 원칙' },
+  수: { name:'물 기운',   key:'지혜 · 유연함 · 생각' },
 };
 
-// 십성을 쉬운 말로
 const SS_EASY = {
-  '비견':{ n:'나와 같은 힘',   t:'자기 주관이 뚜렷하고 남에게 기대지 않습니다. 친구·동료와 어울리는 힘이기도 합니다.' },
-  '겁재':{ n:'경쟁하는 힘',   t:'승부욕이 있고 밀어붙입니다. 다만 돈 문제로 부딪히는 일은 조심하는 게 좋습니다.' },
-  '식신':{ n:'베푸는 힘',     t:'여유가 있고 표현을 잘합니다. 먹을 복이 있고 건강한 편입니다.' },
-  '상관':{ n:'드러내는 힘',   t:'말솜씨와 재능이 있습니다. 틀에 갇히는 걸 싫어해 튀는 행동을 하기도 합니다.' },
-  '편재':{ n:'크게 버는 힘',  t:'사교적이고 기회를 잘 봅니다. 돈이 크게 들어오고 크게 나가는 편입니다.' },
-  '정재':{ n:'꾸준히 버는 힘',t:'성실하고 알뜰합니다. 한 걸음씩 모아 가는 쪽이 잘 맞습니다.' },
-  '편관':{ n:'밀어붙이는 힘', t:'위기에 강하고 추진력이 좋습니다. 스트레스와 압박을 자주 겪기도 합니다.' },
-  '정관':{ n:'책임지는 힘',   t:'질서와 규칙을 지키고 신뢰를 얻습니다. 직장이나 조직에서 인정받는 힘입니다.' },
-  '편인':{ n:'파고드는 힘',   t:'직관이 좋고 남다른 분야를 깊게 팝니다. 생각이 많아지기 쉽습니다.' },
-  '정인':{ n:'배우는 힘',     t:'공부와 문서에 강하고 윗사람 도움을 받습니다. 차분하게 쌓아 가는 쪽입니다.' },
+  '비견':{ n:'내 편이 되는 힘', t:'혼자서도 잘 해냅니다. 누가 시켜서가 아니라 내가 정해서 움직이는 쪽이에요. 친구나 동료가 곁에 붙는 복도 함께 옵니다.' },
+  '겁재':{ n:'이기고 싶은 힘',  t:'지는 걸 싫어하고 승부가 걸리면 눈빛이 달라집니다. 다만 돈이 얽힌 관계는 처음부터 선을 긋는 게 편합니다.' },
+  '식신':{ n:'즐기는 힘',      t:'여유가 있고 잘 먹고 잘 웃습니다. 좋아하는 일을 할 때 가장 빛나고, 주변 사람을 편하게 만드는 재주가 있어요.' },
+  '상관':{ n:'튀는 힘',        t:'말도 재주도 남다릅니다. 시키는 대로만 하는 자리에서는 답답해하고, 자기 방식대로 할 때 실력이 나옵니다.' },
+  '편재':{ n:'크게 버는 힘',    t:'기회를 보는 눈이 밝고 사람을 잘 사귑니다. 돈이 크게 들어오는 만큼 크게 나가기도 해서 관리가 중요해요.' },
+  '정재':{ n:'차곡차곡 모으는 힘', t:'성실하고 알뜰합니다. 한 방보다는 매달 쌓이는 쪽이 잘 맞고, 그렇게 모은 게 오래 남습니다.' },
+  '편관':{ n:'버텨내는 힘',     t:'힘든 상황에서 오히려 강해집니다. 책임이 무거운 자리도 감당하지만, 스스로를 몰아붙이다 지치기 쉬워요.' },
+  '정관':{ n:'믿음을 주는 힘',  t:'약속을 지키고 질서를 따릅니다. 조직이나 직장에서 인정받고, 맡기면 되는 사람이라는 평을 듣습니다.' },
+  '편인':{ n:'깊게 파는 힘',    t:'남들이 안 보는 걸 봅니다. 한 분야를 끝까지 파고드는 재주가 있지만 생각이 너무 많아질 때가 있어요.' },
+  '정인':{ n:'배우고 받는 힘',  t:'공부와 문서에 강하고 윗사람이 잘 챙겨줍니다. 급하게 가기보다 차근차근 쌓아 올리는 쪽입니다.' },
 };
+
+// 대운 기운 한 줄 풀이
+function daeunHint(dayGan, u) {
+  const rel = sipseongOf(dayGan, u.gan);
+  const M = {
+    '비견':'스스로 결정하고 움직이게 되는 시기',
+    '겁재':'경쟁이 붙고 승부를 보게 되는 시기',
+    '식신':'마음이 여유로워지고 즐길 일이 늘어나는 시기',
+    '상관':'재능을 드러내고 하고 싶은 말을 하게 되는 시기',
+    '편재':'돈과 사람이 크게 오가는 시기',
+    '정재':'꾸준히 모으고 안정을 다지는 시기',
+    '편관':'책임이 무거워지고 시험대에 오르는 시기',
+    '정관':'인정받고 자리를 잡아가는 시기',
+    '편인':'깊이 파고들고 배우게 되는 시기',
+    '정인':'도움을 받고 공부·문서 운이 열리는 시기',
+  };
+  return M[rel] || '';
+}
 
 function sjReset() {
   document.getElementById('sj-form').style.display = 'flex';
@@ -507,15 +527,12 @@ function runSaju() {
   if (!y || !mo || !d) { err.textContent = '생년월일을 모두 입력해주세요.'; return; }
   if (y < 1900 || y > 2100) { err.textContent = '1900년부터 2100년까지 계산할 수 있습니다.'; return; }
   if (mo < 1 || mo > 12 || d < 1 || d > 31) { err.textContent = '날짜를 다시 확인해주세요.'; return; }
-  if (!unknown && (isNaN(hh) || hh < 0 || hh > 23)) { err.textContent = '시각을 입력하거나 “시간 모름”을 선택해주세요.'; return; }
+  if (!unknown && (isNaN(hh) || hh < 0 || hh > 23)) { err.textContent = '시각을 입력하거나 “모름”을 선택해주세요.'; return; }
 
   let r;
   try {
     r = calcSaju({ y, m: mo, d, hour: unknown ? null : hh, min: mi, gender, lon });
-  } catch (e) {
-    err.textContent = '계산 중 문제가 발생했습니다: ' + e.message;
-    return;
-  }
+  } catch (e) { err.textContent = '계산 중 문제가 발생했습니다: ' + e.message; return; }
 
   const P = r.pillars;
   const T = { year: pillarText(P.year), month: pillarText(P.month), day: pillarText(P.day), hour: pillarText(P.hour) };
@@ -523,151 +540,155 @@ function runSaju() {
   const ILGAN = ILGAN_DESC[dayGanKo];
   const ST = calcStrength(r);
   const SSC = Object.entries(sipseongCount(r)).sort((a, b) => b[1] - a[1]);
-
   const total = Object.values(r.ohaeng).reduce((a, b) => a + b, 0) || 1;
   const maxOh = Object.entries(r.ohaeng).sort((a, b) => b[1] - a[1])[0];
   const minOh = Object.entries(r.ohaeng).sort((a, b) => a[1] - b[1])[0];
 
-  // 네 기둥 (설명 붙여서)
-  const PILLAR_MEAN = { hour:'말년 · 자녀', day:'나 자신 · 배우자', month:'청년 · 직업', year:'초년 · 부모' };
+  const TXT = '#e8dcc4';      // 본문
+  const DIM = '#a89878';      // 보조
+  const GOLD = '#f0c860';     // 제목
+
+  // ----- 네 기둥 (조금 작게) -----
+  const PM = { hour:'말년 · 자녀', day:'나 자신 · 배우자', month:'청년 · 직업', year:'초년 · 부모' };
   const col = (label, key, t) => `
     <div style="text-align:center;flex:1;min-width:0;">
-      <div style="font-size:13px;color:var(--text2);margin-bottom:2px;font-weight:600;">${label}</div>
-      <div style="font-size:11px;color:var(--text3);margin-bottom:6px;">${PILLAR_MEAN[key]}</div>
-      <div style="background:var(--dark);border:1px solid var(--border);border-radius:6px;padding:12px 4px;">
-        <div style="font-size:30px;font-weight:800;color:${t.ganOh ? OH_COLOR[t.ganOh] : 'var(--text3)'};line-height:1.2;">${t.ganHanja || '—'}</div>
-        <div style="font-size:13px;color:var(--text2);">${t.ganKo || ''}</div>
-        <div style="height:1px;background:var(--border);margin:8px 4px;"></div>
-        <div style="font-size:30px;font-weight:800;color:${t.jiOh ? OH_COLOR[t.jiOh] : 'var(--text3)'};line-height:1.2;">${t.jiHanja || '—'}</div>
-        <div style="font-size:13px;color:var(--text2);">${t.jiKo || ''}</div>
+      <div style="font-size:12px;color:${TXT};font-weight:700;">${label}</div>
+      <div style="font-size:10px;color:${DIM};margin-bottom:5px;">${PM[key]}</div>
+      <div style="background:#0f0c06;border:1px solid #4a3c1c;border-radius:6px;padding:9px 4px;">
+        <div style="font-size:23px;font-weight:800;color:${t.ganOh ? OH_BRIGHT[t.ganOh] : DIM};line-height:1.2;">${t.ganHanja || '—'}</div>
+        <div style="font-size:11px;color:${TXT};">${t.ganKo || ''}</div>
+        <div style="height:1px;background:#4a3c1c;margin:5px 4px;"></div>
+        <div style="font-size:23px;font-weight:800;color:${t.jiOh ? OH_BRIGHT[t.jiOh] : DIM};line-height:1.2;">${t.jiHanja || '—'}</div>
+        <div style="font-size:11px;color:${TXT};">${t.jiKo || ''}</div>
       </div>
     </div>`;
 
   const ohBars = ['목','화','토','금','수'].map(k => {
     const n = r.ohaeng[k], pct = Math.round(n / total * 100);
     return `
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-        <span style="width:105px;font-size:13px;font-weight:700;color:${OH_COLOR[k]};">${OH_EASY[k].split(' (')[0]}</span>
-        <div style="flex:1;height:18px;background:var(--dark);border-radius:9px;overflow:hidden;min-width:60px;">
-          <div style="height:100%;width:${pct}%;background:${OH_COLOR[k]};opacity:.8;"></div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:9px;">
+        <span style="width:80px;font-size:15px;font-weight:700;color:${OH_BRIGHT[k]};">${OH_EASY[k].name}</span>
+        <div style="flex:1;height:20px;background:#0f0c06;border-radius:10px;overflow:hidden;min-width:60px;border:1px solid #33280f;">
+          <div style="height:100%;width:${pct}%;background:${OH_BRIGHT[k]};"></div>
         </div>
-        <span style="width:40px;text-align:right;font-size:13px;color:var(--text2);">${n}개</span>
+        <span style="width:38px;text-align:right;font-size:15px;color:${TXT};font-weight:600;">${n}개</span>
       </div>`;
   }).join('');
 
   const topSS = SSC.length ? SSC[0][0] : null;
-  const ssList = SSC.slice(0, 4).map(([k, n]) => `
-      <div style="display:flex;gap:10px;margin-bottom:10px;align-items:flex-start;">
-        <span style="flex:0 0 96px;font-size:14px;font-weight:700;color:var(--g);">${SS_EASY[k].n}</span>
-        <span style="flex:0 0 32px;font-size:13px;color:var(--text2);">${n}개</span>
-        <span style="flex:1;min-width:0;font-size:14px;color:var(--text2);line-height:1.7;">${SS_EASY[k].t}</span>
+  const ssList = SSC.slice(0, 4).map(([k, n], idx) => `
+      <div style="background:#0f0c06;border:1px solid ${idx===0?'#8a7238':'#33280f'};border-radius:6px;padding:12px 14px;margin-bottom:9px;">
+        <div style="font-size:17px;font-weight:800;color:${idx===0?GOLD:TXT};margin-bottom:5px;">
+          ${SS_EASY[k].n} <span style="font-size:13px;color:${DIM};font-weight:400;">${n}개</span>
+          ${idx===0?'<span style="font-size:11px;background:#6a5420;color:#f5d98a;padding:2px 7px;border-radius:10px;margin-left:6px;">가장 강함</span>':''}
+        </div>
+        <div style="font-size:15px;color:${TXT};line-height:1.8;">${SS_EASY[k].t}</div>
       </div>`).join('');
 
+  const nowAge = new Date().getFullYear() - y + 1;
   const daeunRows = r.daeun.list.map(u => {
     const t = pillarText(u);
-    return `<div style="text-align:center;min-width:60px;">
-      <div style="font-size:12px;color:var(--text3);">${u.age}세</div>
-      <div style="font-size:19px;font-weight:700;color:${OH_COLOR[t.ganOh]};line-height:1.3;">${t.ganHanja}</div>
-      <div style="font-size:19px;font-weight:700;color:${OH_COLOR[t.jiOh]};line-height:1.3;">${t.jiHanja}</div>
-      <div style="font-size:11px;color:var(--text3);">${t.ganOh}${t.jiOh}</div>
-    </div>`;
+    const cur = nowAge >= u.age && nowAge < u.age + 10;
+    return `
+      <div style="display:flex;gap:12px;align-items:center;padding:11px 12px;border-radius:6px;margin-bottom:7px;
+                  background:${cur ? '#3a2c10' : '#0f0c06'};border:1px solid ${cur ? '#a08838' : '#33280f'};">
+        <div style="flex:0 0 58px;text-align:center;">
+          <div style="font-size:15px;font-weight:800;color:${cur ? GOLD : TXT};">${u.age}세</div>
+          <div style="font-size:10px;color:${DIM};">~${u.age + 9}세</div>
+        </div>
+        <div style="flex:0 0 40px;text-align:center;line-height:1.15;">
+          <div style="font-size:19px;font-weight:800;color:${OH_BRIGHT[t.ganOh]};">${t.ganHanja}</div>
+          <div style="font-size:19px;font-weight:800;color:${OH_BRIGHT[t.jiOh]};">${t.jiHanja}</div>
+        </div>
+        <div style="flex:1;min-width:0;font-size:14px;color:${TXT};line-height:1.6;">
+          ${daeunHint(P.day.gan, u)}
+          ${cur ? '<span style="font-size:11px;background:#6a5420;color:#f5d98a;padding:2px 7px;border-radius:10px;margin-left:6px;">지금 여기</span>' : ''}
+        </div>
+      </div>`;
   }).join('');
 
-  // 한 줄 요약
-  const summary = `${name ? name + '님은 ' : ''}<b style="color:${OH_COLOR[dayGanOh]}">${ILGAN.symbol}</b> 같은 사람입니다. `
-    + `타고난 기운은 <b>${ST.level.replace(/\(.*\)/,'')}</b>한 편이고, `
-    + `<b style="color:${OH_COLOR[maxOh[0]]}">${OH_EASY[maxOh[0]].split(' (')[0]}</b>이 가장 많습니다.`;
+  const summary = `${name ? `<b style="color:${GOLD}">${name.replace(/</g,'&lt;')}</b>님은 ` : ''}`
+    + `<b style="color:${OH_BRIGHT[dayGanOh]}">${ILGAN.symbol}</b> 같은 사람입니다.<br>`
+    + `타고난 기운은 <b style="color:${GOLD}">${ST.level.replace(/\(.*\)/, '')}</b>한 편이고, `
+    + `<b style="color:${OH_BRIGHT[maxOh[0]]}">${OH_EASY[maxOh[0]].name}</b>을 가장 많이 타고났어요.`;
+
+  const H = (t, sub) => `
+    <div style="font-size:18px;font-weight:800;color:${GOLD};margin-bottom:${sub?'5px':'10px'};">${t}</div>
+    ${sub ? `<div style="font-size:14px;color:${DIM};margin-bottom:12px;line-height:1.7;">${sub}</div>` : ''}`;
+  const LINE = `<div style="height:1px;background:#3a2e14;margin:22px 0;"></div>`;
 
   document.getElementById('sj-form').style.display = 'none';
   box.style.display = 'block';
   box.innerHTML = `
-    <div style="padding:18px;">
+    <div style="padding:20px;">
 
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
-        <div style="font-size:14px;color:var(--text2);">
-          ${name ? `<b style="color:var(--g);font-size:17px;">${name.replace(/</g,'&lt;')}</b> · ` : ''}${y}년 ${mo}월 ${d}일
-          ${r.trueSolarTime ? ` ${r.trueSolarTime}` : ' (시간 모름)'} · ${r.tti}띠
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+        <div style="font-size:15px;color:${TXT};">
+          ${y}년 ${mo}월 ${d}일${r.trueSolarTime ? ` ${r.trueSolarTime}` : ' (시간 모름)'} · ${r.tti}띠
         </div>
-        <button onclick="sjReset()" style="padding:7px 14px;border:1px solid #5a4a22;background:#2a1e08;color:#d4a84b;border-radius:4px;font-size:13px;cursor:pointer;">다시 보기</button>
+        <button onclick="sjReset()" style="padding:9px 16px;border:1px solid #a08838;background:#3a2c10;color:#f5d98a;border-radius:5px;font-size:14px;font-weight:700;cursor:pointer;">다시 보기</button>
       </div>
 
-      <div style="background:linear-gradient(180deg,#2a1e08,#1a1408);border:1px solid #5a4a22;border-radius:8px;padding:16px;font-size:16px;line-height:1.8;color:#e8dcc8;margin-bottom:18px;">
+      <div style="background:linear-gradient(180deg,#3a2c10,#1e1608);border:1px solid #a08838;border-radius:10px;padding:20px;font-size:19px;line-height:1.9;color:#f0e6d2;margin-bottom:22px;text-align:center;">
         ${summary}
       </div>
 
-      <div style="font-size:15px;font-weight:700;color:var(--g);margin-bottom:10px;">사주 네 기둥</div>
-      <div style="display:flex;gap:8px;margin-bottom:8px;">
-        ${col('시주', 'hour', T.hour)}
-        ${col('일주', 'day', T.day)}
-        ${col('월주', 'month', T.month)}
-        ${col('연주', 'year', T.year)}
+      ${H('사주 네 기둥')}
+      <div style="display:flex;gap:7px;margin-bottom:8px;">
+        ${col('시주','hour',T.hour)}${col('일주','day',T.day)}${col('월주','month',T.month)}${col('연주','year',T.year)}
       </div>
-      <div style="font-size:13px;color:var(--text3);line-height:1.7;margin-bottom:4px;">
-        태어난 연·월·일·시를 옛 달력의 글자로 바꾼 것입니다. 이 여덟 글자로 풀이합니다.
+      <div style="font-size:13px;color:${DIM};line-height:1.7;">
+        태어난 연·월·일·시를 옛 글자로 바꾼 것입니다. 이 여덟 글자로 풀이합니다.
         ${r.trueSolarTime ? '' : '<br>시각을 모르면 시주를 뺀 세 기둥으로 봅니다.'}
       </div>
 
-      <div style="height:1px;background:var(--border);margin:18px 0;"></div>
-
-      <div style="font-size:15px;font-weight:700;color:var(--g);margin-bottom:10px;">타고난 성향</div>
-      <div style="background:var(--dark);border:1px solid var(--border);border-radius:6px;padding:14px;font-size:15px;line-height:1.85;color:var(--text2);">
-        <div style="margin-bottom:8px;font-size:17px;">
-          <b style="color:${OH_COLOR[dayGanOh]};">${ILGAN.symbol}</b>
-          <span style="color:var(--text3);font-size:13px;margin-left:6px;">${T.day.ganHanja} ${dayGanKo}</span>
+      ${LINE}
+      ${H('타고난 성향')}
+      <div style="background:#0f0c06;border:1px solid #4a3c1c;border-radius:8px;padding:18px;">
+        <div style="font-size:22px;font-weight:800;color:${OH_BRIGHT[dayGanOh]};margin-bottom:10px;">
+          ${ILGAN.symbol}
+          <span style="font-size:14px;color:${DIM};font-weight:400;margin-left:8px;">${T.day.ganHanja} ${dayGanKo}</span>
         </div>
-        ${ILGAN.trait}
-        <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:14px;">
-          <span style="color:var(--text3);">잘 맞는 분야</span> · ${ILGAN.job}
-        </div>
-      </div>
-
-      <div style="height:1px;background:var(--border);margin:18px 0;"></div>
-
-      <div style="font-size:15px;font-weight:700;color:var(--g);margin-bottom:6px;">기운의 세기</div>
-      <div style="font-size:13px;color:var(--text3);margin-bottom:10px;">내 기운이 강한지 약한지를 봅니다. 강하면 스스로 밀고 나가고, 약하면 주변 도움을 받는 쪽이 유리합니다.</div>
-      <div style="background:var(--dark);border:1px solid var(--border);border-radius:6px;padding:14px;">
-        <div style="font-size:19px;font-weight:800;color:var(--g);margin-bottom:8px;">${ST.level}</div>
-        <div style="font-size:15px;line-height:1.85;color:var(--text2);">${ST.desc}</div>
-        <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:14px;line-height:1.9;">
-          <div><span style="color:var(--text3);">채우면 좋은 기운 ·</span>
-            ${ST.yongsin.map(k => `<b style="color:${OH_COLOR[k]};margin-left:5px;">${OH_EASY[k].split(' (')[0]}</b>`).join('')}</div>
-          <div><span style="color:var(--text3);">지나치면 부담되는 기운 ·</span>
-            ${ST.gisin.map(k => `<b style="color:${OH_COLOR[k]};margin-left:5px;">${OH_EASY[k].split(' (')[0]}</b>`).join('')}</div>
+        <div style="font-size:16px;line-height:1.9;color:${TXT};">${ILGAN.trait}</div>
+        <div style="margin-top:14px;padding-top:14px;border-top:1px solid #3a2e14;font-size:15px;color:${TXT};">
+          <span style="color:${DIM};">잘 맞는 분야</span> · ${ILGAN.job}
         </div>
       </div>
 
-      <div style="height:1px;background:var(--border);margin:18px 0;"></div>
+      ${LINE}
+      ${H('기운의 세기', '내 기운이 강한지 약한지를 봅니다. 강하면 스스로 밀고 나가고, 약하면 주변 도움을 받는 쪽이 잘 풀립니다.')}
+      <div style="background:#0f0c06;border:1px solid #4a3c1c;border-radius:8px;padding:18px;">
+        <div style="font-size:24px;font-weight:800;color:${GOLD};margin-bottom:10px;">${ST.level}</div>
+        <div style="font-size:16px;line-height:1.9;color:${TXT};">${ST.desc}</div>
+        <div style="margin-top:16px;padding-top:16px;border-top:1px solid #3a2e14;font-size:16px;line-height:2.1;">
+          <div><span style="color:${DIM};">채우면 좋은 기운</span>
+            ${ST.yongsin.map(k => `<b style="color:${OH_BRIGHT[k]};margin-left:8px;">${OH_EASY[k].name}</b>`).join('')}</div>
+          <div><span style="color:${DIM};">지나치면 부담되는 기운</span>
+            ${ST.gisin.map(k => `<b style="color:${OH_BRIGHT[k]};margin-left:8px;">${OH_EASY[k].name}</b>`).join('')}</div>
+        </div>
+      </div>
 
-      <div style="font-size:15px;font-weight:700;color:var(--g);margin-bottom:6px;">다섯 가지 기운</div>
-      <div style="font-size:13px;color:var(--text3);margin-bottom:10px;">여덟 글자가 어떤 기운으로 이루어졌는지 보여줍니다. 한쪽에 몰리면 그 성향이 강하게 나타납니다.</div>
+      ${LINE}
+      ${H('다섯 가지 기운', '여덟 글자가 어떤 기운으로 이루어졌는지입니다. 한쪽에 몰리면 그 성향이 강하게 나타납니다.')}
       ${ohBars}
-      <div style="font-size:15px;color:var(--text2);line-height:1.85;margin-top:10px;">
-        <b style="color:${OH_COLOR[maxOh[0]]}">${OH_EASY[maxOh[0]]}</b>이 가장 많습니다.
+      <div style="font-size:16px;color:${TXT};line-height:1.9;margin-top:12px;">
+        <b style="color:${OH_BRIGHT[maxOh[0]]}">${OH_EASY[maxOh[0]].name}</b>
+        <span style="color:${DIM};">(${OH_EASY[maxOh[0]].key})</span>이 가장 많습니다.
         ${minOh[1] === 0
-          ? `반대로 <b style="color:${OH_COLOR[minOh[0]]}">${OH_EASY[minOh[0]].split(' (')[0]}</b>은 하나도 없어, 그쪽 성향은 약하게 나타납니다.`
-          : `<b style="color:${OH_COLOR[minOh[0]]}">${OH_EASY[minOh[0]].split(' (')[0]}</b>은 가장 적습니다.`}
+          ? `반대로 <b style="color:${OH_BRIGHT[minOh[0]]}">${OH_EASY[minOh[0]].name}</b>은 하나도 없어, 그쪽 성향은 약하게 나타납니다.`
+          : `<b style="color:${OH_BRIGHT[minOh[0]]}">${OH_EASY[minOh[0]].name}</b>은 가장 적습니다.`}
       </div>
 
-      <div style="height:1px;background:var(--border);margin:18px 0;"></div>
+      ${LINE}
+      ${H('두드러지는 힘', '타고난 여덟 글자가 나에게 어떤 힘으로 나타나는지입니다.')}
+      ${ssList || `<div style="font-size:15px;color:${DIM};">—</div>`}
 
-      <div style="font-size:15px;font-weight:700;color:var(--g);margin-bottom:6px;">두드러지는 힘</div>
-      <div style="font-size:13px;color:var(--text3);margin-bottom:12px;">타고난 여덟 글자가 나에게 어떤 힘으로 작용하는지입니다.</div>
-      ${ssList || '<div style="font-size:14px;color:var(--text3);">—</div>'}
-      ${topSS ? `<div style="font-size:15px;color:var(--text2);line-height:1.85;margin-top:6px;">
-        그중에서도 <b style="color:var(--g)">${SS_EASY[topSS].n}</b>이 가장 두드러집니다.</div>` : ''}
+      ${LINE}
+      ${H('10년마다 바뀌는 흐름', `사주는 평생 고정이 아니라 약 ${Math.floor(r.daeun.startAge)}세부터 10년마다 새로운 기운이 들어옵니다. 지금 어느 시기를 지나고 있는지 보세요.`)}
+      ${daeunRows}
 
-      <div style="height:1px;background:var(--border);margin:18px 0;"></div>
-
-      <div style="font-size:15px;font-weight:700;color:var(--g);margin-bottom:6px;">10년 단위 흐름 (대운)</div>
-      <div style="font-size:13px;color:var(--text3);margin-bottom:12px;">
-        약 ${Math.floor(r.daeun.startAge)}세부터 10년마다 기운이 바뀝니다.
-        각 칸 아래 글자가 그 시기에 들어오는 기운입니다.
-      </div>
-      <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;">${daeunRows}</div>
-
-      <div style="height:1px;background:var(--border);margin:18px 0;"></div>
-
-      <div style="font-size:12px;color:var(--text3);line-height:1.8;">
+      ${LINE}
+      <div style="font-size:13px;color:${DIM};line-height:1.9;">
         ※ 절기와 진태양시(경도 ${Math.round(r.correction.lonMin)}분, 균시차 ${r.correction.eotMin >= 0 ? '+' : ''}${Math.round(r.correction.eotMin)}분)를 반영했습니다.<br>
         ※ 절기 시각은 2~3분의 오차가 있을 수 있습니다. 절기 경계에 태어나신 경우 만세력과 대조해 보세요.<br>
         ※ 일주는 자정 기준으로 바뀝니다. 밤 11시 이후를 다음날로 보는 방식과는 결과가 다를 수 있습니다.<br>
