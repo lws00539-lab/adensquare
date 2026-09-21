@@ -1473,14 +1473,16 @@ footer a{color:var(--g2);}
       .tr-shuffle-stage { position:relative; width:380px; height:280px; margin-bottom:48px; perspective:800px; }
       .tr-shuffle-card { position:absolute; width:140px; height:210px; border-radius:14px; border:1px solid #d4a84b; background:linear-gradient(160deg,#0e1525,#1a2535); display:flex; align-items:center; justify-content:center; transform-origin:center center; box-shadow:0 4px 20px rgba(212,168,75,0.2); }
       .tr-shuffle-card svg { width:64px; height:64px; opacity:0.7; }
-      /* 카드 섞기: 맨 위 카드를 옆으로 빼서 맨 아래로 끼워 넣는 것을 반복한다.
-         카드의 앞뒤 순서가 실제로 바뀌므로 매번 다른 카드가 맨 앞에 온다. */
-      .tr-shuffle-card { left:120px; top:35px;
-        transition:transform .26s cubic-bezier(.45,.05,.35,1), box-shadow .26s; }
-      .tr-shuffle-card.tr-out-l { transform:translateX(-165px) translateY(-18px) rotate(-16deg) !important;
-        box-shadow:0 12px 32px rgba(212,168,75,0.45); }
-      .tr-shuffle-card.tr-out-r { transform:translateX(165px) translateY(-18px) rotate(16deg) !important;
-        box-shadow:0 12px 32px rgba(212,168,75,0.45); }
+      @keyframes trShuffle0 { 0%{transform:translateX(0) translateY(0) rotate(0deg)} 25%{transform:translateX(-80px) translateY(-20px) rotate(-15deg)} 50%{transform:translateX(60px) translateY(-40px) rotate(20deg)} 75%{transform:translateX(-40px) translateY(10px) rotate(-8deg)} 100%{transform:translateX(0) translateY(0) rotate(0deg)} }
+      @keyframes trShuffle1 { 0%{transform:translateX(0) translateY(0) rotate(-5deg)} 25%{transform:translateX(70px) translateY(-30px) rotate(25deg)} 50%{transform:translateX(-50px) translateY(-10px) rotate(-20deg)} 75%{transform:translateX(50px) translateY(20px) rotate(10deg)} 100%{transform:translateX(0) translateY(0) rotate(-5deg)} }
+      @keyframes trShuffle2 { 0%{transform:translateX(0) translateY(0) rotate(8deg)} 25%{transform:translateX(-60px) translateY(30px) rotate(-25deg)} 50%{transform:translateX(80px) translateY(20px) rotate(15deg)} 75%{transform:translateX(-30px) translateY(-20px) rotate(-5deg)} 100%{transform:translateX(0) translateY(0) rotate(8deg)} }
+      @keyframes trShuffle3 { 0%{transform:translateX(0) translateY(0) rotate(-10deg)} 25%{transform:translateX(50px) translateY(20px) rotate(20deg)} 50%{transform:translateX(-70px) translateY(-30px) rotate(-15deg)} 75%{transform:translateX(40px) translateY(-10px) rotate(5deg)} 100%{transform:translateX(0) translateY(0) rotate(-10deg)} }
+      @keyframes trShuffle4 { 0%{transform:translateX(0) translateY(0) rotate(3deg)} 25%{transform:translateX(-90px) translateY(-10px) rotate(-20deg)} 50%{transform:translateX(40px) translateY(30px) rotate(18deg)} 75%{transform:translateX(-20px) translateY(-25px) rotate(-12deg)} 100%{transform:translateX(0) translateY(0) rotate(3deg)} }
+      .tr-shuffle-card:nth-child(1){left:120px;top:35px;animation:trShuffle0 0.8s ease-in-out infinite;}
+      .tr-shuffle-card:nth-child(2){left:100px;top:25px;animation:trShuffle1 0.8s ease-in-out infinite 0.06s;}
+      .tr-shuffle-card:nth-child(3){left:140px;top:40px;animation:trShuffle2 0.8s ease-in-out infinite 0.12s;}
+      .tr-shuffle-card:nth-child(4){left:110px;top:30px;animation:trShuffle3 0.8s ease-in-out infinite 0.18s;}
+      .tr-shuffle-card:nth-child(5){left:130px;top:32px;animation:trShuffle4 0.8s ease-in-out infinite 0.24s;}
       .tr-loading-txt { color:#d4a84b; font-size:16px; letter-spacing:0.4em; }
       .tr-loading-dots { display:flex; gap:6px; justify-content:center; margin-top:12px; }
       .tr-loading-dot { width:5px; height:5px; border-radius:50%; background:#d4a84b; animation:trDot 1.2s ease-in-out infinite; }
@@ -2467,7 +2469,7 @@ footer a{color:var(--g2);}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <!-- ?v= 값을 올리면 브라우저가 캐시를 무시하고 새 파일을 받는다. auth-v2.js를 고칠 때마다 숫자를 올릴 것 -->
-<script>window.ADEN_VERSION='v413';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
+<script>window.ADEN_VERSION='v414';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
 <script>
   // 헤더 높이를 실제로 재서 사이드 배경 시작 위치에 반영한다.
   // (헤더 높이는 화면 크기에 따라 달라지므로 숫자를 고정하면 그림이 가려진다)
@@ -2481,9 +2483,9 @@ footer a{color:var(--g2);}
     window.addEventListener('resize', setHeaderVar);
   })();
 </script>
-<script src="auth-v2.js?v=413"></script>
-<script src="admin.js?v=413"></script>
-<script src="saju.js?v=413"></script>
+<script src="auth-v2.js?v=414"></script>
+<script src="admin.js?v=414"></script>
+<script src="saju.js?v=414"></script>
 <script>
   // 왼쪽 배경의 '평소 크기'를 페이지를 처음 열었을 때 재둔다.
   // 사주 화면에서는 이 값으로 고정해서 그림이 커지지 않게 한다.
@@ -3599,43 +3601,36 @@ footer a{color:var(--g2);}
     }, 2600);
   }
 
-  // 실제로 카드를 섞는 것처럼: 맨 위 카드를 빼서 맨 아래로 넣기를 반복
+  // 처음처럼 흔들리며 섞이되, 앞에 오는 카드가 계속 바뀌게 한다.
+  // 카드들이 서로 엇갈리는 순간(애니메이션 절반 지점)마다 앞뒤 순서를 섞는다.
   function startTarotShuffle() {
     const stage = document.querySelector('.tr-shuffle-stage');
     if (!stage) return () => {};
-    const cards = () => Array.from(stage.querySelectorAll('.tr-shuffle-card'));
+    const cards = Array.from(stage.querySelectorAll('.tr-shuffle-card'));
 
-    // 카드마다 살짝 다른 각도·위치를 줘서 손으로 쌓은 느낌
-    const jitter = el => {
-      const x = (Math.random() * 14 - 7).toFixed(1);
-      const y = (Math.random() * 10 - 5).toFixed(1);
-      const r = (Math.random() * 8 - 4).toFixed(1);
-      el.style.transform = `translate(${x}px, ${y}px) rotate(${r}deg)`;
-    };
-    cards().forEach(jitter);
-
-    let left = true, alive = true;
-    const step = () => {
-      if (!alive) return;
-      const list = cards();
-      const top = list[list.length - 1];          // DOM 마지막 = 화면 맨 앞
-      top.classList.add(left ? 'tr-out-l' : 'tr-out-r');
-      left = !left;
-
-      setTimeout(() => {
-        if (!alive) return;
-        stage.insertBefore(top, stage.firstChild);   // 맨 아래로 끼워 넣기
-        top.classList.remove('tr-out-l', 'tr-out-r');
-        jitter(top);
-      }, 260);
+    let last = -1;
+    const reorder = () => {
+      // 1~5 를 무작위로 섞어서 각 카드의 앞뒤 순서로 쓴다
+      const order = cards.map((_, i) => i + 1);
+      for (let i = order.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [order[i], order[j]] = [order[j], order[i]];
+      }
+      // 직전과 같은 카드가 또 맨 앞에 오지 않도록
+      const front = order.indexOf(cards.length);
+      if (front === last) {
+        const k = (front + 1) % cards.length;
+        [order[front], order[k]] = [order[k], order[front]];
+      }
+      last = order.indexOf(cards.length);
+      cards.forEach((c, i) => { c.style.zIndex = order[i]; });
     };
 
-    step();
-    const timer = setInterval(step, 340);
+    reorder();
+    const timer = setInterval(reorder, 400);   // 흔들림 주기(0.8초)의 절반
     return () => {
-      alive = false;
       clearInterval(timer);
-      cards().forEach(c => c.classList.remove('tr-out-l', 'tr-out-r'));
+      cards.forEach(c => { c.style.zIndex = ''; });
     };
   }
 
