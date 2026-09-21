@@ -35,9 +35,7 @@ body{background:var(--dark2);color:var(--text);font-family:'Noto Sans KR',sans-s
      첫 인물(팅커벨)이 헤더에 가려지지 않게 한다.
      위쪽 빈자리는 repeat-y 가 이전 장의 끝부분으로 자동으로 채운다. */
   background-position:left 190px;
-  /* 폭을 칸에 맞춘다. % 로 잡으면 사주 결과처럼 페이지가 길어질 때
-     그림도 같이 커져서 인물이 확대되고 좌우가 잘린다. */
-  background-size:100% auto;
+  background-size:auto 65%;        /* 인물이 크게 보이도록 확대 */
   z-index:1;
   pointer-events:none;
 }
@@ -55,6 +53,9 @@ body{background:var(--dark2);color:var(--text);font-family:'Noto Sans KR',sans-s
   background-size:100% auto;
 }
 @media(max-width:1550px){.side-bg{display:none;}}
+/* 사주팔자는 결과가 길어서 페이지가 몇 배로 늘어난다.
+   65% 로 두면 그림도 같이 커지므로, 사주 화면에서만 평소 크기로 고정한다. */
+body.saju-mode .side-bg-left{background-size:auto var(--sidebg-h, 1950px) !important;}
 
 .side-deco{position:fixed;top:190px;left:0;width:calc((100vw - 1400px)/2);max-width:420px;height:calc(100vh - 190px);background:url('images/side_left.png') left top no-repeat;background-size:auto calc(100vh - 190px);z-index:10;pointer-events:none;overflow:hidden;}
 .side-deco-right{position:fixed;top:190px;right:0;bottom:0;width:calc((100vw - 1400px)/2);max-width:420px;background-color:var(--dark2);background-image:url('images/side_right_v5.png');background-repeat:no-repeat;background-position-x:50%;background-position-y:calc((100vh - 190px) * -0.038);background-size:auto calc(100vh - 190px);z-index:10;pointer-events:none;overflow:hidden;}
@@ -2468,7 +2469,7 @@ footer a{color:var(--g2);}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <!-- ?v= 값을 올리면 브라우저가 캐시를 무시하고 새 파일을 받는다. auth-v2.js를 고칠 때마다 숫자를 올릴 것 -->
-<script>window.ADEN_VERSION='v411';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
+<script>window.ADEN_VERSION='v412';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
 <script>
   // 헤더 높이를 실제로 재서 사이드 배경 시작 위치에 반영한다.
   // (헤더 높이는 화면 크기에 따라 달라지므로 숫자를 고정하면 그림이 가려진다)
@@ -2482,9 +2483,33 @@ footer a{color:var(--g2);}
     window.addEventListener('resize', setHeaderVar);
   })();
 </script>
-<script src="auth-v2.js?v=411"></script>
-<script src="admin.js?v=411"></script>
-<script src="saju.js?v=411"></script>
+<script src="auth-v2.js?v=412"></script>
+<script src="admin.js?v=412"></script>
+<script src="saju.js?v=412"></script>
+<script>
+  // 왼쪽 배경의 '평소 크기'를 페이지를 처음 열었을 때 재둔다.
+  // 사주 화면에서는 이 값으로 고정해서 그림이 커지지 않게 한다.
+  (function () {
+    function measure() {
+      var el = document.querySelector('.side-bg-left');
+      if (!el || el.offsetHeight < 100) return;
+      document.documentElement.style.setProperty('--sidebg-h', Math.round(el.offsetHeight * 0.65) + 'px');
+    }
+    window.addEventListener('load', function () { setTimeout(measure, 300); });
+
+    // 사주 섹션이 열리고 닫히는 것을 감시해서 body 에 표시를 붙였다 뗀다.
+    // (어떤 메뉴로 이동하든 자동으로 풀린다)
+    document.addEventListener('DOMContentLoaded', function () {
+      var sec = document.getElementById('section-saju');
+      if (!sec) return;
+      var sync = function () {
+        document.body.classList.toggle('saju-mode', sec.style.display === 'block');
+      };
+      new MutationObserver(sync).observe(sec, { attributes: true, attributeFilter: ['style'] });
+      sync();
+    });
+  })();
+</script>
 <script>
   // 장비러쉬
   const SIM_SWORD='images/img6.jpg';
