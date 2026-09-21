@@ -2469,7 +2469,7 @@ footer a{color:var(--g2);}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <!-- ?v= 값을 올리면 브라우저가 캐시를 무시하고 새 파일을 받는다. auth-v2.js를 고칠 때마다 숫자를 올릴 것 -->
-<script>window.ADEN_VERSION='v414';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
+<script>window.ADEN_VERSION='v415';console.log('%c아덴광장 '+window.ADEN_VERSION+' 로드됨','color:#d4a84b;font-weight:bold');</script>
 <script>
   // 헤더 높이를 실제로 재서 사이드 배경 시작 위치에 반영한다.
   // (헤더 높이는 화면 크기에 따라 달라지므로 숫자를 고정하면 그림이 가려진다)
@@ -2483,9 +2483,9 @@ footer a{color:var(--g2);}
     window.addEventListener('resize', setHeaderVar);
   })();
 </script>
-<script src="auth-v2.js?v=414"></script>
-<script src="admin.js?v=414"></script>
-<script src="saju.js?v=414"></script>
+<script src="auth-v2.js?v=415"></script>
+<script src="admin.js?v=415"></script>
+<script src="saju.js?v=415"></script>
 <script>
   // 왼쪽 배경의 '평소 크기'를 페이지를 처음 열었을 때 재둔다.
   // 사주 화면에서는 이 값으로 고정해서 그림이 커지지 않게 한다.
@@ -3265,9 +3265,12 @@ footer a{color:var(--g2);}
         const typeColor = n.type==='update'?'#70c870':n.type==='event'?'#d4a84b':'#7090d8';
         const typeText = n.type==='update'?'[업데이트]':n.type==='event'?'[이벤트]':'[공지]';
         const isLast = i === top5.length - 1;
-        return `<div style="padding:5px 0;${isLast?'':'border-bottom:1px solid var(--border);'}cursor:pointer;" onclick="showNews('${game}')">
-          <span style="color:${typeColor};font-size:10px;margin-right:4px;">${typeText}</span>· ${n.title}
-          <span style="color:var(--text3);float:right;">${n.date.slice(5)}</span>
+        // 제목이 길면 한 줄로 자르고 ... 표시 (자유게시판과 높이를 맞추기 위해)
+        return `<div style="padding:5px 0;${isLast?'':'border-bottom:1px solid var(--border);'}cursor:pointer;display:flex;align-items:center;gap:8px;min-width:0;" onclick="showNews('${game}')">
+          <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+            <span style="color:${typeColor};font-size:10px;margin-right:4px;">${typeText}</span>· ${n.title}
+          </span>
+          <span style="flex-shrink:0;color:var(--text3);">${n.date.slice(5)}</span>
         </div>`;
       }).join('');
     } catch(e) {
